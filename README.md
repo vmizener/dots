@@ -1,1 +1,3 @@
 # dots
+YADM-managed dotfiles
+
