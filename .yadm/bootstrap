@@ -92,6 +92,10 @@ if [[ ! ${SHELL} =~ .*zsh$ ]]; then
     chsh -s $(which zsh)
     log INFO "Default shell updated"
 fi
+if [[ ! -d ${ZDOTDIR:-$HOME}/.zim ]]; then
+    log INFO "Cloning Zim framework"
+    git clone --recursive https://github.com/zimfw/zimfw.git ${ZDOTDIR:-${HOME}}/.zim
+fi
 
 # Boot/update Zim
 zsh -c "source ${ZDOTDIR:-${HOME}}/.zlogin"
