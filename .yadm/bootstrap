@@ -24,30 +24,19 @@ case ${system_info} in
         log INFO "Starting bootstrap for OSX"
         ;;
     *Cygwin*)
-        log INFO "Starting bootstrap for Cygwin'"
+        log INFO "Starting bootstrap for Cygwin"
         ;;
     *Arch*)
-        log INFO "Starting bootstrap for Arch Linux'"
+        log INFO "Starting bootstrap for Arch Linux"
+        ;;
+    *GNU/Linux*)
+        log INFO "Starting bootstrap for generic Linux"
         ;;
     *)
         log ERROR "Unknown system type '${system_type}'!  Aborting"
         exit 1
     ;;
 esac
-
-# Env vars
-if [[ -z "${ZDOTDIR}" ]]; then
-    if $(prompt "Env vars XDG_CONFIG_HOME and ZDOTDIR are not set.  "); then
-        echo
-        export XDG_CONFIG_HOME="${HOME}/.config"
-        export ZDOTDIR="${XDG_CONFIG_HOME}/zsh"
-        mkdir -p ${ZDOTDIR}
-        log INFO "Using XDG_CONFIG_HOME: ${XDG_CONFIG_HOME}"
-        log INFO "Using ZDOTDIR: ${ZDOTDIR}"
-    else
-        echo
-    fi
-fi
 
 ################
 # Get package manager
@@ -81,8 +70,10 @@ if [[ ! $(which yadm) ]]; then
     log INFO "Initializing YADM"
     yadm clone --recursive https://github.com/vmizener/dots.git
     yadm remote set-url origin git@github.com:vmizener/dots.git
+
 fi
 yadm pull
+yadm submodule update --init
 log INFO "YADM is ready"
 
 ################
