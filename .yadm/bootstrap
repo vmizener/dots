@@ -1,0 +1,108 @@
+#!/bin/bash
+cd ~
+
+################
+# Helper functions
+function log () {
+    echo "@BOOTSTRAPPER[$1]: $2"
+}
+function prompt () {
+    read -p "@BOOTSTRAPPER[PROMPT]: $1 [yn] (n) " -n 1 -r
+    if [[ ${REPLY} =~ ^[Yy]$ ]]; then
+        exit 0
+    else
+        exit 1
+    fi
+}
+
+################
+# Startup dialog
+
+system_info=$(uname -a)
+case ${system_info} in
+    *Darwin*)
+        log INFO "Starting bootstrap for OSX"
+        ;;
+    *Cygwin*)
+        log INFO "Starting bootstrap for Cygwin'"
+        ;;
+    *Arch*)
+        log INFO "Starting bootstrap for Arch Linux'"
+        ;;
+    *)
+        log ERROR "Unknown system type '${system_type}'!  Aborting"
+        exit 1
+    ;;
+esac
+
+# Env vars
+if [[ -z "${ZDOTDIR}" ]]; then
+    if $(prompt "Env vars XDG_CONFIG_HOME and ZDOTDIR are not set.  "); then
+        echo
+        export XDG_CONFIG_HOME="${HOME}/.config"
+        export ZDOTDIR="${XDG_CONFIG_HOME}/zsh"
+        mkdir -p ${ZDOTDIR}
+        log INFO "Using XDG_CONFIG_HOME: ${XDG_CONFIG_HOME}"
+        log INFO "Using ZDOTDIR: ${ZDOTDIR}"
+    else
+        echo
+    fi
+fi
+
+################
+# Get package manager
+
+log INFO "Checking package manager"
+case ${system_info} in
+    *Darwin*)
+        if [[ ! $(which brew) ]]; then
+            log INFO "Installing Homebrew"
+            /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        fi
+    ;;
+    *Cygwin*)
+        #TODO Cygwin pacman?
+        log INFO "No package manager for Cygwin"
+    ;;
+esac
+log INFO "Package manager is ready"
+
+################
+# Get YADM
+
+log INFO "Checking YADM"
+if [[ ! $(which yadm) ]]; then
+    log INFO "Installing YADM"
+    case ${system_type} in
+        *Darwin*)
+            brew install yadm
+        ;;
+    esac
+    log INFO "Initializing YADM"
+    yadm clone --recursive https://github.com/vmizener/dots.git
+    yadm remote set-url origin git@github.com:vmizener/dots.git
+fi
+yadm pull
+log INFO "YADM is ready"
+
+################
+# Set default shell to ZSH
+
+# Install ZSH
+log INFO "Checking shell"
+if [[ ! ${SHELL} =~ .*zsh$ ]]; then
+    log INFO "Default shell is not ZSH"
+    if [[ ! $(which zsh) ]]; then
+        log INFO "Installing ZSH"
+        #TODO
+        log ERROR "TODO"
+        exit 1
+    fi
+    chsh -s $(which zsh)
+    log INFO "Default shell updated"
+fi
+
+# Boot/update Zim
+zsh -c "source ${ZDOTDIR:-${HOME}}/.zlogin"
+zsh -i -c "zmanage update"
+log INFO "Shell is ready"
