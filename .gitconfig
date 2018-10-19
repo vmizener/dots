@@ -1,3 +1,14 @@
 [user]
 	email = vmizener@gmail.com
 	name = Raymond von Mizener
+[push]
+	default = current
+[branch]
+	autosetuprebase = always
+[core]
+	excludesfile = ~/.gitignore
+[merge]
+	tool = vimdiff
+	conflictstyle = diff3
+[mergetool]
+	prompt = false

@@ -1,3 +1,0 @@
-[submodule ".config/zsh/.zprezto"]
-	path = .config/zsh/.zprezto
-	url = git@github.com:vmizener/prezto.git
