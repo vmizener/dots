@@ -1,64 +1,79 @@
 #!/bin/bash
-cd ~
+cd ${HOME}
 
 ################
 # Helper functions
 function log () {
-    echo "@BOOTSTRAPPER[$1]: $2"
+    printf "@BOOTSTRAPPER[$1]: $2\n"
 }
-function prompt () {
-    read -p "@BOOTSTRAPPER[PROMPT]: $1 [yn] (n) " -n 1 -r
+function query () {
+    read -e -p "@BOOTSTRAPPER[PROMPT]: $1 [yn] (n) " -n 1 -r
     if [[ ${REPLY} =~ ^[Yy]$ ]]; then
         exit 0
     else
         exit 1
     fi
 }
+function prompt () {
+    read -p "@BOOTSTRAPPER[PROMPT}: $1 " -r
+    return ${REPLY}
+}
 
 ################
-# Startup dialog
+# Initialization
 
+flag_install_source=0
 system_info=$(uname -a)
 case ${system_info} in
     *Darwin*)
-        log INFO "Starting bootstrap for OSX"
-        ;;
-    *Cygwin*)
-        log INFO "Starting bootstrap for Cygwin"
-        ;;
-    *Arch*)
-        log INFO "Starting bootstrap for Arch Linux"
-        ;;
-    *GNU/Linux*)
-        log INFO "Starting bootstrap for generic Linux"
-        ;;
-    *)
-        log ERROR "Unknown system type '${system_type}'!  Aborting"
-        exit 1
-    ;;
-esac
-
-################
-# Get package manager
-
-log INFO "Checking package manager"
-case ${system_info} in
-    *Darwin*)
+        log INFO "Starting bootstrap for MacOS"
+        system_type='Darwin'
         if [[ ! $(which brew) ]]; then
             log INFO "Installing Homebrew"
             /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
         fi
-    ;;
+        ;;
+    *Arch*)
+        log INFO "Starting bootstrap for Arch Linux"
+        system_type='Arch'
+        #TODO
+        ;;
     *Cygwin*)
-        #TODO Cygwin pacman?
-        log INFO "No package manager for Cygwin"
-    ;;
+        log INFO "Starting bootstrap for Cygwin"
+        system_type='Cygwin'
+        flag_install_source="Cygwin has no package manager.  Install from source?"
+        ;;
+    *)
+        log INFO "Starting bootstrap for generic system type '$(uname -s)'"
+        system_type='Linux'
+        flag_install_source="No package manager defined.  Install from source?"
+        ;;
 esac
-log INFO "Package manager is ready"
+if [[ ! ${flag_install_source} == 0 ]]; then
+    if $(query ${flag_install_source}); then
+        echo "okay"
+        #TODO
+    else
+        log INFO "Skipping package installations."
+        #TODO
+    fi
+fi
+
+req_packages=(
+    'zsh' \
+    'yadm'
+)
+for package in ${req_packages[@]}; do
+    #TODO
+    echo $package
+done
+
+log INFO "System is ready"
 
 ################
 # Get YADM
 
+#TODO move install to above loop?
 log INFO "Checking YADM"
 if [[ ! $(which yadm) ]]; then
     log INFO "Installing YADM"
@@ -77,9 +92,10 @@ yadm submodule update --init
 log INFO "YADM is ready"
 
 ################
-# Set default shell to ZSH
+# Get Zim
 
 # Install ZSH
+#TODO move install to above loop?
 log INFO "Checking shell"
 if [[ ! ${SHELL} =~ .*zsh$ ]]; then
     log INFO "Default shell is not ZSH"
@@ -92,12 +108,14 @@ if [[ ! ${SHELL} =~ .*zsh$ ]]; then
     chsh -s $(which zsh)
     log INFO "Default shell updated"
 fi
+
+# Install Zim
 if [[ ! -d ${ZDOTDIR:-$HOME}/.zim ]]; then
     log INFO "Cloning Zim framework"
-    git clone --recursive https://github.com/zimfw/zimfw.git ${ZDOTDIR:-${HOME}}/.zim
+    git clone --recursive https://github.com/zimfw/zimfw.git ${ZDOTDIR:-${HOME}/.config/zsh}/.zim
+    zsh -c "source ${ZDOTDIR:-${HOME}}/.zlogin"
 fi
 
 # Boot/update Zim
-zsh -c "source ${ZDOTDIR:-${HOME}}/.zlogin"
 zsh -i -c "zmanage update"
 log INFO "Shell is ready"
