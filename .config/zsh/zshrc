@@ -2,8 +2,23 @@
 # User configuration sourced by interactive shells
 #
 
-# Change default zim location
-export ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim
+DOTDIR=${ZDOTDIR:-${HOME}}
 
 # Start zim
+export ZIM_HOME=${DOTDIR}/.zim
 [[ -s ${ZIM_HOME}/init.zsh ]] && source ${ZIM_HOME}/init.zsh
+
+bindkey "^?" backward-delete-char
+bindkey "^H" backward-delete-char
+bindkey "^W" backward-kill-word
+bindkey "^U" backward-kill-line
+
+# Aliases
+alias cdr='cd $(git rev-parse --show-toplevel)'
+alias resrc='source ${ZDOTDIR:-${HOME}}/.zshrc'
+alias vi='nvim'
+
+# Source local config
+[[ -f ${DOTDIR}/local_init.zsh ]] && source ${DOTDIR}/local_init.zsh
+
+unset DOTDIR
