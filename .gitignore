@@ -1,6 +1,9 @@
 # Git ignore file
 # Lines that start with '#' are comments
 # Assign project local ignore patterns in .git/info/exlude
+.idea/
+.vscode/
 *.log
 *.pyc
 *.swp
+*.zwc
