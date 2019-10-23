@@ -5,12 +5,18 @@
 "   curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 " Then install plugins with `nvim +PlugInstall +qall`
 "
+" Note vim-devicons requires fonts to be installed
+" See https://github.com/ryanoasis/nerd-fonts
+" Make sure your terminal is using the correct font as well
+"
 " Changelog: {{{
 " Wed Oct 23 2019 {{{
 "   - Reorganized this file; added fold markers
 "   - Added modeline
 "   - Copy/paste now goes directly to system clipboard (removed separate hotkey)
 "   - Changed tab hotkeys to be consistent with buffer hotkeys
+"   - Added nerdcommenter plugin for automatic commenting
+"   - Added vim-devicons for pretty filetype icons
 " }}}
 " Fri Aug 09 2019 {{{
 "   - Added virtualedit=block option to allow selecting over non-existant characters
@@ -108,6 +114,8 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'davidhalter/jedi-vim'
     " Neomake is an asynchronous make/linter tool for neovim
     "Plug 'neomake/neomake'
+    " Nerdcommenter is for automatically commenting lines
+    Plug 'scrooloose/nerdcommenter'
     " Nerdtree is a directory preview tool
     Plug 'scrooloose/nerdtree'
     " Supertab is a code-completion tool
@@ -122,11 +130,17 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'tpope/vim-obsession'
     " Vim-sneak is a convenient motion command
     Plug 'justinmk/vim-sneak'
+
+    " Add custom filetype glyphs to various Vim plugins
+    " !! Must be loaded last !!
+    Plug 'ryanoasis/vim-devicons'
 call plug#end()
 " }}}
 " ====================================================================
 " Settings & I/O {{{
     " General Settings {{{
+        set encoding=utf-8      " Okay
+
         set autoindent          " Automatic indentation
         set breakindent         " Indent line-breaks to align with code
         set confirm             " Confirm quit if there're unsaved changes
@@ -300,6 +314,8 @@ call plug#end()
 " }}}
 " Plugin Settings {{{
     " Airline {{{
+        let g:airline_powerline_fonts = 1
+
         let g:airline#extensions#tabline#enabled = 1
         let g:airline#extensions#tabline#fnamemod = ':t'
         let g:airline#extensions#tabline#left_sep = ''
@@ -336,6 +352,9 @@ call plug#end()
         " Open most recently used files
         nnoremap <Leader>of :CtrlPMRUFiles<CR>
     " }}}
+    " DevIcons {{{
+        set guifont=Hack\ Regular\ Nerd\ Font\ Complete\ 11
+    " }}}
     " Fugitive / Gitgutter {{{
         nnoremap <Leader>gc :Gcommit<CR>
         nnoremap <Leader>gd :Gdiff HEAD<CR>
@@ -367,6 +386,9 @@ call plug#end()
         let g:indentLine_enabled = 0
         " Toggle IndentLine
         nnoremap <Leader>i :IndentLinesToggle<CR>
+    " }}}
+    " Nerdcommenter {{{
+        let g:NERDSpaceDelims = 1           " Include a space after comment delimiters
     " }}}
     " Nerdtree {{{
         " Toggle the tree
