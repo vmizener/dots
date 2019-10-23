@@ -13,10 +13,26 @@ bindkey "^H" backward-delete-char
 bindkey "^W" backward-kill-word
 bindkey "^U" backward-kill-line
 
+# Custom functions
+weather () {
+    # Print the current weather.
+    local url="wttr.in/${*}"
+    if command -v curl &>/dev/null; then
+        # Try with `curl` first
+        curl -m 10 ${url} 2>/dev/null || printf "%s\n" "[ERROR] weather: Could not connect to weather service."
+    elif command -v wget &>/dev/null; then
+        # Try with `wget` next
+        wget -O - -q -T 600 ${url} 2>/dev/null || printf "%s\n" "[ERROR] weather: Could not connect to weather service."
+    else
+        printf "%s\n" "[ERROR] weather: This command requires either 'curl' or 'wget' to be installed."
+    fi
+}
+
 # Aliases
 alias cdr='cd $(git rev-parse --show-toplevel)'
 alias resrc='source ${ZDOTDIR:-${HOME}}/.zshrc'
 alias vi='nvim'
+alias weather='weather'
 
 # Source local config
 [[ -f ${DOTDIR}/local_init.zsh ]] && source ${DOTDIR}/local_init.zsh
