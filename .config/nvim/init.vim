@@ -10,6 +10,12 @@
 " Make sure your terminal is using the correct font as well
 "
 " Changelog: {{{
+" Mon Oct 28 2019 {{{
+"   - Shortcut for opening this file for editing now puts it in a buffer,
+"   instead of a tab
+"   - Decreased vim 'updatetime' from 4000 (default) to 500 milliseconds
+"   - Split up some folds of this file
+" }}}
 " Wed Oct 23 2019 {{{
 "   - Reorganized this file; added fold markers
 "   - Added modeline
@@ -137,8 +143,7 @@ call plug#begin('~/.config/nvim/plugged')
 call plug#end()
 " }}}
 " ====================================================================
-" Settings & I/O {{{
-    " General Settings {{{
+" General Settings {{{
         set encoding=utf-8      " Okay
 
         set autoindent          " Automatic indentation
@@ -169,6 +174,7 @@ call plug#end()
         set timeoutlen=250      " Less timeout?
         set ttimeoutlen=10      " Keycode timeouts?  Who the what?
         set undolevels=500      " MOAR undo
+        set updatetime=500      " Check file status every half second (e.g. for swp file and git)
         set virtualedit=block   " Allow selecting over non-existant characters in visual block mode
 
         filetype on         " Detect filetypes
@@ -180,8 +186,8 @@ call plug#end()
         " See all the characters
         set list
         set listchars=tab:>-,trail:-,extends:>,precedes:<,nbsp:+
-    " }}}
-    " Controls and Custom Shortcuts {{{
+" }}}
+" Controls and Custom Shortcuts {{{
         let mapleader=','   " Use ',' as the leader key
         " Toggle Editor Settings {{{
             " Toggle line wrap
@@ -245,7 +251,8 @@ call plug#end()
         " }}}
         " Reading & Writing Files {{{
             " Open this configuration file for editing
-            nnoremap <silent> <Leader>ec :execute "tabedit" resolve($MYVIMRC)<CR>
+            "nnoremap <silent> <Leader>ec :execute "tabedit" resolve($MYVIMRC)<CR>
+            nnoremap <silent> <Leader>ec :edit $MYVIMRC<CR>
             " Source this configuration file
             nnoremap <silent> <Leader>sc :source $MYVIMRC<CR>
             " Copy and paste from an external buffer file
@@ -277,8 +284,8 @@ call plug#end()
             inoremap <M-ScrollWheelUp>   <C-O><C-Y>
             inoremap <M-ScrollWheelDown> <C-O><C-E>
         " }}}
-    " }}}
-    " Interface Behavior {{{
+" }}}
+" Interface Behavior {{{
         " General Behavior {{{
             " Automatically show absolute numbering only when in insert mode
             autocmd InsertEnter * :set norelativenumber
@@ -304,12 +311,11 @@ call plug#end()
             " Close a terminal
             tnoremap <C-x> <C-\><C-n>:b#\|bd! #<CR>
         " }}}
-    " }}}
-    " UI Appearance {{{
+" }}}
+" UI Appearance {{{
         " Colorscheme {{{
             set bg=dark
             colorscheme gruvbox
-        " }}}
     " }}}
 " }}}
 " Plugin Settings {{{

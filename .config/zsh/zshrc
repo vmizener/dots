@@ -1,20 +1,28 @@
+#################################
+#               _
+#              | |
+#     ____ ___ | |__   _ __  ___
+#    |_  // __|| '_ \ | '__|/ __|
+#  _  / / \__ \| | | || |  | (__
+# (_)/___||___/|_| |_||_|   \___|
 #
-# User configuration sourced by interactive shells
 #
+# My .zshrc file.
+# (http://patorjk.com/software/taag/#p=display&h=1&f=Doom)
 
+
+##########
+# Local variables
 DOTDIR=${ZDOTDIR:-${HOME}}
 
+##########
 # Start zim
 export ZIM_HOME=${DOTDIR}/.zim
 [[ -s ${ZIM_HOME}/init.zsh ]] && source ${ZIM_HOME}/init.zsh
 
-bindkey "^?" backward-delete-char
-bindkey "^H" backward-delete-char
-bindkey "^W" backward-kill-word
-bindkey "^U" backward-kill-line
-
+##########
 # Custom functions
-weather () {
+function weather () {
     # Print the current weather.
     local url="wttr.in/${*}"
     if command -v curl &>/dev/null; then
@@ -28,13 +36,36 @@ weather () {
     fi
 }
 
+function fg-bg () {
+    if [[ ${#BUFFER} -eq 0 ]]; then
+        fg
+    else
+        zle push-input
+    fi
+}
+zle -N fg-bg  # Create a bind to this function
+
+##########
 # Aliases
 alias cdr='cd $(git rev-parse --show-toplevel)'
 alias resrc='source ${ZDOTDIR:-${HOME}}/.zshrc'
 alias vi='nvim'
 alias weather='weather'
 
+##########
+# Keybinds
+bindkey "^?" backward-delete-char
+bindkey "^H" backward-delete-char
+bindkey "^W" backward-kill-word
+bindkey "^U" backward-kill-line
+bindkey "^Z" fg-bg
+
+##########
 # Source local config
 [[ -f ${DOTDIR}/local_init.zsh ]] && source ${DOTDIR}/local_init.zsh
 
+##########
+# Unset locals
 unset DOTDIR
+
+# vim:foldmethod=marker:foldlevel=0:filetype=zsh
