@@ -1,5 +1,24 @@
 " ====================================================================
-" NEOVIM NEOVIM NEOVIM
+"  _   _ ______ ______      _______ __  __
+" | \ | |  ____/ __ \ \    / /_   _|  \/  |
+" |  \| | |__ | |  | \ \  / /  | | | \  / |
+" | . ` |  __|| |  | |\ \/ /   | | | |\/| |
+" | |\  | |___| |__| | \  /   _| |_| |  | |
+" |_| \_|______\____/   \/   |_____|_|  |_|
+"
+"  _   _ ______ ______      _______ __  __
+" | \ | |  ____/ __ \ \    / /_   _|  \/  |
+" |  \| | |__ | |  | \ \  / /  | | | \  / |
+" | . ` |  __|| |  | |\ \/ /   | | | |\/| |
+" | |\  | |___| |__| | \  /   _| |_| |  | |
+" |_| \_|______\____/   \/   |_____|_|  |_|
+"
+"  _   _ ______ ______      _______ __  __
+" | \ | |  ____/ __ \ \    / /_   _|  \/  |
+" |  \| | |__ | |  | \ \  / /  | | | \  / |
+" | . ` |  __|| |  | |\ \/ /   | | | |\/| |
+" | |\  | |___| |__| | \  /   _| |_| |  | |
+" |_| \_|______\____/   \/   |_____|_|  |_|
 "
 " Use with Plug (https://github.com/junegunn/vim-plug):
 "   curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -10,6 +29,18 @@
 " Make sure your terminal is using the correct font as well
 "
 " Changelog: {{{
+" Thu Oct 31 2019 {{{
+"   - Happy Halloween!
+"   - Added some ASCII art to the header
+"   - Added rulers to columns 80 & 120
+"   - Changed read/write to buffer hotkeys from Ctrl-<key> to <Leader><key>
+"   - Added vim-peekaboo plugin for register previewing
+"   - Added vim-startify plugin for fancy startup
+" }}}
+" Tue Oct 29 2019 {{{
+"   - Nerdtree is now bound to '<Leader>ot' to consolidate file finding
+"   shortcuts
+" }}}
 " Mon Oct 28 2019 {{{
 "   - Shortcut for opening this file for editing now puts it in a buffer,
 "   instead of a tab
@@ -120,10 +151,14 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'davidhalter/jedi-vim'
     " Neomake is an asynchronous make/linter tool for neovim
     "Plug 'neomake/neomake'
+    " Peekaboo displays a preview window of register contents
+    Plug 'junegunn/vim-peekaboo'
     " Nerdcommenter is for automatically commenting lines
     Plug 'scrooloose/nerdcommenter'
     " Nerdtree is a directory preview tool
     Plug 'scrooloose/nerdtree'
+    " Startify is a fancy start page for vim
+    Plug 'mhinz/vim-startify'
     " Supertab is a code-completion tool
     Plug 'ervandew/supertab'
     " Vim-cool smartly toggles search highlighting automatically
@@ -148,6 +183,7 @@ call plug#end()
 
         set autoindent          " Automatic indentation
         set breakindent         " Indent line-breaks to align with code
+        set colorcolumn=80,120  " Draw rulers at columns 80 & 120
         set confirm             " Confirm quit if there're unsaved changes
         set expandtab           " Fill tabs with spaces
         set foldlevelstart=20   " Open files with closed folds
@@ -256,9 +292,9 @@ call plug#end()
             " Source this configuration file
             nnoremap <silent> <Leader>sc :source $MYVIMRC<CR>
             " Copy and paste from an external buffer file
-            vmap <C-y> :w! ${HOME}/.vbuf<CR>
-            nmap <C-y> :.w! ${HOME}/.vbuf<CR>
-            nmap <C-p> :r ${HOME}/.vbuf<CR>
+            vnoremap <Leader>y :w! ${HOME}/.vbuf<CR>
+            nnoremap <Leader>y :.w! ${HOME}/.vbuf<CR>
+            nnoremap <Leader>p :r ${HOME}/.vbuf<CR>
             " Write the current file with sudo permission
             cmap w!! w !sudo tee > /dev/null %
         " }}}
@@ -398,7 +434,7 @@ call plug#end()
     " }}}
     " Nerdtree {{{
         " Toggle the tree
-        nnoremap <silent> <Leader><Space> :NERDTreeToggle<CR>
+        nnoremap <silent> <Leader>ot :NERDTreeToggle<CR>
     " }}}
     " Sneak {{{
         " Respect case sensitivity settings
@@ -412,6 +448,10 @@ call plug#end()
         map F <Plug>Sneak_F
         map t <Plug>Sneak_t
         map T <Plug>Sneak_T
+    " }}}
+    " Startify {{{
+        let g:startify_custom_footer =
+           \ ['', "   Vim is charityware. Please read ':help uganda'.", '']
     " }}}
     " Supertab {{{
         " Completion type is per word
