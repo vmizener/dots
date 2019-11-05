@@ -6,36 +6,53 @@
 " | |\  | |___| |__| | \  /   _| |_| |  | |
 " |_| \_|______\____/   \/   |_____|_|  |_|
 "
-"  _   _ ______ ______      _______ __  __
-" | \ | |  ____/ __ \ \    / /_   _|  \/  |
-" |  \| | |__ | |  | \ \  / /  | | | \  / |
-" | . ` |  __|| |  | |\ \/ /   | | | |\/| |
-" | |\  | |___| |__| | \  /   _| |_| |  | |
-" |_| \_|______\____/   \/   |_____|_|  |_|
+"         _   _ ______ ______      _______ __  __
+"        | \ | |  ____/ __ \ \    / /_   _|  \/  |
+"        |  \| | |__ | |  | \ \  / /  | | | \  / |
+"        | . ` |  __|| |  | |\ \/ /   | | | |\/| |
+"        | |\  | |___| |__| | \  /   _| |_| |  | |
+"        |_| \_|______\____/   \/   |_____|_|  |_|
 "
-"  _   _ ______ ______      _______ __  __
-" | \ | |  ____/ __ \ \    / /_   _|  \/  |
-" |  \| | |__ | |  | \ \  / /  | | | \  / |
-" | . ` |  __|| |  | |\ \/ /   | | | |\/| |
-" | |\  | |___| |__| | \  /   _| |_| |  | |
-" |_| \_|______\____/   \/   |_____|_|  |_|
+"                _   _ ______ ______      _______ __  __
+"               | \ | |  ____/ __ \ \    / /_   _|  \/  |
+"               |  \| | |__ | |  | \ \  / /  | | | \  / |
+"               | . ` |  __|| |  | |\ \/ /   | | | |\/| |
+"               | |\  | |___| |__| | \  /   _| |_| |  | |
+"               |_| \_|______\____/   \/   |_____|_|  |_|
 "
 " Use with Plug (https://github.com/junegunn/vim-plug):
 "   curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 " Then install plugins with `nvim +PlugInstall +qall`
+"
+" You may also add any plugins to the plugins list below, then resource this
+" file and run `:PlugInstall` to install all listed plugins.
 "
 " Note vim-devicons requires fonts to be installed
 " See https://github.com/ryanoasis/nerd-fonts
 " Make sure your terminal is using the correct font as well
 "
 " Changelog: {{{
+" Tue Nov 05 2019 {{{
+"   - Added an automatic setup block
+"   - Added LanguageClient plugin for language server protocol (LSP) support
+"   - Set textwidth to 120
+"   - Increased gitgutter max signs from 500 to 1500
+" }}}
+" Mon Nov 04 2019 {{{
+"   - Categorized plugins
+"   - Added deoplete plugin for code completion (testing it out)
+"   - Commented out supertab/jedi plugins during test
+" }}}
 " Thu Oct 31 2019 {{{
 "   - Happy Halloween!
 "   - Added some ASCII art to the header
 "   - Added rulers to columns 80 & 120
-"   - Changed read/write to buffer hotkeys from Ctrl-<key> to <Leader><key>
 "   - Added vim-peekaboo plugin for register previewing
 "   - Added vim-startify plugin for fancy startup
+"   - Changed read/write to buffer hotkeys from Ctrl-<key> to <Leader><key>
+"   - Consolidated UI Settings and Interface Behavior groups
+"   - Reorganized terminal settings
+"   - Added a couple more lines to the header on plugin installation
 " }}}
 " Tue Oct 29 2019 {{{
 "   - Nerdtree is now bound to '<Leader>ot' to consolidate file finding
@@ -128,53 +145,70 @@
 " }}}
 " }}}
 " ====================================================================
+" Automatic Setup {{{
+    if empty(glob('~/.vim/autoload/plug.vim'))
+        silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+            \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    endif
+" }}}
 " Load Plugins {{{
 call plug#begin('~/.config/nvim/plugged')
-    " Airline provides a better status line and a tab bar
-    Plug 'bling/vim-airline'
-    " Ale is an 'asynchronous linting engine'
-    "Plug 'w0rp/ale'
-    " Ctrl-P is a fuzzy file finder tool
-    Plug 'kien/ctrlp.vim'
-    " Fugitive is a Git wrapper for vim
-    Plug 'tpope/vim-fugitive'
-    " Gitgutter shows a Git diff in the sign column asynchronously
-    Plug 'airblade/vim-gitgutter'
-    " Gruvbox is a colorscheme for vim
-    Plug 'morhetz/gruvbox'
-    " Gutentags automatically maintains ctags for an open project (use with
-    " universal-ctags for an up-to-date ctags implementation)
-    " Plug 'ludovicchabant/vim-gutentags'
-    " IndentLine provides an indentation guide
-    Plug 'Yggdroot/indentLine'
-    " Jedi-Vim is an autocompletion library for Python
-    Plug 'davidhalter/jedi-vim'
-    " Neomake is an asynchronous make/linter tool for neovim
-    "Plug 'neomake/neomake'
-    " Peekaboo displays a preview window of register contents
-    Plug 'junegunn/vim-peekaboo'
-    " Nerdcommenter is for automatically commenting lines
-    Plug 'scrooloose/nerdcommenter'
-    " Nerdtree is a directory preview tool
-    Plug 'scrooloose/nerdtree'
-    " Startify is a fancy start page for vim
-    Plug 'mhinz/vim-startify'
-    " Supertab is a code-completion tool
-    Plug 'ervandew/supertab'
-    " Vim-cool smartly toggles search highlighting automatically
-    Plug 'romainl/vim-cool'
-    " Vim-css-color is a color-code highlighting plugin
-    Plug 'ap/vim-css-color'
-    " Vim-latex is vim latex, obviously
-    Plug 'vim-latex/vim-latex'
-    " Vim-obsession is an automatic session management plugin
-    Plug 'tpope/vim-obsession'
-    " Vim-sneak is a convenient motion command
-    Plug 'justinmk/vim-sneak'
-
-    " Add custom filetype glyphs to various Vim plugins
-    " !! Must be loaded last !!
-    Plug 'ryanoasis/vim-devicons'
+    " UI Appearance & Interface {{{
+        " Airline provides a better status line and a tab bar
+        Plug 'bling/vim-airline'
+        " Gruvbox is a colorscheme for vim
+        Plug 'morhetz/gruvbox'
+        " IndentLine provides an indentation guide
+        Plug 'Yggdroot/indentLine'
+        " Peekaboo displays a preview window of register contents
+        Plug 'junegunn/vim-peekaboo'
+        " Startify is a fancy start page for vim
+        Plug 'mhinz/vim-startify'
+        " Vim-cool smartly toggles search highlighting automatically
+        Plug 'romainl/vim-cool'
+        " Vim-css-color is a color-code highlighting plugin
+        Plug 'ap/vim-css-color'
+    " }}}
+    " Workflow Features {{{
+        " Ctrl-P is a fuzzy file finder tool
+        Plug 'kien/ctrlp.vim'
+        " Fugitive is a Git wrapper for vim
+        Plug 'tpope/vim-fugitive'
+        " Gitgutter shows a Git diff in the sign column asynchronously
+        Plug 'airblade/vim-gitgutter'
+        " Gutentags automatically maintains ctags for an open project (use with
+        " universal-ctags for an up-to-date ctags implementation)
+        " Plug 'ludovicchabant/vim-gutentags'
+        " Nerdcommenter is for automatically commenting lines
+        Plug 'scrooloose/nerdcommenter'
+        " Nerdtree is a directory preview tool
+        Plug 'scrooloose/nerdtree'
+        " Vim-latex is vim latex, obviously
+        Plug 'vim-latex/vim-latex'
+        " Vim-obsession is an automatic session management plugin
+        Plug 'tpope/vim-obsession'
+        " Vim-sneak is a convenient motion command
+        Plug 'justinmk/vim-sneak'
+    " }}}
+    " Language & Completion {{{
+        " Syntax with vim-polyglot
+        Plug 'sheerun/vim-polyglot'
+        " Completion with deoplete
+        Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+        " Language with LanguageClient-neovim (LSP)
+        Plug 'autozimu/LanguageClient-neovim', {
+            \ 'branch': 'next',
+            \ 'do': 'bash install.sh',
+            \ }
+    " }}}
+    " Bonus Extras {{{
+        " Vim-Plugged itself (just for help docs)
+        Plug 'junegunn/vim-plug'
+        " Add custom filetype glyphs to various Vim plugins
+        " !! Must be loaded last !!
+        Plug 'ryanoasis/vim-devicons'
+    " }}}
 call plug#end()
 " }}}
 " ====================================================================
@@ -197,8 +231,8 @@ call plug#end()
         set mouse=a             " MORE mouse
         set nobackup            " No swp files please
         set nojoinspaces        " No extra space after '.' when joining lines
-        set nowrap              " By default, don't wrap lines
-        set nowritebackup       " ...even before writing
+        set nowrap              " No line wrap please (as default)
+        set nowritebackup       " No swp files even before writing
         set number              " Show absolute line numbers on left
         set relativenumber      " Show relative line numbers on left (overrides number except on current line)
         set scrolloff=10        " Leave lines above/below cursor
@@ -207,10 +241,11 @@ call plug#end()
         set splitbelow          " Always split below current buffer
         set splitright          " Always split right of current buffer
         set tabstop=4           " Set tabular length to 4 columns
-        set timeoutlen=250      " Less timeout?
+        set textwidth=120       " Wrap at 120 columns
+        set timeoutlen=250      " Use less timeout?
         set ttimeoutlen=10      " Keycode timeouts?  Who the what?
         set undolevels=500      " MOAR undo
-        set updatetime=500      " Check file status every half second (e.g. for swp file and git)
+        set updatetime=500      " Check file status every half second (e.g. for git line markers)
         set virtualedit=block   " Allow selecting over non-existant characters in visual block mode
 
         filetype on         " Detect filetypes
@@ -245,9 +280,9 @@ call plug#end()
             nnoremap j gj
             nnoremap k gk
             " Indentation with tab key
+            " (See deoplete settings)
             nnoremap <Tab> >>_
             nnoremap <S-Tab> <<
-            inoremap <S-Tab> <C-d>
             vnoremap <Tab> >gv
             vnoremap <S-Tab> <gv
             " Clear search
@@ -256,7 +291,7 @@ call plug#end()
             noremap n nzz
             noremap N Nzz
         " }}}
-        " Buffer/Tab/Window Navigation {{{
+        " Editor Navigation {{{
             " Buffers {{{
                 " Navigate buffers
                 nnoremap <Leader>bp  :bprev<CR>
@@ -283,6 +318,16 @@ call plug#end()
                 nnoremap <C-j> <C-w>j
                 nnoremap <C-k> <C-w>k
                 nnoremap <C-l> <C-w>l
+            " }}}
+            " Terminals {{{
+                " Open a terminal
+                nnoremap <silent> <Leader>tt :terminal<CR>i
+                nnoremap <silent> <Leader>tv :vnew<CR><Esc>:terminal<CR>i
+                nnoremap <silent> <Leader>th :new<CR><Esc>:terminal<CR>i
+                " Escape a terminal
+                tnoremap <Esc> <C-\><C-n>
+                " Close a terminal
+                tnoremap <C-x> <C-\><C-n>:b#\|bd! #<CR>
             " }}}
         " }}}
         " Reading & Writing Files {{{
@@ -321,12 +366,13 @@ call plug#end()
             inoremap <M-ScrollWheelDown> <C-O><C-E>
         " }}}
 " }}}
-" Interface Behavior {{{
+" Interface Appearance & Behavior {{{
         " General Behavior {{{
             " Automatically show absolute numbering only when in insert mode
             autocmd InsertEnter * :set norelativenumber
             autocmd InsertLeave * :set relativenumber
             " Automatic views
+            " NOTE: Remember to clean up views periodically! (~/.local/share/nvim/view)
             augroup AutoSaveView
                 autocmd!
                 autocmd BufWinLeave * if &buftype !=# 'terminal' | silent! mkview
@@ -338,20 +384,10 @@ call plug#end()
             autocmd BufWinEnter,WinEnter term://* startinsert
             " Don't automatically unload terminal buffers
             silent! autocmd TermOpen * set bufhidden=hide
-            " Open a terminal
-            nnoremap <silent> <Leader>tt :terminal<CR>i
-            nnoremap <silent> <Leader>tv :vnew<CR><Esc>:terminal<CR>i
-            nnoremap <silent> <Leader>th :new<CR><Esc>:terminal<CR>i
-            " Escape a terminal
-            tnoremap <Esc> <C-\><C-n>
-            " Close a terminal
-            tnoremap <C-x> <C-\><C-n>:b#\|bd! #<CR>
         " }}}
-" }}}
-" UI Appearance {{{
-        " Colorscheme {{{
-            set bg=dark
-            colorscheme gruvbox
+    " Colorscheme {{{
+        set bg=dark
+        colorscheme gruvbox
     " }}}
 " }}}
 " Plugin Settings {{{
@@ -394,6 +430,16 @@ call plug#end()
         " Open most recently used files
         nnoremap <Leader>of :CtrlPMRUFiles<CR>
     " }}}
+    " Deoplete {{{
+        let g:deoplete#enable_at_startup = 1
+        let g:deoplete#enable_smart_case = 1
+        " Enable tab completion
+        inoremap <expr><Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+        inoremap <expr><S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
+        imap <expr><CR> pumvisible() ? deoplete#close_popup() : "\<CR>"
+        " Close previews after completion
+        autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+    " }}}
     " DevIcons {{{
         set guifont=Hack\ Regular\ Nerd\ Font\ Complete\ 11
     " }}}
@@ -408,6 +454,8 @@ call plug#end()
 
         nnoremap <Leader>gj :GitGutterNextHunk<CR>
         nnoremap <Leader>gk :GitGutterPrevHunk<CR>
+
+        let g:gitgutter_max_signs = 1500
     " }}}
     " Gutentags {{{
         "let g:gutentags_cache_dir = expand('$HOME/.cache/gutentags')
@@ -428,6 +476,22 @@ call plug#end()
         let g:indentLine_enabled = 0
         " Toggle IndentLine
         nnoremap <Leader>i :IndentLinesToggle<CR>
+    " }}}
+    " LanguageClient {{{
+        " Shortcuts {{{
+            nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+            nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+        " }}}
+        " Language Servers {{{
+            " Assign language servers
+            " (see https://langserver.org/)
+            let g:LanguageClient_serverCommands = {}
+            " Python:
+            " palantir/python-language-server
+            " pip3 install --upgrade python-language-server
+            let g:LanguageClient_serverCommands.python =
+                \ ['pyls']
+        " }}}
     " }}}
     " Nerdcommenter {{{
         let g:NERDSpaceDelims = 1           " Include a space after comment delimiters
