@@ -32,6 +32,16 @@
 " Make sure your terminal is using the correct font as well
 "
 " Changelog: {{{
+" Tue Nov 12 2019 {{{
+"   - Added a new command for recreating the current view
+"   - Added sidescroll settings to ensure smooth side scrolling
+"   - Added vim-qf plugin for streamlined quickfix navigation
+"   - LanguageClient no longer shows virtual text for diagnostic messages
+"   - Renamed some of the setting sections
+"   - Removed lingering Neomake configuration
+"   - Removed window navigation shortcuts (just use defaults controls now)
+"   - Old window navigation shorcuts are now used for quickfix navigation
+" }}}
 " Tue Nov 05 2019 {{{
 "   - Added an automatic setup block
 "   - Added LanguageClient plugin for language server protocol (LSP) support
@@ -188,6 +198,8 @@ call plug#begin('~/.config/nvim/plugged')
         Plug 'vim-latex/vim-latex'
         " Vim-obsession is an automatic session management plugin
         Plug 'tpope/vim-obsession'
+        " Vim-qf streamlines using the quickfix window
+        Plug 'romainl/vim-qf'
         " Vim-sneak is a convenient motion command
         Plug 'justinmk/vim-sneak'
     " }}}
@@ -203,7 +215,7 @@ call plug#begin('~/.config/nvim/plugged')
             \ }
     " }}}
     " Bonus Extras {{{
-        " Vim-Plugged itself (just for help docs)
+        " Vim-Plugged itself (for help docs)
         Plug 'junegunn/vim-plug'
         " Add custom filetype glyphs to various Vim plugins
         " !! Must be loaded last !!
@@ -237,6 +249,8 @@ call plug#end()
         set relativenumber      " Show relative line numbers on left (overrides number except on current line)
         set scrolloff=10        " Leave lines above/below cursor
         set shiftwidth=4        " Set indentation depth to 4 columns
+        set sidescroll=1        " Ensure smooth side-scrolling
+        set sidescrolloff=1     " Don't select edge characters while side-scrolling
         set softtabstop=4       " Backspacing over 4 spaces like over tabs
         set splitbelow          " Always split below current buffer
         set splitright          " Always split right of current buffer
@@ -272,7 +286,7 @@ call plug#end()
             nnoremap z<Space> za
             vnoremap z<Space> za
         " }}}
-        " File Navigation {{{
+        " Editor Controls {{{
             " Get to normal mode with `jk` or `<Space>`
             inoremap jk <Esc>
             vnoremap <Space> <Esc>
@@ -291,7 +305,7 @@ call plug#end()
             noremap n nzz
             noremap N Nzz
         " }}}
-        " Editor Navigation {{{
+        " Editor View Navigation {{{
             " Buffers {{{
                 " Navigate buffers
                 nnoremap <Leader>bp  :bprev<CR>
@@ -310,14 +324,10 @@ call plug#end()
                 nnoremap <Leader>td  :tabclose<CR>
             " }}}
             " Windows {{{
-                tnoremap <C-h> <C-\><C-n><C-w>h
-                tnoremap <C-j> <C-\><C-n><C-w>j
-                tnoremap <C-k> <C-\><C-n><C-w>k
-                tnoremap <C-l> <C-\><C-n><C-w>l
-                nnoremap <C-h> <C-w>h
-                nnoremap <C-j> <C-w>j
-                nnoremap <C-k> <C-w>k
-                nnoremap <C-l> <C-w>l
+                tnoremap <C-w>h <C-\><C-n><C-w>h
+                tnoremap <C-w>j <C-\><C-n><C-w>j
+                tnoremap <C-w>k <C-\><C-n><C-w>k
+                tnoremap <C-w>l <C-\><C-n><C-w>l
             " }}}
             " Terminals {{{
                 " Open a terminal
@@ -331,17 +341,47 @@ call plug#end()
             " }}}
         " }}}
         " Reading & Writing Files {{{
-            " Open this configuration file for editing
-            "nnoremap <silent> <Leader>ec :execute "tabedit" resolve($MYVIMRC)<CR>
-            nnoremap <silent> <Leader>ec :edit $MYVIMRC<CR>
-            " Source this configuration file
-            nnoremap <silent> <Leader>sc :source $MYVIMRC<CR>
             " Copy and paste from an external buffer file
             vnoremap <Leader>y :w! ${HOME}/.vbuf<CR>
             nnoremap <Leader>y :.w! ${HOME}/.vbuf<CR>
             nnoremap <Leader>p :r ${HOME}/.vbuf<CR>
             " Write the current file with sudo permission
             cmap w!! w !sudo tee > /dev/null %
+
+            " Open this configuration file for editing
+            nnoremap <silent> <Leader>ec :edit $MYVIMRC<CR>
+            " Source this configuration file
+            nnoremap <silent> <Leader>sc :source $MYVIMRC<CR>
+
+            " Add the 'reloadview' command for completely recreating the current view
+            function! ReloadView()
+                " Get the full filepath of the current buffer
+                let path = fnamemodify(bufname('%'), ':p')
+                " Modify the filepath to match vim's odd view naming scheme:
+                "   1. Use '~' for the home path
+                "   2. '=' -> '=='
+                "   3. '/' -> '=+'
+                if !empty($HOME)
+                    let viewpath = path
+                else
+                    let viewpath = substitute(path, '^'.$HOME, '\~', '')
+                endif
+                let viewpath = substitute(viewpath, '=', '==', 'g')
+                let viewpath = substitute(viewpath, '/', '=+', 'g') . '='
+                " Append the view directory
+                let viewpath = &viewdir.'/'.viewpath
+                " Delete the file
+                call delete(viewpath)
+                " Close the current buffer
+                execute "noautocmd bdelete"
+                " Reopen the file
+                execute "edit ".path
+                " Report success
+                echo "Reloaded: ".path
+            endfunction
+            command! Reloadview call ReloadView()
+            cabbrev reloadview <C-R>=(getcmdtype()==':' && getcmdpos()==1 ? 'Reloadview' : 'reloadview')<CR>
+
         " }}}
         " Mouse Scroll Behavior {{{
             "           Scroll Wheel = Up/Down 4 lines
@@ -375,8 +415,8 @@ call plug#end()
             " NOTE: Remember to clean up views periodically! (~/.local/share/nvim/view)
             augroup AutoSaveView
                 autocmd!
-                autocmd BufWinLeave * if &buftype !=# 'terminal' | silent! mkview
-                autocmd BufWinEnter * if &buftype !=# 'terminal' | silent! loadview
+                autocmd BufWinLeave *.* if &buftype !=# 'terminal' | silent! mkview | endif
+                autocmd BufWinEnter *.* if &buftype !=# 'terminal' | silent! loadview | endif
             augroup END
         " }}}
         " Terminal Behavior {{{
@@ -482,6 +522,10 @@ call plug#end()
             nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
             nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
         " }}}
+        " Settings {{{
+            " Don't display in-line errors
+            let g:LanguageClient_useVirtualText = 0
+        " }}}
         " Language Servers {{{
             " Assign language servers
             " (see https://langserver.org/)
@@ -494,11 +538,25 @@ call plug#end()
         " }}}
     " }}}
     " Nerdcommenter {{{
-        let g:NERDSpaceDelims = 1           " Include a space after comment delimiters
+        " Include a space after comment delimiters
+        let g:NERDSpaceDelims = 1
     " }}}
     " Nerdtree {{{
         " Toggle the tree
         nnoremap <silent> <Leader>ot :NERDTreeToggle<CR>
+    " }}}
+    " Quickfix {{{
+        " Toggle the location/quickfix window, keep focus on current buffer
+        nmap <F5> <Plug>(qf_qf_toggle_stay)
+        nmap <F6> <Plug>(qf_loc_toggle_stay)
+        " In a location/quickfix window, navigate to an older or newer list
+        nmap <buffer> <Left>  <Plug>(qf_older)
+        nmap <buffer> <Right> <Plug>(qf_newer)
+        " Go up and down the current location/quickfix window, wrapping as necessary
+        nmap <C-j> <Plug>(qf_qf_next)
+        nmap <C-k> <Plug>(qf_qf_previous)
+        nmap <M-j> <Plug>(qf_loc_next)
+        nmap <M-k> <Plug>(qf_loc_previous)
     " }}}
     " Sneak {{{
         " Respect case sensitivity settings
@@ -522,20 +580,6 @@ call plug#end()
         let g:SuperTabRetainCompletionDuration = 'completion'
         " Select completion option with `<CR>` (instead of inserting newline)
         let g:SuperTabCrMapping = 1
-    " }}}
-    " Neomake {{{
-        " Let there be linters
-        let g:neomake_python_enabled_makers = ['pylint']
-        " Run Neomake
-        nnoremap <Leader>ln :Neomake<CR>
-        " Open lint window (and move cursor back to original window)
-        nnoremap <silent> <Leader>ll :lwindow<CR><C-w>k
-        " Close lint window
-        nnoremap <silent> <Leader>lc :lclose<CR>
-        " Next lint list option
-        nnoremap <silent> <Down> :lnext<CR>
-        " Previous lint list option
-        nnoremap <silent> <Up> :lprev<CR>
     " }}}
 " }}}
 " ====================================================================

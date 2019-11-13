@@ -42,12 +42,16 @@ function fg-bg () {
 }
 zle -N fg-bg  # Create a bind to this function
 
+function dict-less () {
+    dict $@ | less
+}
+
 ##########
 # Aliases
 alias cdr='cd $(git rev-parse --show-toplevel)'
+alias dict='dict-less'
 alias resrc='source ${ZDOTDIR:-${HOME}}/.zshrc'
 alias vi='nvim'
-alias weather='weather'
 
 ##########
 # Keybinds
