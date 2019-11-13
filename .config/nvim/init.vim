@@ -1,4 +1,4 @@
-" ====================================================================
+" =============================================================================
 "  _   _ ______ ______      _______ __  __
 " | \ | |  ____/ __ \ \    / /_   _|  \/  |
 " |  \| | |__ | |  | \ \  / /  | | | \  / |
@@ -20,18 +20,22 @@
 "               | |\  | |___| |__| | \  /   _| |_| |  | |
 "               |_| \_|______\____/   \/   |_____|_|  |_|
 "
-" Use with Plug (https://github.com/junegunn/vim-plug):
-"   curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-" Then install plugins with `nvim +PlugInstall +qall`
+" Use with Plug (https://github.com/junegunn/vim-plug)
 "
 " You may also add any plugins to the plugins list below, then resource this
-" file and run `:PlugInstall` to install all listed plugins.
+" file and run `:PlugInstall` to install all listed plugins
 "
 " Note vim-devicons requires fonts to be installed
 " See https://github.com/ryanoasis/nerd-fonts
 " Make sure your terminal is using the correct font as well
 "
 " Changelog: {{{
+" Wed Nov 13 2019 {{{
+"   - Adjusted automatic setup block for clarity; now uses variables
+"   - Lengthed section separators
+"   - Updated listchars/showbreak characters
+"   - Minor typo fixes
+" }}}
 " Tue Nov 12 2019 {{{
 "   - Added a new command for recreating the current view
 "   - Added sidescroll settings to ensure smooth side scrolling
@@ -154,13 +158,16 @@
 "   - https://gist.github.com/subfuzion/7d00a6c919eeffaf6d3dbf9a4eb11d64
 " }}}
 " }}}
-" ====================================================================
+" =============================================================================
 " Automatic Setup {{{
-    if empty(glob('~/.vim/autoload/plug.vim'))
-        silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-            \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    let plugged_autoload = '~/.vim/autoload/plug.vim'
+    if empty(glob(plugged_autoload))
+        let plugged_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+        execute '!curl -fLo '.plugged_autoload.' --create-dirs '.plugged_url
         autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+        unlet plugged_url
     endif
+    unlet plugged_autoload
 " }}}
 " Load Plugins {{{
 call plug#begin('~/.config/nvim/plugged')
@@ -223,7 +230,7 @@ call plug#begin('~/.config/nvim/plugged')
     " }}}
 call plug#end()
 " }}}
-" ====================================================================
+" =============================================================================
 " General Settings {{{
         set encoding=utf-8      " Okay
 
@@ -241,10 +248,10 @@ call plug#end()
         set smartcase           " ...unless capital letters are used
         set modeline            " MORE modeline
         set mouse=a             " MORE mouse
-        set nobackup            " No swp files please
+        set nobackup            " No bak files please
         set nojoinspaces        " No extra space after '.' when joining lines
         set nowrap              " No line wrap please (as default)
-        set nowritebackup       " No swp files even before writing
+        set nowritebackup       " No bak files even before writing
         set number              " Show absolute line numbers on left
         set relativenumber      " Show relative line numbers on left (overrides number except on current line)
         set scrolloff=10        " Leave lines above/below cursor
@@ -270,7 +277,8 @@ call plug#end()
         set clipboard=unnamedplus
         " See all the characters
         set list
-        set listchars=tab:>-,trail:-,extends:>,precedes:<,nbsp:+
+        set listchars=tab:→\ ,nbsp:␣,trail:·,extends:⟩,precedes:⟨
+        set showbreak=↪\    " Line wrap indicator
 " }}}
 " Controls and Custom Shortcuts {{{
         let mapleader=','   " Use ',' as the leader key
@@ -472,7 +480,6 @@ call plug#end()
     " }}}
     " Deoplete {{{
         let g:deoplete#enable_at_startup = 1
-        let g:deoplete#enable_smart_case = 1
         " Enable tab completion
         inoremap <expr><Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
         inoremap <expr><S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
@@ -582,5 +589,5 @@ call plug#end()
         let g:SuperTabCrMapping = 1
     " }}}
 " }}}
-" ====================================================================
+" =============================================================================
 " vim:foldmethod=marker:foldlevel=0
