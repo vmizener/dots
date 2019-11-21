@@ -30,6 +30,18 @@
 " Make sure your terminal is using the correct font as well
 "
 " Changelog: {{{
+" Thu Nov 21 2019 {{{
+"   - Replaced vim-obsession with vim-stay
+"   - Removed automatic view creation logic (now handled by vim-stay)
+"   - Removed default foldlevel from this file
+" }}}
+" Wed Nov 20 2019 {{{
+"   - Added Python folding rule plugin 'SimpylFold'
+"   - Added FastFold plugin for faster folding
+" }}}
+" Thu Nov 14 2019 {{{
+"   - Changed vim-qf navigation shortcuts to avoid overlap with vim-latex
+" }}}
 " Wed Nov 13 2019 {{{
 "   - Adjusted automatic setup block for clarity; now uses variables
 "   - Lengthed section separators
@@ -190,6 +202,8 @@ call plug#begin('~/.config/nvim/plugged')
     " Workflow Features {{{
         " Ctrl-P is a fuzzy file finder tool
         Plug 'kien/ctrlp.vim'
+        " FastFold for fast folds
+        Plug 'Konfekt/FastFold'
         " Fugitive is a Git wrapper for vim
         Plug 'tpope/vim-fugitive'
         " Gitgutter shows a Git diff in the sign column asynchronously
@@ -203,12 +217,12 @@ call plug#begin('~/.config/nvim/plugged')
         Plug 'scrooloose/nerdtree'
         " Vim-latex is vim latex, obviously
         Plug 'vim-latex/vim-latex'
-        " Vim-obsession is an automatic session management plugin
-        Plug 'tpope/vim-obsession'
         " Vim-qf streamlines using the quickfix window
         Plug 'romainl/vim-qf'
         " Vim-sneak is a convenient motion command
         Plug 'justinmk/vim-sneak'
+        " Vim-stay provides automatic view/session management
+        Plug 'zhimsel/vim-stay'
     " }}}
     " Language & Completion {{{
         " Syntax with vim-polyglot
@@ -220,6 +234,8 @@ call plug#begin('~/.config/nvim/plugged')
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
             \ }
+        " Folding rules for Python
+        Plug 'tmhedberg/SimpylFold'
     " }}}
     " Bonus Extras {{{
         " Vim-Plugged itself (for help docs)
@@ -275,6 +291,8 @@ call plug#end()
 
         " Copy and paste to system clipboard (may require X)
         set clipboard=unnamedplus
+        " View sessions should save appropriate things (not local options!)
+        set viewoptions=cursor,folds,slash,unix
         " See all the characters
         set list
         set listchars=tab:→\ ,nbsp:␣,trail:·,extends:⟩,precedes:⟨
@@ -419,13 +437,6 @@ call plug#end()
             " Automatically show absolute numbering only when in insert mode
             autocmd InsertEnter * :set norelativenumber
             autocmd InsertLeave * :set relativenumber
-            " Automatic views
-            " NOTE: Remember to clean up views periodically! (~/.local/share/nvim/view)
-            augroup AutoSaveView
-                autocmd!
-                autocmd BufWinLeave *.* if &buftype !=# 'terminal' | silent! mkview | endif
-                autocmd BufWinEnter *.* if &buftype !=# 'terminal' | silent! loadview | endif
-            augroup END
         " }}}
         " Terminal Behavior {{{
             " Start insert mode when entering a terminal
@@ -489,6 +500,9 @@ call plug#end()
     " }}}
     " DevIcons {{{
         set guifont=Hack\ Regular\ Nerd\ Font\ Complete\ 11
+    " }}}
+    " FastFold {{{
+        let g:fastfold_savehook = 0
     " }}}
     " Fugitive / Gitgutter {{{
         nnoremap <Leader>gc :Gcommit<CR>
@@ -560,10 +574,10 @@ call plug#end()
         nmap <buffer> <Left>  <Plug>(qf_older)
         nmap <buffer> <Right> <Plug>(qf_newer)
         " Go up and down the current location/quickfix window, wrapping as necessary
-        nmap <C-j> <Plug>(qf_qf_next)
-        nmap <C-k> <Plug>(qf_qf_previous)
-        nmap <M-j> <Plug>(qf_loc_next)
-        nmap <M-k> <Plug>(qf_loc_previous)
+        nmap <PageDown> <Plug>(qf_qf_next)
+        nmap <PageUp> <Plug>(qf_qf_previous)
+        nmap <C-PageDown> <Plug>(qf_loc_next)
+        nmap <C-PageUp> <Plug>(qf_loc_previous)
     " }}}
     " Sneak {{{
         " Respect case sensitivity settings
@@ -590,4 +604,4 @@ call plug#end()
     " }}}
 " }}}
 " =============================================================================
-" vim:foldmethod=marker:foldlevel=0
+" vim:foldmethod=marker
