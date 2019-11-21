@@ -43,7 +43,7 @@ function fg-bg () {
 zle -N fg-bg  # Create a bind to this function
 
 function dict-less () {
-    dict $@ | less
+    command dict $@ | less
 }
 
 ##########
