@@ -1,72 +1,88 @@
-#################################
-#            _
-#    _______| |__  _ __ ___
-#   |_  / __| '_ \| '__/ __|
-#  _ / /\__ \ | | | | | (__
-# (_)___|___/_| |_|_|  \___|
-#
+###########
+# Init work
 
-##########
-# Local variables
-DOTDIR=${ZDOTDIR:-${HOME}}
+# Break early on non-interactive shell
+[ -z "$PS1" ] && return
 
-##########
-# Start zim
-export ZIM_HOME=${DOTDIR}/.zim
-[[ -s ${ZIM_HOME}/init.zsh ]] && source ${ZIM_HOME}/init.zsh
+# Set umask to give group write permissions
+# (Default is 022)
+umask 002
 
-##########
-# Custom functions
-function weather () {
-    # Print the current weather.
-    local url="wttr.in/${*}"
-    if command -v curl &>/dev/null; then
-        # Try with `curl` first
-        curl -m 10 ${url} 2>/dev/null \
-            || printf "%s\n" "[ERROR] weather: Could not connect to weather service. Try again later."
-    elif command -v wget &>/dev/null; then
-        # Try with `wget` next
-        wget -O - -q -T 600 ${url} 2>/dev/null \
-            || printf "%s\n" "[ERROR] weather: Could not connect to weather service. Try again later."
-    else
-        printf "%s\n" "[ERROR] weather: This command requires either 'curl' or 'wget' to be installed."
-    fi
-}
+# Color variables for convenience
+# To print all zshrc colors:
+# for i in {1..256}; do print -P "%F{$i}Color : $i"; done;
+local c_blk='%F{8}'     # Text Black
+local c_red='%F{1}'     # Text Red
+local c_grn='%F{5}'     # Text Green
+local c_ylw='%F{3}'     # Text Yellow
+local c_blu='%F{4}'     # Text Blue
+local c_cyn='%F{6}'     # Text Cyan
+local c_wht='%F{7}'     # Text White
+local c_gry='%F{10}'    # Text Grey
+local b_blk='%F{16}'    # Bold black
+local b_red='%F{9}'     # Bold red
+local b_grn='%F{28}'    # Bold green
+local b_ylw='%F{226}'   # Bold yellow
+local b_blu='%F{27}'    # Bold blue
+local b_cyn='%F{50}'    # Bold cyan
+local b_wht='%F{15}'    # Bold white
+local g_blk='\033[40m'  # Background black
+local g_red='\033[41m'  # Background red
+local g_grn='\033[42m'  # Background green
+local g_ylw='\033[43m'  # Background yellow
+local g_blu='\033[44m'  # Background blue
+local g_cyn='\033[46m'  # Background cyan
+local g_wht='\033[47m'  # Background white
+local c_rst='%f'        # Reset color
 
-function fg-bg () {
-    if [[ ${#BUFFER} -eq 0 ]]; then
-        fg
-    else
-        zle push-input
-    fi
-}
-zle -N fg-bg  # Create a bind to this function
+# Build path
+PATH=.
+PATH=$PATH:/usr/local/sbin
+PATH=$PATH:/usr/local/bin
+PATH=$PATH:/usr/sbin
+PATH=$PATH:/usr/bin
+PATH=$PATH:/sbin
+PATH=$PATH:/bin
 
-function dict-less () {
-    command dict $@ | less
-}
+for d (
+    /opt/X11/bin
+    /Library/TeX/texbin
+    ${HOME}/.pyenv/bin
+) do;
+    [ -d $d ] && PATH=$PATH:$d
+done
 
-##########
-# Aliases
-alias cdr='cd $(git rev-parse --show-toplevel)'
-alias dict='dict-less'
-alias resrc='source ${ZDOTDIR:-${HOME}}/.zshrc'
-alias vi='nvim'
+export PATH
 
-##########
-# Keybinds
-bindkey "^?" backward-delete-char
-bindkey "^H" backward-delete-char
-bindkey "^W" backward-kill-word
-bindkey "^U" backward-kill-line
-bindkey "^Z" fg-bg
 
-##########
-# Source local config
-[[ -f ${DOTDIR}/local_init.zsh ]] && source ${DOTDIR}/local_init.zsh
+# Enable history
+export HISTSIZE=10000
+export SAVEHIST=10000
+export HISTFILE=${HOME}/.zsh_history
 
-##########
-# Unset locals
-unset DOTDIR
 
-# vim:foldmethod=marker:foldlevel=0:filetype=zsh
+###########
+# Startup
+ZSHCONFIGFILES=(${HOME}/.config/zsh/**/*.zsh)
+
+# Load path files
+for file in ${(M)ZSHCONFIGFILES:#*/path.zsh}; do
+    source ${file}
+done
+
+# Load non-path/non-completion files
+for file in ${${ZSHCONFIGFILES:#*/path.zsh}:#*/completion.zsh}; do
+    source ${file}
+done
+
+# Enable autocomplete
+zmodload zsh/complist
+bindkey -M menuselect '^[[Z' reverse-menu-complete  # Support shift-tab
+autoload -U compinit && compinit
+
+# Load completion files
+for file in ${(M)ZSHCONFIGFILES:#*/completion.zsh}; do
+    source ${file}
+done
+
+unset ZSHCONFIGFILES
