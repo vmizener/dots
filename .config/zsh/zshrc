@@ -19,21 +19,8 @@ local c_blu='%F{4}'     # Text Blue
 local c_cyn='%F{6}'     # Text Cyan
 local c_wht='%F{7}'     # Text White
 local c_gry='%F{10}'    # Text Grey
-local b_blk='%F{16}'    # Bold black
-local b_red='%F{9}'     # Bold red
-local b_grn='%F{28}'    # Bold green
-local b_ylw='%F{226}'   # Bold yellow
-local b_blu='%F{27}'    # Bold blue
-local b_cyn='%F{50}'    # Bold cyan
-local b_wht='%F{15}'    # Bold white
-local g_blk='\033[40m'  # Background black
-local g_red='\033[41m'  # Background red
-local g_grn='\033[42m'  # Background green
-local g_ylw='\033[43m'  # Background yellow
-local g_blu='\033[44m'  # Background blue
-local g_cyn='\033[46m'  # Background cyan
-local g_wht='\033[47m'  # Background white
-local c_rst='%f'        # Reset color
+local c_palegrey='%F{243}'
+local c_reset='%f'        # Reset color
 
 # Build path
 PATH=.
@@ -86,3 +73,9 @@ for file in ${(M)ZSHCONFIGFILES:#*/completion.zsh}; do
 done
 
 unset ZSHCONFIGFILES
+
+# Load local init
+[[ -e ${HOME}/.localrc ]]; source ${HOME}/.localrc
+
+# TODO: syntax highlighting: https://github.com/zsh-users/zsh-syntax-highlighting
+# TODO: tab-completion not from initial character

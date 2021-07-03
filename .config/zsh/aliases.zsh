@@ -46,6 +46,7 @@ function fg-bg () {
     fi
 }
 zle -N fg-bg  # Create a bind to this function
+bindkey "^Z" fg-bg
 
 function dict-less () {
     command dict $@ | less
@@ -55,11 +56,11 @@ alias dict='dict-less'
 function dump {
     date
     if [ -n "${STY+x}" ]; then
-        print -P "Session ID:\t${c_wht}${STY}${c_rst}"
+        print -P "Session ID:\t${c_wht}${STY}${c_reset}"
     else;
-        print -P "Session ID:\t${c_red}<No Session>${c_rst}"
+        print -P "Session ID:\t${c_red}<No Session>${c_reset}"
     fi
-    print -P "Logged in as:\t${c_wht}$(whoami)${c_rst}@${c_wht}$(hostname)${c_rst}"
+    print -P "Logged in as:\t${c_wht}$(whoami)${c_reset}@${c_wht}$(hostname)${c_reset}"
 }
 
 # vim:foldmethod=marker:foldlevel=0:filetype=zsh

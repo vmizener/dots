@@ -4,9 +4,12 @@
 [push]
 	default = current
 [branch]
-	autosetuprebase = always
+	autosetupmerge = always
+[color]
+	ui = always
 [core]
 	excludesfile = ~/.gitignore
+	pager = less -r
 [merge]
 	tool = vimdiff
 	conflictstyle = diff3

@@ -5,16 +5,21 @@ function normal-mode () { echo "-- NORMAL --" }
 function virtual-env () {
     if (( ${+VIRTUAL_ENV} )); then
         local venv_str=$(echo ${VIRTUAL_ENV} | awk -F'/' '{print $NF}')
-        echo "${c_grn}${venv_str}${c_rst} "
+        echo "${c_grn}${venv_str}${c_reset} "
     fi
 }
 function screen-sty () {
     if (( ${+STY} )); then
         local sty_str=$(echo ${STY} | awk -F'.' '{print $NF}')
-        echo "${c_wht}${sty_str}${c_rst} "
+        echo "${c_wht}${sty_str}${c_reset} "
     fi
 }
-function git-status () {
+function get-hostname () {
+    if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+        echo "${c_ylw}$(hostname -i 2>/dev/null)${c_reset} "
+    else
+        echo "${c_ylw}Localhost${c_reset} "
+    fi
 }
 function git-branch () {
     if git rev-parse --git-dir > /dev/null 2>&1; then
@@ -23,15 +28,15 @@ function git-branch () {
         else
             local prefix="${c_red}✗"
         fi
-        echo "(${prefix} ${c_gry}$(git rev-parse --abbrev-ref HEAD)${c_rst})"
+        echo "(${prefix} ${c_gry}$(git rev-parse --abbrev-ref HEAD)${c_reset})"
     fi
 }
 
-RPROMPT="$(screen-sty)[${c_ylw}%D{%H:%M:%S}${c_rst}]"
+RPROMPT="$(screen-sty)$(get-hostname)[${c_gry}%D{%H:%M}${c_reset}]"
 
 local NEWLINE=$'\n'
 precmd () {
-    print -rP "${NEWLINE}${c_blu}%~ ${c_rst}$(git-branch)"
+    print -rP "${NEWLINE}${c_blu}%~ ${c_reset}$(git-branch)"
     set-prompt
 }
 function set-prompt () {
@@ -42,7 +47,7 @@ function set-prompt () {
     esac
     terminfo_down_sc=${terminfo[cud1]}${terminfo[cuu1]}${terminfo[sc]}${terminfo[cud1]}
     VIMODE="%{${terminfo_down_sc}${VI_MODE}${terminfo[rc]}%}"
-    PS1="${VIMODE}$(virtual-env)%(?..${c_red})%# ${c_rst}"
+    PS1="${VIMODE}$(virtual-env)%(?..${c_red})%# ${c_reset}"
 }
 
 function zle-line-init zle-keymap-select {
@@ -55,7 +60,7 @@ preexec () { print -rn -- ${terminfo[el]}; }
 bindkey -v
 zle -N zle-line-init
 zle -N zle-keymap-select
-#
+
 # Make keys work
 bindkey "^[[1~" beginning-of-line   # Home
 bindkey "^[[4~" end-of-line         # End

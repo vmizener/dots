@@ -15,7 +15,7 @@ function query () {
     fi
 }
 function prompt () {
-    read -p "@BOOTSTRAPPER[PROMPT}: $1 " -r
+    read -p "@BOOTSTRAPPER[PROMPT]: $1 " -r
     return ${REPLY}
 }
 

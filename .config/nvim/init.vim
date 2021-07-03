@@ -22,14 +22,30 @@
 "
 " Use with Plug (https://github.com/junegunn/vim-plug)
 "
-" You may also add any plugins to the plugins list below, then resource this
+" You may also add any plugins to the plugins list below, then re-source this
 " file and run `:PlugInstall` to install all listed plugins
 "
-" Note vim-devicons requires fonts to be installed
+" Note that vim-devicons requires fonts to be installed
 " See https://github.com/ryanoasis/nerd-fonts
 " Make sure your terminal is using the correct font as well
 "
 " Changelog: {{{
+" Mon Mar 02 2020 {{{
+"   - Set textwidth to 0 to disable automatically text wrapping
+"   - Set foldlevelstart to 99 to open all folds by default
+"   - Added hotkey to open an empty buffer in the current window
+" }}}
+" Mon Feb 06 2020 {{{
+"   - Added vim-yaml-folds for YAML folding rules
+" }}}
+" Mon Jan 27 2020 {{{
+"   - Gdiff (fugitive) hotkey now does 3-way split by default
+"   - Gdiff (fugitive) will use vertical splits by default
+" }}}
+" Wed Jan 15 2020 {{{
+"   - Added Undotree plugin for undo history visualization
+"   - Added a hotkey to toggle invisible characters
+" }}}
 " Thu Nov 21 2019 {{{
 "   - Replaced vim-obsession with vim-stay
 "   - Removed automatic view creation logic (now handled by vim-stay)
@@ -215,8 +231,10 @@ call plug#begin('~/.config/nvim/plugged')
         Plug 'scrooloose/nerdcommenter'
         " Nerdtree is a directory preview tool
         Plug 'scrooloose/nerdtree'
+        " Undotree displays an interactive undo history tree
+        Plug 'mbbill/undotree'
         " Vim-latex is vim latex, obviously
-        Plug 'vim-latex/vim-latex'
+        Plug 'vim-latex/vim-latex', { 'for': 'tex' }
         " Vim-qf streamlines using the quickfix window
         Plug 'romainl/vim-qf'
         " Vim-sneak is a convenient motion command
@@ -225,6 +243,8 @@ call plug#begin('~/.config/nvim/plugged')
         Plug 'zhimsel/vim-stay'
     " }}}
     " Language & Completion {{{
+        " Autoformatter for Python
+        Plug 'psf/black'
         " Syntax with vim-polyglot
         Plug 'sheerun/vim-polyglot'
         " Completion with deoplete
@@ -235,7 +255,9 @@ call plug#begin('~/.config/nvim/plugged')
             \ 'do': 'bash install.sh',
             \ }
         " Folding rules for Python
-        Plug 'tmhedberg/SimpylFold'
+        Plug 'tmhedberg/SimpylFold', { 'for': 'python' }
+        " Folding rules for YAML
+        Plug 'pedrohdz/vim-yaml-folds'
     " }}}
     " Bonus Extras {{{
         " Vim-Plugged itself (for help docs)
@@ -255,7 +277,7 @@ call plug#end()
         set colorcolumn=80,120  " Draw rulers at columns 80 & 120
         set confirm             " Confirm quit if there're unsaved changes
         set expandtab           " Fill tabs with spaces
-        set foldlevelstart=20   " Open files with closed folds
+        set foldlevelstart=99   " Open files with open folds
         set hidden              " Don't require writing buffers before hiding them
         set history=500         " MORE history
         set hlsearch            " Highlight search results
@@ -266,6 +288,7 @@ call plug#end()
         set mouse=a             " MORE mouse
         set nobackup            " No bak files please
         set nojoinspaces        " No extra space after '.' when joining lines
+        set noswapfile          " No swap file
         set nowrap              " No line wrap please (as default)
         set nowritebackup       " No bak files even before writing
         set number              " Show absolute line numbers on left
@@ -278,7 +301,7 @@ call plug#end()
         set splitbelow          " Always split below current buffer
         set splitright          " Always split right of current buffer
         set tabstop=4           " Set tabular length to 4 columns
-        set textwidth=120       " Wrap at 120 columns
+        set textwidth=0         " Do not automatically wrap text
         set timeoutlen=250      " Use less timeout?
         set ttimeoutlen=10      " Keycode timeouts?  Who the what?
         set undolevels=500      " MOAR undo
@@ -291,6 +314,8 @@ call plug#end()
 
         " Copy and paste to system clipboard (may require X)
         set clipboard=unnamedplus
+        " Use vertical diff splits by default
+        set diffopt+=vertical
         " View sessions should save appropriate things (not local options!)
         set viewoptions=cursor,folds,slash,unix
         " See all the characters
@@ -305,6 +330,8 @@ call plug#end()
             nnoremap <silent> <Leader>w :set wrap! wrap?<CR>
             " Toggle paste mode
             set pastetoggle=<F2>
+            " Toggle invisible characters
+            nnoremap <silent> <Leader>I :set list! list?<CR>
             " Toggle spell check mode
             nnoremap <silent> <F3> :set spell! spell?<CR>
             vnoremap <silent> <F3> <Esc>:set spell! spell?<CR>gv
@@ -359,7 +386,7 @@ call plug#end()
                 " Open a terminal
                 nnoremap <silent> <Leader>tt :terminal<CR>i
                 nnoremap <silent> <Leader>tv :vnew<CR><Esc>:terminal<CR>i
-                nnoremap <silent> <Leader>th :new<CR><Esc>:terminal<CR>i
+                nnoremap <silent> <Leader>th :new<CR><Esc>:terminal<CR>:resize 10<CR>i
                 " Escape a terminal
                 tnoremap <Esc> <C-\><C-n>
                 " Close a terminal
@@ -367,6 +394,8 @@ call plug#end()
             " }}}
         " }}}
         " Reading & Writing Files {{{
+            " Open a new unamed buffer in the current window
+            nnoremap <Leader>oe :enew<CR>
             " Copy and paste from an external buffer file
             vnoremap <Leader>y :w! ${HOME}/.vbuf<CR>
             nnoremap <Leader>y :.w! ${HOME}/.vbuf<CR>
@@ -506,7 +535,7 @@ call plug#end()
     " }}}
     " Fugitive / Gitgutter {{{
         nnoremap <Leader>gc :Gcommit<CR>
-        nnoremap <Leader>gd :Gdiff HEAD<CR>
+        nnoremap <Leader>gd :Gdiff!<CR>
         nnoremap <Leader>gf :Gfetch<CR>
         nnoremap <Leader>gl :Gpull<CR>
         nnoremap <Leader>gp :Gpush<CR>
@@ -561,6 +590,8 @@ call plug#end()
     " Nerdcommenter {{{
         " Include a space after comment delimiters
         let g:NERDSpaceDelims = 1
+        " Align left by default
+        let g:NERDDefaultAlign = 'left'
     " }}}
     " Nerdtree {{{
         " Toggle the tree
@@ -601,6 +632,10 @@ call plug#end()
         let g:SuperTabRetainCompletionDuration = 'completion'
         " Select completion option with `<CR>` (instead of inserting newline)
         let g:SuperTabCrMapping = 1
+    " }}}
+    " Undotree {{{
+        " Toggle the undo-tree panel
+        nmap <F4> :UndotreeToggle<cr>
     " }}}
 " }}}
 " =============================================================================
