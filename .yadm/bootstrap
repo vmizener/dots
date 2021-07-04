@@ -1,17 +1,21 @@
-#!/bin/bash
-cd ${HOME}
+#!/usr/bin/env bash
 
-################
-# Helper functions
+#################
+# Lib functions
+#################
+
 function log () {
     printf "@BOOTSTRAPPER[$1]: $2\n"
 }
 function query () {
-    read -e -p "@BOOTSTRAPPER[PROMPT]: $1 [yn] (n) " -n 1 -r
+    read -e -p "@BOOTSTRAPPER[PROMPT]: $1 [YyNn] " -n 1 -r
     if [[ ${REPLY} =~ ^[Yy]$ ]]; then
         exit 0
-    else
+    elif [[ ${REPLY} =~ ^[Nn]$ ]]; then
         exit 1
+    else
+        log ERROR "Please answer Y or N";
+	query $1
     fi
 }
 function prompt () {
@@ -19,103 +23,44 @@ function prompt () {
     return ${REPLY}
 }
 
-################
-# Initialization
+#################
+# Initializer
+#################
 
-flag_install_source=0
-system_info=$(uname -a)
-case ${system_info} in
+cd ${HOME}
+case $(uname -s) in
     *Darwin*)
         log INFO "Starting bootstrap for MacOS"
         system_type='Darwin'
-        if [[ ! $(which brew) ]]; then
-            log INFO "Installing Homebrew"
-            /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        fi
-        ;;
-    *Arch*)
-        log INFO "Starting bootstrap for Arch Linux"
-        system_type='Arch'
-        #TODO
-        ;;
-    *Cygwin*)
-        log INFO "Starting bootstrap for Cygwin"
-        system_type='Cygwin'
-        flag_install_source="Cygwin has no package manager.  Install from source?"
         ;;
     *)
-        log INFO "Starting bootstrap for generic system type '$(uname -s)'"
-        system_type='Linux'
-        flag_install_source="No package manager defined.  Install from source?"
+        log ERROR "Unsupported OS"
+        exit 1
         ;;
 esac
-if [[ ! ${flag_install_source} == 0 ]]; then
-    if $(query ${flag_install_source}); then
-        echo "okay"
-        #TODO
+
+#################
+# MacOS
+#################
+if [ "${system_type}" = "Darwin" ]; then
+    PACKAGES=(
+        yadm
+    )
+
+    if ! command -v brew >/dev/null 2>&1; then
+        log INFO "Installing Homebrew"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     else
-        log INFO "Skipping package installations."
-        #TODO
+        log INFO "Updating Homebrew"
+        brew update
     fi
-fi
 
-req_packages=(
-    'zsh' \
-    'yadm'
-)
-for package in ${req_packages[@]}; do
-    #TODO
-    echo $package
-done
-
-log INFO "System is ready"
-
-################
-# Get YADM
-
-#TODO move install to above loop?
-log INFO "Checking YADM"
-if [[ ! $(which yadm) ]]; then
-    log INFO "Installing YADM"
-    case ${system_type} in
-        *Darwin*)
-            brew install yadm
-        ;;
-    esac
-    log INFO "Initializing YADM"
-    yadm clone --recursive https://github.com/vmizener/dots.git
-    yadm remote set-url origin git@github.com:vmizener/dots.git
+    brew install ${PACKAGES[@]}
 
 fi
-yadm pull
-yadm submodule update --init
-log INFO "YADM is ready"
 
-################
-# Get Zim
+#################
+# Cleanup
+#################
 
-# Install ZSH
-#TODO move install to above loop?
-log INFO "Checking shell"
-if [[ ! ${SHELL} =~ .*zsh$ ]]; then
-    log INFO "Default shell is not ZSH"
-    if [[ ! $(which zsh) ]]; then
-        log INFO "Installing ZSH"
-        #TODO
-        log ERROR "TODO"
-        exit 1
-    fi
-    chsh -s $(which zsh)
-    log INFO "Default shell updated"
-fi
-
-# Install Zim
-if [[ ! -d ${ZDOTDIR:-$HOME}/.zim ]]; then
-    log INFO "Cloning Zim framework"
-    git clone --recursive https://github.com/zimfw/zimfw.git ${ZDOTDIR:-${HOME}/.config/zsh}/.zim
-    zsh -c "source ${ZDOTDIR:-${HOME}}/.zlogin"
-fi
-
-# Boot/update Zim
-zsh -i -c "zmanage update"
-log INFO "Shell is ready"
+log INFO "Bootstrap completed successfully!"
