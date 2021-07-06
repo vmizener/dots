@@ -48,30 +48,43 @@ esac
 # MacOS
 #################
 if [ "${system_type}" = "Darwin" ]; then
-    PACKAGES=(
+    packages=(
         kitty
         neovim
+        npm
         yadm
     )
 
     if ! command -v brew >/dev/null 2>&1; then
         log INFO "Installing Homebrew"
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    else
-        log INFO "Updating Homebrew"
+    elif confirm "Update Homebrew?"; then
         brew update
     fi
 
-    log INFO "The following brew packages will be installed: ${PACKAGES[*]}"
-    if confirm "Install all packages?"; then
-        brew install ${PACKAGES[@]}
+    log INFO "Checking Homebrew packages..."
+    declare -a missing_packages
+    for package in "${packages[@]}"; do
+        if ! $(brew list ${package} >/dev/null 2>&1) && ! $(brew list --cask ${package} >/dev/null 2>&1); then
+            missing_packages+=(${package})
+        fi
+    done
+    num_missing=${#missing_packages[@]}
+    if [[ ${num_missing} -gt 0 ]]; then
+        log INFO "The following Homebrew packages are missing: ${missing_packages[*]}"
+        if [[ ${num_missing} -gt 1 ]] && confirm "Install all packages?"; then
+            brew install ${missing_packages[@]}
+        else
+            for package in "${missing_packages[@]}"; do
+                if confirm "Install \"${package}\"?"; then
+                    brew install ${package}
+                fi
+            done
+        fi
     else
-        for package in "${PACKAGES[@]}"; do
-            if confirm "Install \"${package}\"?"; then
-                brew install ${package}
-            fi
-        done
+        log INFO "No missing packages"
     fi
+    unset missing_packages
 
     # Fonts
     if ! brew tap | grep cask-fonts >/dev/null 2>&1 && confirm "Install fonts?"; then
@@ -85,6 +98,7 @@ fi
 # Post-Install
 #################
 
+# YADM
 if ! command -v yadm >/dev/null 2>&1; then
     log ERROR "YADM is required to proceed; please install YADM"
     exit 1
@@ -93,6 +107,7 @@ elif ! $(yadm list >/dev/null 2>&1); then
     yadm clone "https://github.com/vmizener/dots.git"
 fi
 
+# Python
 if command -v python3 >/dev/null 2>&1 && confirm "Update Python3?"; then
     log INFO "Installing Python packages"
     pip3 install -r .config/yadm/requirements.txt --user
@@ -100,7 +115,39 @@ if command -v python3 >/dev/null 2>&1 && confirm "Update Python3?"; then
     pip3 install --upgrade pip --user
 fi
 
+# NPM
+if command -v npm >/dev/null 2>&1; then
+    node_packages=(
+        pyright
+    )
+    log INFO "Checking NPM packages..."
+    declare -a missing_packages
+    for package in "${node_packages[@]}"; do
+        if ! $(npm list --global --depth 0 ${package} >/dev/null 2>&1); then
+            missing_packages+=(${package})
+        fi
+    done
+    num_missing=${#missing_packages[@]}
+    if [[ ${num_missing} -gt 0 ]]; then
+        log INFO "The following NPM packages are missing: ${missing_packages[*]}"
+        if [[ ${#missing_packages[@]} -gt 1 ]] && confirm "Install all packages?"; then
+            npm install -g ${missing_packages[@]}
+        else
+            for package in "${missing_packages[@]}"; do
+                if confirm "Install \"${package}\"?"; then
+                    npm install -g ${package}
+                fi
+            done
+        fi
+    else
+        log INFO "No missing packages"
+    fi
+    unset missing_packages
+else
+    log WARNING "NPM is not installed; some packages will be missing"
+fi
 
+# Neovim
 if command -v nvim >/dev/null 2>&1 && confirm "Update Neovim?"; then
     log INFO "Updating Neovim"
     if [ ! -f ~/.local/share/nvim/site/autoload/plug.vim ]; then
