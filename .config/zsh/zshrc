@@ -75,7 +75,9 @@ done
 unset ZSHCONFIGFILES
 
 # Load local init
-[[ -e ${HOME}/.localrc ]]; source ${HOME}/.localrc
+if [[ -e ${HOME}/.localrc ]]; then
+    source ${HOME}/.localrc
+fi
 
 # TODO: syntax highlighting: https://github.com/zsh-users/zsh-syntax-highlighting
 # TODO: tab-completion not from initial character
