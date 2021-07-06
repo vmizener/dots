@@ -4,23 +4,28 @@
 # Lib functions
 #################
 
+function curtime () {
+    date +'%H:%M:%S'
+}
 function log () {
-    printf "@BOOTSTRAPPER[$1]: $2\n"
+    printf "@BOOTSTRAPPER($(curtime))[$1]: $2\n"
+}
+function confirm () {
+    while true; do
+        read -e -p "@BOOTSTRAPPER($(curtime))[PROMPT]: $1 [YyNn] " -n 1 -r
+        case ${REPLY} in
+            [Yy])
+                return 0;;
+            [Nn])
+                return 1;;
+            *)
+                log ERROR "Please answer Y or N";;
+        esac
+    done
 }
 function query () {
-    read -e -p "@BOOTSTRAPPER[PROMPT]: $1 [YyNn] " -n 1 -r
-    if [[ ${REPLY} =~ ^[Yy]$ ]]; then
-        exit 0
-    elif [[ ${REPLY} =~ ^[Nn]$ ]]; then
-        exit 1
-    else
-        log ERROR "Please answer Y or N";
-	query $1
-    fi
-}
-function prompt () {
-    read -p "@BOOTSTRAPPER[PROMPT]: $1 " -r
-    return ${REPLY}
+    read -p "@BOOTSTRAPPER($(curtime))[PROMPT]: $1 " -r
+    echo ${REPLY}
 }
 
 #################
@@ -56,32 +61,53 @@ if [ "${system_type}" = "Darwin" ]; then
         brew update
     fi
 
-    brew install ${PACKAGES[@]}
+    log INFO "The following brew packages will be installed: ${PACKAGES[*]}"
+    if confirm "Install all packages?"; then
+        brew install ${PACKAGES[@]}
+    else
+        for package in "${PACKAGES[@]}"; do
+            if confirm "Install \"${package}\"?"; then
+                brew install ${package}
+            fi
+        done
+    fi
+
+    # Fonts
+    if ! brew tap | grep cask-fonts >/dev/null 2>&1 && confirm "Install fonts?"; then
+        brew tap homebrew/cask-fonts
+        brew install --cask font-hack-nerd-font
+    fi
 
 fi
+
 #################
 # Post-Install
 #################
 
-if ! $(yadm list &>/dev/nullA); then
-    log INFO "Setting up YADM"
+if ! command -v yadm >/dev/null 2>&1; then
+    log ERROR "YADM is required to proceed; please install YADM"
+    exit 1
+elif ! $(yadm list >/dev/null 2>&1); then
+    log INFO "Initializing YADM"
     yadm clone "https://github.com/vmizener/dots.git"
 fi
 
-if command -v python3 >/dev/null 2>&1; then
-    log INFO "Updating Python"
+if command -v python3 >/dev/null 2>&1 && confirm "Update Python3?"; then
+    log INFO "Installing Python packages"
     pip3 install -r .config/yadm/requirements.txt --user
+    log INFO "Updating Pip"
     pip3 install --upgrade pip --user
 fi
 
 
-if command -v nvim >/dev/null 2>&1; then
-    echo "Updating Neovim"
+if command -v nvim >/dev/null 2>&1 && confirm "Update Neovim?"; then
+    log INFO "Updating Neovim"
     if [ ! -f ~/.local/share/nvim/site/autoload/plug.vim ]; then
         log INFO "Installing Vim-Plug"
         sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
             https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     fi
+    log INFO "Updating Neovim plugins"
     nvim '+PlugUpdate' '+PlugClean!' '+PlugUpdate' '+qall'
 fi
 
