@@ -28,6 +28,37 @@ function query () {
     echo ${REPLY}
 }
 
+function install_packages () {
+    local input_type=$1
+    local installer=$2
+    local checker=$3
+    local packages=$4
+
+    log INFO "Checking ${input_type}..."
+    declare -a missing_packages
+    for package in "${packages[@]}"; do
+        if ! eval ${checker} ${package} >/dev/null 2>&1; then
+            missing_packages+=(${package})
+        fi
+    done
+    num_missing=${#missing_packages[@]}
+    if [[ ${num_missing} -gt 0 ]]; then
+        log INFO "The following ${input_type} are missing: ${missing_packages[*]}"
+        if [[ ${num_missing} -gt 1 ]] && confirm "Install all ${input_type}?"; then
+            eval ${installer} ${missing_packages[@]}
+        else
+            for package in "${missing_packages[@]}"; do
+                if confirm "Install \"${package}\"?"; then
+                    eval ${installer} ${package}
+                fi
+            done
+        fi
+    else
+        log INFO "No missing ${input_type}"
+    fi
+    unset missing_packages
+}
+
 #################
 # Initializer
 #################
@@ -48,8 +79,11 @@ esac
 # MacOS
 #################
 if [ "${system_type}" = "Darwin" ]; then
-    packages=(
+    casks=(
+        docker
         kitty
+    )
+    packages=(
         neovim
         npm
         yadm
@@ -62,29 +96,16 @@ if [ "${system_type}" = "Darwin" ]; then
         brew update
     fi
 
-    log INFO "Checking Homebrew packages..."
-    declare -a missing_packages
-    for package in "${packages[@]}"; do
-        if ! $(brew list ${package} >/dev/null 2>&1) && ! $(brew list --cask ${package} >/dev/null 2>&1); then
-            missing_packages+=(${package})
-        fi
-    done
-    num_missing=${#missing_packages[@]}
-    if [[ ${num_missing} -gt 0 ]]; then
-        log INFO "The following Homebrew packages are missing: ${missing_packages[*]}"
-        if [[ ${num_missing} -gt 1 ]] && confirm "Install all packages?"; then
-            brew install ${missing_packages[@]}
-        else
-            for package in "${missing_packages[@]}"; do
-                if confirm "Install \"${package}\"?"; then
-                    brew install ${package}
-                fi
-            done
-        fi
-    else
-        log INFO "No missing packages"
-    fi
-    unset missing_packages
+    install_packages \
+        "casks" \
+        "brew install --cask" \
+        "brew list --cask" \
+        "${casks[@]}"
+    install_packages \
+        "packages" \
+        "brew install" \
+        "brew list" \
+        "${packages[@]}"
 
     # Fonts
     if ! brew tap | grep cask-fonts >/dev/null 2>&1 && confirm "Install fonts?"; then
@@ -118,31 +139,13 @@ fi
 # NPM
 if command -v npm >/dev/null 2>&1; then
     node_packages=(
-        pyright
+        pyright     # Python language server
     )
-    log INFO "Checking NPM packages..."
-    declare -a missing_packages
-    for package in "${node_packages[@]}"; do
-        if ! $(npm list --global --depth 0 ${package} >/dev/null 2>&1); then
-            missing_packages+=(${package})
-        fi
-    done
-    num_missing=${#missing_packages[@]}
-    if [[ ${num_missing} -gt 0 ]]; then
-        log INFO "The following NPM packages are missing: ${missing_packages[*]}"
-        if [[ ${#missing_packages[@]} -gt 1 ]] && confirm "Install all packages?"; then
-            npm install -g ${missing_packages[@]}
-        else
-            for package in "${missing_packages[@]}"; do
-                if confirm "Install \"${package}\"?"; then
-                    npm install -g ${package}
-                fi
-            done
-        fi
-    else
-        log INFO "No missing packages"
-    fi
-    unset missing_packages
+    install_packages \
+        "NPM packages" \
+        "npm install -g" \
+        "npm list -g --depth 0" \
+        "${node_packages}"
 else
     log WARNING "NPM is not installed; some packages will be missing"
 fi
