@@ -49,6 +49,7 @@ esac
 #################
 if [ "${system_type}" = "Darwin" ]; then
     PACKAGES=(
+        kitty
         neovim
         yadm
     )
