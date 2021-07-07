@@ -3,6 +3,8 @@
 	name = Raymond von Mizener
 [push]
 	default = current
+[pull]
+	rebase = false
 [branch]
 	autosetupmerge = always
 [color]
