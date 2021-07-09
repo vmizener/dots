@@ -3,6 +3,7 @@
 # Assign project local ignore patterns in .git/info/exlude
 .idea/
 .vscode/
+venv/
 *.log
 *.pyc
 *.swp
