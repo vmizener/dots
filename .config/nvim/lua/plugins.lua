@@ -49,7 +49,6 @@ return require('packer').startup(function(use)
                 utils.buf_map('n', '<Leader>ee', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>', opts)
                 utils.buf_map('n', '<Leader>j', '<cmd>lua vim.lsp.diagnostic.goto_next()<cr>', opts)
                 utils.buf_map('n', '<Leader>k', '<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>', opts)
-                utils.buf_map('n', '<Leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
                 utils.buf_map('n', '<Leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
             end
@@ -160,6 +159,26 @@ return require('packer').startup(function(use)
             utils.map('n', '<Leader>og', ':Telescope live_grep<CR>')
             utils.map('n', '<Leader>ob', ':Telescope buffers<CR>')
             utils.map('n', '<Leader>oh', ':Telescope help_tags<CR>')
+
+            utils.map('n', '<Leader>od', ':Telescope lsp_document_diagnostics<CR>')
+
+            local actions = require('telescope.actions')
+            require('telescope').setup({
+                defaults = {
+                    mappings = {
+                        i = {
+                            ["<C-j>"]  = actions.move_selection_next,
+                            ["<C-k>"]  = actions.move_selection_previous
+                        }
+                    },
+                    file_ignore_patterns = {
+                        '.git/.*',
+                        'node_modules/.*',
+                        '%.pyc',
+                    },
+                    layout_strategy = 'vertical'
+                },
+            })
         end
     }
     -- }}}
