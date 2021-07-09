@@ -243,17 +243,23 @@ call plug#begin('~/.config/nvim/plugged')
         Plug 'zhimsel/vim-stay'
     " }}}
     " Language & Completion {{{
+        Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+        Plug 'nvim-treesitter/playground'
         " Autoformatter for Python
         Plug 'psf/black'
         " Syntax with vim-polyglot
-        Plug 'sheerun/vim-polyglot'
+        "Plug 'sheerun/vim-polyglot'
         " Completion with deoplete
-        Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+        "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+        " LSP config
+        Plug 'neovim/nvim-lspconfig'
+        " LSP completion
+        "Plug 'hrsh7th/nvim-compe'
         " Language with LanguageClient-neovim (LSP)
-        Plug 'autozimu/LanguageClient-neovim', {
-            \ 'branch': 'next',
-            \ 'do': 'bash install.sh',
-            \ }
+        "Plug 'autozimu/LanguageClient-neovim', {
+        "    \ 'branch': 'next',
+        "    \ 'do': 'bash install.sh',
+        "    \ }
         " Folding rules for Python
         Plug 'tmhedberg/SimpylFold', { 'for': 'python' }
         " Folding rules for YAML
@@ -269,6 +275,60 @@ call plug#begin('~/.config/nvim/plugged')
 call plug#end()
 " }}}
 " =============================================================================
+" Neovim Startup Config {{{
+    " Figure out the system Python for Neovim.
+    if exists("$VIRTUAL_ENV")
+        let g:python3_host_prog=substitute(system("which -a python3 | head -n2 | tail -n1"), "\n", '', 'g')
+    else
+        let g:python3_host_prog=substitute(system("which python3"), "\n", '', 'g')
+    endif
+
+lua << EOF
+    local nvim_lsp = require('lspconfig')
+
+    -- Use an on_attach function to only map the following keys
+    -- after the language server attaches to the current buffer
+    local on_attach = function(client, bufnr)
+        local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+        local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+        --Enable completion triggered by <c-x><c-o>
+        buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+        -- Mappings.
+        local opts = { noremap=true, silent=true }
+
+        -- See `:help vim.lsp.*` for documentation on any of the below functions
+        buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+        buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+        buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+        buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+        buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+        buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+        buf_set_keymap('n', 'gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+        buf_set_keymap('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+        buf_set_keymap('n', '<Leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+        buf_set_keymap('n', '<Leader>ee', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+        buf_set_keymap('n', '<Leader>dp', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+        buf_set_keymap('n', '<Leader>dn', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+        buf_set_keymap('n', '<Leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+        buf_set_keymap('n', '<Leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+
+    end
+
+    -- Use a loop to conveniently call 'setup' on multiple servers and
+    -- map buffer local keybindings when the language server attaches
+    local servers = { "pyright" }
+    for _, lsp in ipairs(servers) do
+        nvim_lsp[lsp].setup {
+            on_attach = on_attach,
+            flags = {
+                debounce_text_changes = 150,
+            }
+        }
+    end
+EOF
+" }}}
 " General Settings {{{
         set encoding=utf-8      " Okay
 
@@ -519,13 +579,13 @@ call plug#end()
         nnoremap <Leader>of :CtrlPMRUFiles<CR>
     " }}}
     " Deoplete {{{
-        let g:deoplete#enable_at_startup = 1
-        " Enable tab completion
-        inoremap <expr><Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-        inoremap <expr><S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
-        imap <expr><CR> pumvisible() ? deoplete#close_popup() : "\<CR>"
-        " Close previews after completion
-        autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+        " let g:deoplete#enable_at_startup = 1
+        " " Enable tab completion
+        " inoremap <expr><Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+        " inoremap <expr><S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
+        " imap <expr><CR> pumvisible() ? deoplete#close_popup() : "\<CR>"
+        " " Close previews after completion
+        " autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
     " }}}
     " DevIcons {{{
         set guifont=Hack\ Regular\ Nerd\ Font\ Complete\ 11
@@ -534,12 +594,12 @@ call plug#end()
         let g:fastfold_savehook = 0
     " }}}
     " Fugitive / Gitgutter {{{
-        nnoremap <Leader>gc :Gcommit<CR>
-        nnoremap <Leader>gd :Gdiff!<CR>
-        nnoremap <Leader>gf :Gfetch<CR>
-        nnoremap <Leader>gl :Gpull<CR>
-        nnoremap <Leader>gp :Gpush<CR>
-        nnoremap <Leader>gs :Gstatus<CR>
+        nnoremap <Leader>gc :Git commit<CR>
+        nnoremap <Leader>gd :Gdiffsplit!<CR>
+        nnoremap <Leader>gf :Git fetch<CR>
+        nnoremap <Leader>gl :Git pull<CR>
+        nnoremap <Leader>gp :Git push<CR>
+        nnoremap <Leader>gs :Git status<CR>
         nnoremap <Leader>gw :Gwrite<CR>
 
         nnoremap <Leader>gj :GitGutterNextHunk<CR>
@@ -568,23 +628,23 @@ call plug#end()
         nnoremap <Leader>i :IndentLinesToggle<CR>
     " }}}
     " LanguageClient {{{
-        " Shortcuts {{{
-            nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-            nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-        " }}}
-        " Settings {{{
-            " Don't display in-line errors
-            let g:LanguageClient_useVirtualText = 0
-        " }}}
-        " Language Servers {{{
-            " Assign language servers
-            " (see https://langserver.org/)
-            let g:LanguageClient_serverCommands = {}
-            " Python:
-            " palantir/python-language-server
-            " pip3 install --upgrade python-language-server
-            let g:LanguageClient_serverCommands.python =
-                \ ['pyls']
+        " " Shortcuts {{{
+        "     nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+        "     nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+        " " }}}
+        " " Settings {{{
+        "     " Don't display in-line errors
+        "     let g:LanguageClient_useVirtualText = 0
+        " " }}}
+        " " Language Servers {{{
+        "     " Assign language servers
+        "     " (see https://langserver.org/)
+        "     let g:LanguageClient_serverCommands = {}
+        "     " Python:
+        "     " palantir/python-language-server
+        "     " pip3 install --upgrade python-language-server
+        "     let g:LanguageClient_serverCommands.python =
+        "         \ ['pyls']
         " }}}
     " }}}
     " Nerdcommenter {{{
@@ -628,10 +688,10 @@ call plug#end()
            \ ['', "   Vim is charityware. Please read ':help uganda'.", '']
     " }}}
     " Supertab {{{
-        " Completion type is per word
-        let g:SuperTabRetainCompletionDuration = 'completion'
-        " Select completion option with `<CR>` (instead of inserting newline)
-        let g:SuperTabCrMapping = 1
+        " " Completion type is per word
+        " let g:SuperTabRetainCompletionDuration = 'completion'
+        " " Select completion option with `<CR>` (instead of inserting newline)
+        " let g:SuperTabCrMapping = 1
     " }}}
     " Undotree {{{
         " Toggle the undo-tree panel
