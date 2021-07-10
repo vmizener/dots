@@ -87,7 +87,16 @@ return require('packer').startup(function(use)
         'akinsho/nvim-bufferline.lua',
         requires = {'kyazdani42/nvim-web-devicons', opt = true },
         config = function ()
-            require("bufferline").setup()
+            require("bufferline").setup({
+                options = {
+                    numbers = "buffer_id",
+                    diagnostics = 'nvim_lsp',
+                    diagnostics_indicator = function(count, level)
+                        local icon = level:match("error") and "" or ""
+                        return " " .. icon .. count
+                    end
+                }
+            })
         end
     }
     -- }}}
@@ -155,14 +164,14 @@ return require('packer').startup(function(use)
                     lualine_b = {'branch', 'b:gitsigns_status'},
                     lualine_c = {'filename'},
                     lualine_x = {'encoding', 'fileformat', 'filetype'},
-                    lualine_y = {{'diagnostics', sources = {'nvim_lsp'} }},
-                    lualine_z = {'progress', 'location'},
+                    lualine_y = { {'diagnostics', sources = {'nvim_lsp'}} },
+                    lualine_z = {'progress', {'location', icon = ''}}
                 },
                 inactive_sections = {
                     lualine_a = {},
                     lualine_b = {},
                     lualine_c = {'filename'},
-                    lualine_x = {'location'},
+                    lualine_x = {{'location', icon = ''}},
                     lualine_y = {},
                     lualine_z = {},
                 },
