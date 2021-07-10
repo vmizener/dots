@@ -10,7 +10,6 @@ if fn.empty(fn.glob(install_path)) > 0 then
 end
 -- }}}
 -- Automatically reload configs after writing {{{
--- ####### Currently breaks lualine loading #######
 --vim.cmd([[
 --   autocmd BufWritePost ~/.config/nvim/init.lua,~/.config/nvim/lua/*.lua source <afile> | PackerCompile
 --]])
@@ -83,6 +82,15 @@ return require('packer').startup(function(use)
       }
     -- }}}
 
+    -- Bufferline adds fancy tabs for buffers {{{
+    use { 
+        'akinsho/nvim-bufferline.lua',
+        requires = {'kyazdani42/nvim-web-devicons', opt = true },
+        config = function ()
+            require("bufferline").setup()
+        end
+    }
+    -- }}}
     -- Fugitive is a Git wrapper for Vim {{{
     use { 'tpope/vim-fugitive', config = function ()
         -- map('n', '<Leader>gc', ':Git commit<CR>')
@@ -94,7 +102,19 @@ return require('packer').startup(function(use)
         'lewis6991/gitsigns.nvim',
         requires = { 'nvim-lua/plenary.nvim' },
         config = function()
-            require('gitsigns').setup()
+            require('gitsigns').setup({
+                yadm = { enable = true },
+                status_formatter = function (status)
+                    local added, changed, removed = status.added, status.changed, status.removed
+                    local status_txt = {}
+                    if added   and added   > 0 then table.insert(status_txt, '+'..added  ) end
+                    if changed and changed > 0 then table.insert(status_txt, '~'..changed) end
+                    if removed and removed > 0 then table.insert(status_txt, '-'..removed) end
+                    return table.concat(status_txt, ' ')
+                end
+            })
+            utils.map('n', '<Leader>gj', ':Gitsigns next_hunk<CR>', { noremap = true, silent = true } )
+            utils.map('n', '<Leader>gk', ':Gitsigns prev_hunk<CR>', { noremap = true, silent = true } )
         end
     }
     -- }}}
@@ -118,12 +138,35 @@ return require('packer').startup(function(use)
         utils.map('n', '<Leader>i', ':IndentLinesToggle<CR>')
     end }
     -- }}}
+    -- LSP-rooter automatically sets the working directory to the project root {{{
+    use { "ahmedkhalf/lsp-rooter.nvim", config = function()
+        require("lsp-rooter").setup()
+    end }
+    -- }}}
     -- Lualine provides a better status line and a tab bar, in lua {{{
     use {
         'hoob3rt/lualine.nvim',
         requires = {'kyazdani42/nvim-web-devicons', opt = true },
+        after = { 'gitsigns.nvim' },
         config = function ()
-            require('lualine').setup()
+            require('lualine').setup({
+                sections = {
+                    lualine_a = {'mode'},
+                    lualine_b = {'branch', 'b:gitsigns_status'},
+                    lualine_c = {'filename'},
+                    lualine_x = {'encoding', 'fileformat', 'filetype'},
+                    lualine_y = {{'diagnostics', sources = {'nvim_lsp'} }},
+                    lualine_z = {'progress', 'location'},
+                },
+                inactive_sections = {
+                    lualine_a = {},
+                    lualine_b = {},
+                    lualine_c = {'filename'},
+                    lualine_x = {'location'},
+                    lualine_y = {},
+                    lualine_z = {},
+                },
+            })
         end
     }
     -- }}}
@@ -194,4 +237,4 @@ return require('packer').startup(function(use)
     -- }}}
 end)
 
--- vim:foldmethod=marker
+-- vim: set foldmethod=marker foldlevel=0 :
