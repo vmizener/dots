@@ -29,18 +29,20 @@ function query () {
 }
 
 function install_packages () {
-    local input_type=$1     # Name of the input type; e.g. "packages"
-    local installer=$2      # Installer prefix; e.g. "brew install"
-    local checker=$3        # Checker prefix; e.g. "brew list"
-    local packages=$4       # Input list; e.g. "(neofetch nethack)"
+    local input_type=$1         # Name of the input type; e.g. "packages"
+    local installer=$2          # Installer prefix; e.g. "brew install"
+    local checker=$3            # Checker prefix; e.g. "brew list"
+    local packages=( ${@:4} )   # Input list; e.g. "(neofetch nethack)"
 
     log INFO "Checking ${input_type}..."
     declare -a missing_packages
     for package in "${packages[@]}"; do
+        echo -n "."
         if ! eval ${checker} ${package} >/dev/null 2>&1; then
             missing_packages+=(${package})
         fi
     done
+    echo
     num_missing=${#missing_packages[@]}
     if [[ ${num_missing} -gt 0 ]]; then
         log INFO "The following ${input_type} are missing: ${missing_packages[*]}"
@@ -90,6 +92,7 @@ if [ "${system_type}" = "Darwin" ]; then
         neovim
         npm
         python
+        ripgrep
         yadm
     )
 
@@ -148,7 +151,7 @@ if command -v npm >/dev/null 2>&1; then
         "NPM packages" \
         "npm install -g" \
         "npm list -g --depth 0" \
-        "${node_packages}"
+        "${node_packages[@]}"
 else
     log WARNING "NPM is not installed; some packages will be missing"
 fi
