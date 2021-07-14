@@ -100,6 +100,9 @@ return require('packer').startup(function(use)
         end
     }
     -- }}}
+    -- Black is an autoformatter for Python {{{
+    use 'psf/black'
+    -- }}}
     -- Fugitive is a Git wrapper for Vim {{{
     use { 'tpope/vim-fugitive', config = function ()
         -- map('n', '<Leader>gc', ':Git commit<CR>')
@@ -207,6 +210,7 @@ return require('packer').startup(function(use)
         'nvim-telescope/telescope.nvim',
         requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
         config = function ()
+            utils.map('n', '<Leader>ot', ':Telescope file_browser<CR>')
             utils.map('n', '<Leader>of', ':Telescope find_files<CR>')
             utils.map('n', '<Leader>og', ':Telescope live_grep<CR>')
             utils.map('n', '<Leader>ob', ':Telescope buffers<CR>')

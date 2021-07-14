@@ -4,6 +4,7 @@ utils.apply_options({
     encoding = 'utf-8',     -- Okay
 
     autoindent = true,      -- Automatic indentation
+    smartindent = true,     -- Detect language-based indentation levels
     breakindent = true,     -- Indent line-breaks to align with code
     colorcolumn = '80,120', -- Draw rulers at columns 80 & 120
     confirm = true,         -- Confirm quit if there're unsaved changes
@@ -55,3 +56,15 @@ vim.cmd([[
     autocmd InsertEnter * :set norelativenumber
     autocmd InsertLeave * :set relativenumber
 ]])
+
+-- Determine python3 provider
+if vim.env.VIRTUAL_ENV then
+    vim.cmd [[
+        let g:python3_host_prog=substitute(system("which -a python3 | head -n2 | tail -n1"), "\n", '', 'g')
+    ]]
+else
+    vim.cmd [[
+        let g:python3_host_prog=substitute(system("which python3"), "\n", '', 'g')
+    ]]
+end
+

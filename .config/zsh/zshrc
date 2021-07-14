@@ -31,6 +31,9 @@ PATH=$PATH:/usr/bin
 PATH=$PATH:/sbin
 PATH=$PATH:/bin
 
+if [ ! -z $VIRTUAL_ENV ]; then
+    PATH=${VIRTUAL_ENV}/bin:$PATH
+fi
 for d (
     /opt/X11/bin
     /Library/TeX/texbin
