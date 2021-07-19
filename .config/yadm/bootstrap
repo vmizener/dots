@@ -3,28 +3,35 @@
 #################
 # Lib utilities
 #################
+NAME=BOOTSTRAPPER
 
 function curtime () {
     date +'%H:%M:%S'
 }
 function log () {
-    printf "@BOOTSTRAPPER($(curtime))[$1]: $2\n"
+    local append_newline=false
+    if [ $1 = "-n" ]; then
+        shift
+        append_newline=true
+    fi
+    printf "@${NAME}($(curtime))[$1]: $2"
+    [[ ${append_newline} = true ]] && printf "\n"
 }
 function confirm () {
     while true; do
-        read -e -p "@BOOTSTRAPPER($(curtime))[PROMPT]: $1 [YyNn] " -n 1 -r
+        read -e -p "@${NAME}($(curtime))[PROMPT]: $1 [YyNn] " -n 1 -r
         case ${REPLY} in
             [Yy])
                 return 0;;
             [Nn])
                 return 1;;
             *)
-                log ERROR "Please answer Y or N";;
+                log -n ERROR "Please answer Y or N";;
         esac
     done
 }
 function query () {
-    read -p "@BOOTSTRAPPER($(curtime))[PROMPT]: $1 " -r
+    read -p "@${NAME}($(curtime))[PROMPT]: $1 " -r
     echo ${REPLY}
 }
 
@@ -34,7 +41,7 @@ function install_packages () {
     local checker=$3            # Checker prefix; e.g. "brew list"
     local packages=( ${@:4} )   # Input list; e.g. "(neofetch nethack)"
 
-    log INFO "Checking ${input_type}..."
+    log INFO "Checking ${input_type}.."
     declare -a missing_packages
     for package in "${packages[@]}"; do
         echo -n "."
@@ -45,7 +52,7 @@ function install_packages () {
     echo
     num_missing=${#missing_packages[@]}
     if [[ ${num_missing} -gt 0 ]]; then
-        log INFO "The following ${input_type} are missing: ${missing_packages[*]}"
+        log -n INFO "The following ${input_type} are missing: ${missing_packages[*]}"
         if [[ ${num_missing} -gt 1 ]] && confirm "Install all ${input_type}?"; then
             eval ${installer} ${missing_packages[@]}
         else
@@ -56,7 +63,7 @@ function install_packages () {
             done
         fi
     else
-        log INFO "No missing ${input_type}"
+        log -n INFO "No missing ${input_type}"
     fi
     unset missing_packages
 }
@@ -68,11 +75,11 @@ function install_packages () {
 cd ${HOME}
 case $(uname -s) in
     *Darwin*)
-        log INFO "Starting bootstrap for MacOS"
+        log -n INFO "Starting bootstrap for MacOS"
         system_type='Darwin'
         ;;
     *)
-        log ERROR "Unsupported OS"
+        log -n ERROR "Unsupported OS"
         exit 1
         ;;
 esac
@@ -87,6 +94,7 @@ if [ "${system_type}" = "Darwin" ]; then
     )
     packages=(
         dict
+        fzf
         httpie
         neofetch
         neovim
@@ -97,7 +105,7 @@ if [ "${system_type}" = "Darwin" ]; then
     )
 
     if ! command -v brew >/dev/null 2>&1; then
-        log INFO "Installing Homebrew"
+        log -n INFO "Installing Homebrew"
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
@@ -126,18 +134,18 @@ fi
 
 # YADM
 if ! command -v yadm >/dev/null 2>&1; then
-    log ERROR "YADM is required to proceed; please install YADM"
+    log -n ERROR "YADM is required to proceed; please install YADM"
     exit 1
 elif ! $(yadm list >/dev/null 2>&1); then
-    log INFO "Initializing YADM"
+    log -n INFO "Initializing YADM"
     yadm clone "https://github.com/vmizener/dots.git"
 fi
 
 # Python
 if command -v python3 >/dev/null 2>&1 && confirm "Update Python3?"; then
-    log INFO "Installing Python packages"
+    log -n INFO "Installing Python packages"
     pip3 install -r .config/yadm/requirements.txt --user
-    log INFO "Updating Pip"
+    log -n INFO "Updating Pip"
     pip3 install --upgrade pip --user
 fi
 
@@ -153,23 +161,23 @@ if command -v npm >/dev/null 2>&1; then
         "npm list -g --depth 0" \
         "${node_packages[@]}"
 else
-    log WARNING "NPM is not installed; some packages will be missing"
+    log -n WARNING "NPM is not installed; some packages will be missing"
 fi
 
 # Neovim
 if command -v nvim >/dev/null 2>&1 && confirm "Bootstrap Neovim?"; then
-    log INFO "Updating Neovim"
+    log -n INFO "Updating Neovim"
     if [ ! -d ~/.local/share/nvim/site/pack/packer ]; then
         git clone https://github.com/wbthomason/packer.nvim \
              ~/.local/share/nvim/site/pack/packer/start/packer.nvim
     fi
-    # log INFO "Updating Neovim"
+    # log -n INFO "Updating Neovim"
     # if [ ! -f ~/.local/share/nvim/site/autoload/plug.vim ]; then
     #     log INFO "Installing Vim-Plug"
     #     sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
     #         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     # fi
-    # log INFO "Updating Neovim plugins"
+    # log -n INFO "Updating Neovim plugins"
     nvim '+autocmd User PackerComplete sleep 100m | qall' +PackerSync
     # nvim '+PlugUpdate' '+PlugClean!' '+PlugUpdate' '+qall'
 fi
@@ -178,4 +186,4 @@ fi
 # Cleanup
 #################
 
-log INFO "Bootstrap completed successfully!"
+log -n INFO "Bootstrap completed successfully!"
