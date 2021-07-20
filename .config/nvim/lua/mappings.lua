@@ -21,6 +21,9 @@ utils.apply_globals({ mapleader = ' ' })
     map('v', '<S-Tab>', '<gv', { noremap = true, silent = true })
     -- Quickly close quickfix/loclist windows
     map('n', 'QQ', ':cclose | lclose<CR>', { noremap = true, silent = true })
+    -- Navigate auto-completion menu with tab key
+    map('i', '<Tab>', 'pumvisible() ? "<C-n>" : "<Tab>"', { expr = true })
+    map('i', '<S-Tab>', 'pumvisible() ? "<C-p>" : "<Tab>"', { expr = true })
 -- }}}
 
 -- Editor Behavior and Appearance {{{
@@ -87,6 +90,7 @@ utils.apply_globals({ mapleader = ' ' })
     map('i', '<C-ScrollWheelDown>', '<C-O><C-D>',  { noremap = true, silent = true })
     map('i', '<M-ScrollWheelUp>',   '<C-O><C-Y>',  { noremap = true, silent = true })
     map('i', '<M-ScrollWheelDown>', '<C-O><C-E>',  { noremap = true, silent = true })
---- }}}
+-- }}}
+
 
 -- vim:foldmethod=marker

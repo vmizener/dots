@@ -49,6 +49,8 @@ utils.apply_options({
     list = true,
     listchars = 'tab:→ ,nbsp:␣,trail:·,extends:⟩,precedes:⟨',
     showbreak = '↪ ',
+    -- Enable auto-completion menu
+    completeopt = "menuone,noselect"
 })
 
 -- Automatically show absolute numbering while in insert mode
