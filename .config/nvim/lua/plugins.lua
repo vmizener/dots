@@ -38,13 +38,13 @@ return require('packer').startup(function(use)
                 local opts = { noremap=true, silent=true }
                 utils.buf_map('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
                 utils.buf_map('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-                utils.buf_map('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-                utils.buf_map('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-                utils.buf_map('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+                --utils.buf_map('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+                --utils.buf_map('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+                --utils.buf_map('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
                 utils.buf_map('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
                 utils.buf_map('n', 'gt', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
-                utils.buf_map('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-                utils.buf_map('n', '<Leader>ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+                --utils.buf_map('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+                --utils.buf_map('n', '<Leader>ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
                 utils.buf_map('n', '<Leader>ee', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>', opts)
                 utils.buf_map('n', '<Leader>j', '<cmd>lua vim.lsp.diagnostic.goto_next()<cr>', opts)
                 utils.buf_map('n', '<Leader>k', '<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>', opts)
@@ -63,6 +63,24 @@ return require('packer').startup(function(use)
                     }
                 }
             end
+        end
+    }
+    -- }}}
+    -- LSP UI {{{
+    use {
+        'glepnir/lspsaga.nvim',
+        config = function()
+            require('lspsaga').init_lsp_saga()
+            local opts = { noremap=true, silent=true }
+            utils.map('n', 'K', ':Lspsaga hover_doc<CR>', opts)
+            utils.map('n', 'gr', ':Lspsaga lsp_finder<CR>', opts)
+            utils.map('n', 'gs', ':Lspsaga signature_help<CR>', opts)
+            utils.map('n', '<Leader>rn', ':Lspsaga rename<CR>', opts)
+            utils.map('n', '<Leader>ca', ':Lspsaga code_action<CR>', opts)
+            utils.map('v', '<Leader>ca', '<C-u>:Lspsaga range_code_action<CR>', opts)
+
+            utils.map('n', '<M-d>', ':Lspsaga open_floaterm<CR>', opts)
+            utils.map('t', '<M-d>', '<C-\\><C-n>:Lspsaga close_floaterm<CR>', opts)
         end
     }
     -- }}}
@@ -85,7 +103,7 @@ return require('packer').startup(function(use)
     use {
         'hrsh7th/nvim-compe',
         config = function ()
-            require'compe'.setup({
+            require('compe').setup({
                 enabled = true;
                 autocomplete = true;
                 debug = false;
@@ -189,6 +207,21 @@ return require('packer').startup(function(use)
         vim.api.nvim_command('colorscheme gruvbox-material')
     end }
     -- }}}
+    -- Hop allows sneaky movement {{{
+    use {
+        'phaazon/hop.nvim',
+        as = 'hop',
+        config = function()
+            -- you can configure Hop the way you like here; see :h hop-config
+            require('hop').setup { keys = 'etovxqpdygfblzhckisuran' }
+            utils.map('n', 's', ':HopChar2<CR>')
+            utils.map('n', 'S', ':HopWord<CR>')
+            utils.map('n', 'f', ':HopChar1<CR>')
+            utils.map('n', 'F', ':HopLineStart<CR>')
+            -- There's a PR for "t" behavior
+        end
+    }
+    -- }}}
     -- IndentLine provides an indentation guide {{{
     use { 'Yggdroot/indentLine', config = function ()
         utils.apply_globals({ indentLine_char = '┆' })
@@ -209,7 +242,7 @@ return require('packer').startup(function(use)
             require('lualine').setup({
                 sections = {
                     lualine_a = {'mode'},
-                    lualine_b = {'branch', 'b:gitsigns_status'},
+                    lualine_b = {{'b:gitsigns_head', icon = ''}, 'b:gitsigns_status'},
                     lualine_c = {'filename'},
                     lualine_x = {'encoding', 'fileformat', 'filetype'},
                     lualine_y = { {'diagnostics', sources = {'nvim_lsp'}} },
@@ -229,23 +262,6 @@ return require('packer').startup(function(use)
     -- }}}
     -- Peekaboo displays a preview window of register contents {{{
     use 'junegunn/vim-peekaboo'
-    -- }}}
-    -- Sneak for sneaky movement {{{
-    use { 
-        'justinmk/vim-sneak',
-        config = function ()
-            utils.apply_globals({
-                ['sneak#use_ic_scs'] = 1,     -- Respect case-sensitivity settings
-                ['sneak#label'] = 1,          -- Use labels
-            })
-            utils.map('n', 's', '<Plug>SneakLabel_s')
-            utils.map('n', 'S', '<Plug>SneakLabel_S')
-            utils.map('n', 'f', '<Plug>Sneak_f')
-            utils.map('n', 'F', '<Plug>Sneak_F')
-            utils.map('n', 't', '<Plug>Sneak_t')
-            utils.map('n', 'T', '<Plug>Sneak_T')
-        end
-    }
     -- }}}
     -- Startify is a fancy start page for Vim {{{
     use 'mhinz/vim-startify'
