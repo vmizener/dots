@@ -50,7 +50,11 @@ utils.apply_options({
     listchars = 'tab:→ ,nbsp:␣,trail:·,extends:⟩,precedes:⟨',
     showbreak = '↪ ',
     -- Enable auto-completion menu
-    completeopt = "menuone,noselect"
+    completeopt = "menuone,noselect",
+    -- Set terminal title
+    title = true,
+    titlelen = 40,
+    titlestring = "%f%=%<(%l/%L:%P)",  -- See "statusline" help for item defs
 })
 
 -- Automatically show absolute numbering while in insert mode

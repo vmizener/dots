@@ -36,7 +36,10 @@ RPROMPT="$(screen-sty)$(get-hostname)[${c_gry}%D{%H:%M}${c_reset}]"
 
 local NEWLINE=$'\n'
 precmd () {
-    print -rP "${NEWLINE}${c_blu}%~ ${c_reset}$(git-branch)"
+    # Set terminal title to truncated working directory
+    print -Pn "\e]0;%(5~|%-1~/…/%3~|%4~)\a"
+    # Print directory info above the prompt
+    print -Pr "${NEWLINE}${c_blu}%~ ${c_reset}$(git-branch)"
     set-prompt
 }
 function set-prompt () {
