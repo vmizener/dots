@@ -90,6 +90,7 @@ esac
 if [ "${system_type}" = "Darwin" ]; then
     casks=(
         docker
+        dropbox
         kitty
     )
     packages=(
@@ -120,6 +121,11 @@ if [ "${system_type}" = "Darwin" ]; then
         "brew list" \
         "${packages[@]}"
 
+    # Git Manager
+    if ! brew tap | grep microsoft/git >/dev/null 2>&1 && confirm "Install Github Manager?"; then
+        brew tap microsoft/git
+        brew install --cask git-credential-manager-core
+    fi
     # Fonts
     if ! brew tap | grep cask-fonts >/dev/null 2>&1 && confirm "Install fonts?"; then
         brew tap homebrew/cask-fonts

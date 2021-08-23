@@ -17,3 +17,7 @@
 	conflictstyle = diff3
 [mergetool]
 	prompt = false
+[credential]
+	helper = manager-core
+[credential "https://dev.azure.com"]
+	useHttpPath = true
