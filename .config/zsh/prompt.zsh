@@ -5,7 +5,7 @@ function normal-mode () { echo "-- NORMAL --" }
 function virtual-env () {
     if (( ${+VIRTUAL_ENV} )); then
         local venv_str=$(echo ${VIRTUAL_ENV} | awk -F'/' '{print $NF}')
-        echo "${c_grn}${venv_str}${c_reset} "
+        echo "${C_grn}${venv_str}${c_reset} "
     fi
 }
 function screen-sty () {
@@ -28,11 +28,11 @@ function git-branch () {
         else
             local prefix="${c_red}✗"
         fi
-        echo "(${prefix} ${c_gry}$(git rev-parse --abbrev-ref HEAD)${c_reset})"
+        echo "(${prefix} ${c_mag}$(git rev-parse --abbrev-ref HEAD)${c_reset})"
     fi
 }
 
-RPROMPT="$(screen-sty)$(get-hostname)[${c_gry}%D{%H:%M}${c_reset}]"
+RPROMPT="$(screen-sty)$(get-hostname)[${C_wht}%D{%H:%M}${c_reset}]"
 
 local NEWLINE=$'\n'
 precmd () {
@@ -63,6 +63,20 @@ preexec () { print -rn -- ${terminfo[el]}; }
 bindkey -v
 zle -N zle-line-init
 zle -N zle-keymap-select
+
+# Yank to the system clipboard
+function vi-yank-xclip {
+    case $(uname -s) in 
+        # TODO: test other options
+        *Darwin*)   COPY_CMD="pbcopy -i" ;;
+        *Linux*)    COPY_CMD="xclip" ;;
+        *)          COPY_CMD="xclip" ;;
+    esac
+    zle vi-yank
+    eval "echo '${CUTBUFFER}' | ${COPY_CMD}"
+}
+zle -N vi-yank-xclip
+bindkey -M vicmd 'y' vi-yank-xclip
 
 # Make keys work
 bindkey "^[[1~" beginning-of-line   # Home

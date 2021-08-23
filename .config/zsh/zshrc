@@ -11,16 +11,23 @@ umask 002
 # Color variables for convenience
 # To print all zshrc colors:
 # for i in {1..256}; do print -P "%F{$i}Color : $i"; done;
-local c_blk='%F{8}'     # Text Black
-local c_red='%F{1}'     # Text Red
-local c_grn='%F{5}'     # Text Green
-local c_ylw='%F{3}'     # Text Yellow
-local c_blu='%F{4}'     # Text Blue
-local c_cyn='%F{6}'     # Text Cyan
-local c_wht='%F{7}'     # Text White
-local c_gry='%F{10}'    # Text Grey
-local c_palegrey='%F{243}'
-local c_reset='%f'        # Reset color
+local c_blk='%F{0}'     # Soft Black
+local c_red='%F{1}'     # Soft Red
+local c_grn='%F{2}'     # Soft Green
+local c_ylw='%F{3}'     # Soft Yellow
+local c_blu='%F{4}'     # Soft Blue
+local c_mag='%F{5}'     # Soft Magenta
+local c_cyn='%F{6}'     # Soft Cyan
+local c_wht='%F{7}'     # Soft White
+local C_blk='%F{8}'     # Emph Black
+local C_red='%F{9}'     # Emph Red
+local C_grn='%F{10}'    # Emph Green
+local C_ylw='%F{11}'    # Emph Yellow
+local C_blu='%F{12}'    # Emph Blue
+local C_mag='%F{13}'    # Emph Magenta
+local C_cyn='%F{14}'    # Emph Cyan
+local C_wht='%F{15}'    # Emph White
+local c_reset='%f'      # Reset color
 
 # Build path
 PATH=.
