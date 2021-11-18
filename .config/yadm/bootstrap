@@ -35,7 +35,7 @@ function query () {
     echo ${REPLY}
 }
 
-function install_packages () {
+function install_from_list () {
     local input_type=$1         # Name of the input type; e.g. "packages"
     local installer=$2          # Installer prefix; e.g. "brew install"
     local checker=$3            # Checker prefix; e.g. "brew list"
@@ -92,16 +92,20 @@ if [ "${system_type}" = "Darwin" ]; then
         docker
         dropbox
         kitty
+        vnc-viewer
     )
     packages=(
         dict
         fzf
+        ghostscript
         httpie
+        imagemagick
         neofetch
         neovim
         npm
-        python
+        python-tk
         ripgrep
+        texlive
         yadm
     )
 
@@ -110,12 +114,12 @@ if [ "${system_type}" = "Darwin" ]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
-    install_packages \
+    install_from_list \
         "casks" \
         "brew install --cask" \
         "brew list --cask" \
         "${casks[@]}"
-    install_packages \
+    install_from_list \
         "packages" \
         "brew install" \
         "brew list" \
@@ -156,12 +160,14 @@ if command -v python3 >/dev/null 2>&1 && confirm "Update Python3?"; then
 fi
 
 # NPM
-if command -v npm >/dev/null 2>&1; then
+if command -v npm >/dev/null 2>&1 && confirm "Update NPM?"; then
+    log -n INFO "Updating NPM"
+    npm install -g npm
     node_packages=(
         json-server # Deploy a fake REST API server
         pyright     # Python language server
     )
-    install_packages \
+    install_from_list \
         "NPM packages" \
         "npm install -g" \
         "npm list -g --depth 0" \

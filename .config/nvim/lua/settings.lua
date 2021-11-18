@@ -9,7 +9,6 @@ utils.apply_options({
     colorcolumn = '80,120', -- Draw rulers at columns 80 & 120
     confirm = true,         -- Confirm quit if there're unsaved changes
     expandtab = true,       -- Fill tabs with spaces
-    foldlevelstart = 99,    -- Open files with open folds
     hidden = true,          -- Don't require writing buffers before hiding them
     history = 500,          -- MORE history
     hlsearch = true,        -- Highlight search results
@@ -55,6 +54,10 @@ utils.apply_options({
     title = true,
     titlelen = 40,
     titlestring = "%f%=%<(%l/%L:%P)",  -- See "statusline" help for item defs
+    -- Configure folding
+    foldlevelstart = 99,  -- Open files with open folds
+    foldmethod = 'expr',
+    foldexpr = 'nvim_treesitter#foldexpr()',  -- Use treesitter for folding rules
 })
 
 -- Automatically show absolute numbering while in insert mode

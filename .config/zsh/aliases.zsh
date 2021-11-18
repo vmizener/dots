@@ -21,6 +21,8 @@ alias sr='screen -r'
 alias sR='screen -dr'
 alias ss='screen -S'
 
+alias icat='kitty +kitten icat --align=left'
+
 [ -d ${HOME}/.bash_aliases ] && source ${HOME}/.bash_aliases
 
 function weather () {

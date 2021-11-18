@@ -74,7 +74,6 @@ return require('packer').startup(function(use)
             local opts = { noremap=true, silent=true }
             utils.map('n', 'K', ':Lspsaga hover_doc<CR>', opts)
             utils.map('n', 'gr', ':Lspsaga lsp_finder<CR>', opts)
-            utils.map('n', 'gs', ':Lspsaga signature_help<CR>', opts)
             utils.map('n', '<Leader>rn', ':Lspsaga rename<CR>', opts)
             utils.map('n', '<Leader>ca', ':Lspsaga code_action<CR>', opts)
             utils.map('v', '<Leader>ca', '<C-u>:Lspsaga range_code_action<CR>', opts)
@@ -166,11 +165,27 @@ return require('packer').startup(function(use)
     -- Black is an autoformatter for Python {{{
     use 'psf/black'
     -- }}}
+    -- Colorizer automatically highlights color codes {{{
+    use { 
+        'norcalli/nvim-colorizer.lua',
+        config = function()
+            require('colorizer').setup(nil, {
+                --names = false,
+            })
+        end
+    }
+    -- }}}
     -- Fugitive is a Git wrapper for Vim {{{
-    use { 'tpope/vim-fugitive', config = function ()
-        -- map('n', '<Leader>gc', ':Git commit<CR>')
-        -- map('n', '<Leader>gd', ':Gitdiffsplit!<CR>')
-    end }
+    use {
+        'tpope/vim-fugitive',
+        config = function ()
+            local opts = { noremap=true, silent=true }
+            utils.map('n', '<Leader>gd', ':Gdiffsplit!<CR>', opts)
+            utils.map('n', '<Leader>gD', '<C-w>h<C-w>c', opts)
+            --utils.map('n', '<Leader>gc', ':G commit<CR>', opts)
+            utils.map('n', '<Leader>gs', ':G status<CR>', opts)
+        end
+    }
     -- }}}
     -- Gitsigns provides Git diff and blame info {{{
     use {
@@ -207,26 +222,14 @@ return require('packer').startup(function(use)
         vim.api.nvim_command('colorscheme gruvbox-material')
     end }
     -- }}}
-    -- Hop allows sneaky movement {{{
-    use {
-        'phaazon/hop.nvim',
-        as = 'hop',
-        config = function()
-            -- you can configure Hop the way you like here; see :h hop-config
-            require('hop').setup { keys = 'etovxqpdygfblzhckisuran' }
-            utils.map('n', 's', ':HopChar2<CR>')
-            utils.map('n', 'S', ':HopWord<CR>')
-            utils.map('n', 'f', ':HopChar1<CR>')
-            utils.map('n', 'F', ':HopLineStart<CR>')
-            -- There's a PR for "t" behavior
-        end
-    }
-    -- }}}
     -- IndentLine provides an indentation guide {{{
     use { 'Yggdroot/indentLine', config = function ()
         utils.apply_globals({ indentLine_char = '┆' })
         utils.map('n', '<Leader>i', ':IndentLinesToggle<CR>')
     end }
+    -- }}}
+    -- Lightspeed.nvim is the nvim successor to vim-sneak {{{
+    use 'ggandor/lightspeed.nvim'
     -- }}}
     -- LSP-rooter automatically sets the working directory to the project root {{{
     use { "ahmedkhalf/lsp-rooter.nvim", config = function()
@@ -276,6 +279,7 @@ return require('packer').startup(function(use)
         config = function ()
             utils.map('n', '<Leader>ot', ':Telescope file_browser<CR>')
             utils.map('n', '<Leader>of', ':Telescope find_files<CR>')
+            utils.map('n', '<Leader>oF', ':Telescope find_files cwd=~<CR>')
             utils.map('n', '<Leader>og', ':Telescope live_grep<CR>')
             utils.map('n', '<Leader>ob', ':Telescope buffers<CR>')
             utils.map('n', '<Leader>oh', ':Telescope help_tags<CR>')
@@ -305,8 +309,11 @@ return require('packer').startup(function(use)
     -- Vim-cool smartly toggles search highlighting automatically {{{
     use 'romainl/vim-cool'
     -- }}}
-    -- Vim-css-color is a color-code highlighting plugin {{{
-    use 'ap/vim-css-color'
+    -- VimTex for Tex {{{
+    use {
+        'lervag/vimtex',
+        ft = 'tex'
+    }
     -- }}}
 
     -- Packer can manage itself {{{

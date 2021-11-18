@@ -31,13 +31,16 @@ function git-branch () {
         echo "(${prefix} ${c_mag}$(git rev-parse --abbrev-ref HEAD)${c_reset})"
     fi
 }
+function set-terminal-title () {
+    # Set terminal title to truncated working directory
+    print -Pn "\e]0;%(5~|%-1~/…/%3~|%4~)\a"
+}
 
 RPROMPT="$(screen-sty)$(get-hostname)[${C_wht}%D{%H:%M}${c_reset}]"
 
 local NEWLINE=$'\n'
 precmd () {
-    # Set terminal title to truncated working directory
-    print -Pn "\e]0;%(5~|%-1~/…/%3~|%4~)\a"
+    set-terminal-title
     # Print directory info above the prompt
     print -Pr "${NEWLINE}${c_blu}%~ ${c_reset}$(git-branch)"
     set-prompt
