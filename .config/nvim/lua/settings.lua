@@ -6,7 +6,7 @@ utils.apply_options({
     autoindent = true,      -- Automatic indentation
     smartindent = true,     -- Detect language-based indentation levels
     breakindent = true,     -- Indent line-breaks to align with code
-    colorcolumn = '80,120', -- Draw rulers at columns 80 & 120
+    colorcolumn = '90,120', -- Draw rulers at columns 80 & 120
     confirm = true,         -- Confirm quit if there're unsaved changes
     expandtab = true,       -- Fill tabs with spaces
     hidden = true,          -- Don't require writing buffers before hiding them

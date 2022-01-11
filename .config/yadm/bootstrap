@@ -96,8 +96,10 @@ if [ "${system_type}" = "Darwin" ]; then
     )
     packages=(
         dict
+        fd
         fzf
         ghostscript
+        git-delta
         httpie
         imagemagick
         neofetch

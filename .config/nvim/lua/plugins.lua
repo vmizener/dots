@@ -143,6 +143,9 @@ return require('packer').startup(function(use)
     }
 
     -- }}}
+    -- GUI Library {{{
+    use 'ray-x/guihua.lua'
+    -- }}}
 
     -- Bufferline adds fancy tabs for buffers {{{
     use { 
@@ -265,6 +268,17 @@ return require('packer').startup(function(use)
     -- }}}
     -- Peekaboo displays a preview window of register contents {{{
     use 'junegunn/vim-peekaboo'
+    -- }}}
+    -- Sad provides project-wide replacement {{{
+    use {
+        'ray-x/sad.nvim',
+        config = function ()
+            require('sad').setup({
+                diff = 'delta',
+                exact = false,
+            })
+        end
+    }
     -- }}}
     -- Startify is a fancy start page for Vim {{{
     use 'mhinz/vim-startify'

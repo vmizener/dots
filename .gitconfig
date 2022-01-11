@@ -11,7 +11,7 @@
 	ui = always
 [core]
 	excludesfile = ~/.gitignore
-	pager = less -r
+	pager = delta -n
 [merge]
 	tool = vimdiff
 	conflictstyle = diff3
@@ -21,3 +21,7 @@
 	helper = manager-core
 [credential "https://dev.azure.com"]
 	useHttpPath = true
+[alias]
+	tree = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+	tree-detail= log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+
