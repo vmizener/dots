@@ -92,6 +92,7 @@ if [ "${system_type}" = "Darwin" ]; then
         docker
         dropbox
         kitty
+        mpv
         vnc-viewer
     )
     packages=(
