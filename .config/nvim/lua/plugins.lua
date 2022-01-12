@@ -320,6 +320,18 @@ return require('packer').startup(function(use)
         end
     }
     -- }}}
+    -- Transparent makes Neovim transparent {{{
+    use {
+        'xiyaowong/nvim-transparent',
+        config = function ()
+            require("transparent").setup({
+                enable = true, -- boolean: enable transparent
+                extra_groups = 'all',
+                exclude = {}, -- table: groups you don't want to clear
+            })
+        end
+    }
+    -- }}}
     -- Vim-cool smartly toggles search highlighting automatically {{{
     use 'romainl/vim-cool'
     -- }}}
