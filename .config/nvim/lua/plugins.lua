@@ -96,7 +96,7 @@ return require('packer').startup(function(use)
                 textobjects = { enable = true },
             })
         end
-      }
+    }
     -- }}}
     -- Auto-Completion {{{
     use {
@@ -326,7 +326,9 @@ return require('packer').startup(function(use)
         config = function ()
             require("transparent").setup({
                 enable = true, -- boolean: enable transparent
-                extra_groups = 'all',
+                extra_groups = {
+                    "Folded",
+                },
                 exclude = {}, -- table: groups you don't want to clear
             })
         end
