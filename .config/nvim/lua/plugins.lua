@@ -83,6 +83,14 @@ return require('packer').startup(function(use)
         end
     }
     -- }}}
+    -- LSP Symbols {{{
+    use {
+        'simrat39/symbols-outline.nvim',
+        config = function ()
+            utils.map('n', '<Leader>ss', ':SymbolsOutline<CR>', { noremap = true, silent = true } )
+        end
+    }
+    -- }}}
     -- Treesitter {{{
     use {
         'nvim-treesitter/nvim-treesitter',
@@ -178,6 +186,14 @@ return require('packer').startup(function(use)
         end
     }
     -- }}}
+    -- Fidget provides a progress indicator for the LSP {{{
+    use {
+        'j-hui/fidget.nvim',
+        config = function()
+            require("fidget").setup()
+        end
+    }
+    -- }}}
     -- Fugitive is a Git wrapper for Vim {{{
     use {
         'tpope/vim-fugitive',
@@ -231,9 +247,6 @@ return require('packer').startup(function(use)
         utils.map('n', '<Leader>i', ':IndentLinesToggle<CR>')
     end }
     -- }}}
-    -- Lightspeed.nvim is the nvim successor to vim-sneak {{{
-    use 'ggandor/lightspeed.nvim'
-    -- }}}
     -- LSP-rooter automatically sets the working directory to the project root {{{
     use { "ahmedkhalf/lsp-rooter.nvim", config = function()
         require("lsp-rooter").setup()
@@ -268,6 +281,13 @@ return require('packer').startup(function(use)
     -- }}}
     -- Peekaboo displays a preview window of register contents {{{
     use 'junegunn/vim-peekaboo'
+    -- }}}
+    -- Pounce is a motion plugin akin to Hop/Sneak/Lightspeed with fuzzy matching {{{
+    use { 'rlane/pounce.nvim', config = function ()
+        utils.map('n', 's', ':Pounce<CR>')
+        utils.map('n', 'S', ':PounceRepeat<CR>')
+        utils.map('v', 's', ':Pounce<CR>')
+    end }
     -- }}}
     -- Sad provides project-wide replacement {{{
     use {
