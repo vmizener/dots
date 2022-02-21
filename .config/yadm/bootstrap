@@ -78,6 +78,23 @@ case $(uname -s) in
         log -n INFO "Starting bootstrap for MacOS"
         system_type='Darwin'
         ;;
+    *Linux*)
+        if [ ! -f /etc/lsb-release ]; then
+            log -n ERROR "Failed to identify distro; terminating"
+            exit 1
+        fi
+        dist_id=$(head -n1 /etc/lsb-release | cut -f2 -d"=")
+        case $dist_id in
+            *Mint*)
+                log -n INFO "Starting bootstrap for Linux Mint"
+                system_type="Mint"
+                ;;
+            *)
+                log -n ERROR "Unsupported Linux OS"
+                exit 1
+                ;;
+        esac
+        ;;
     *)
         log -n ERROR "Unsupported OS"
         exit 1
