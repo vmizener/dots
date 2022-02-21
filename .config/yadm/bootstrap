@@ -156,6 +156,22 @@ if [ "${system_type}" = "Darwin" ]; then
         brew install --cask font-hack-nerd-font
     fi
 
+#################
+# Linux Mint
+#################
+elif [ "${system_type}" = "Mint" ]; then
+    packages=(
+        git
+        neovim
+        yadm
+    )
+
+    install_from_list \
+        "packages" \
+        "apt-get install" \
+        "dpkg-query -W" \
+        "${packages[@]}"
+
 fi
 
 #################
@@ -168,7 +184,7 @@ if ! command -v yadm >/dev/null 2>&1; then
     exit 1
 elif ! $(yadm list >/dev/null 2>&1); then
     log -n INFO "Initializing YADM"
-    yadm clone "https://github.com/vmizener/dots.git"
+    yadm clone --no-bootstrap "https://github.com/vmizener/dots.git"
 fi
 
 # Python
