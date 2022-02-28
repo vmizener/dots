@@ -181,6 +181,7 @@ elif [ "${system_type}" = "Debian" ]; then
         fd-find
         fzf
         git
+        neofetch
         neovim
         python3-pip
         yadm
