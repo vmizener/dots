@@ -17,6 +17,16 @@ function log () {
     printf "@${NAME}($(curtime))[$1]: $2"
     [[ ${append_newline} = true ]] && printf "\n"
 }
+function exists () {
+    if command -v "$1" >/dev/null 2>&1; then
+        return 0
+    else
+        return 1
+    fi
+}
+function pause () {
+    read -e -p "@${NAME}($(curtime))[PROMPT]: Press any key to continue" -n 1 -r
+}
 function confirm () {
     while true; do
         read -e -p "@${NAME}($(curtime))[PROMPT]: $1 [YyNn] " -n 1 -r
@@ -77,6 +87,7 @@ case $(uname -s) in
     *Darwin*)
         log -n INFO "Starting bootstrap for MacOS"
         system_type='Darwin'
+        dist_type='Darwin'
         ;;
     *Linux*)
         if [ ! -f /etc/lsb-release ]; then
@@ -87,7 +98,13 @@ case $(uname -s) in
         case $dist_id in
             *Mint*)
                 log -n INFO "Starting bootstrap for Linux Mint"
-                system_type="Mint"
+            system_type='Debian'
+            dist_type='Mint'
+                ;;
+            *Ubuntu*)
+                log -n INFO "Starting bootstrap for Ubuntu"
+            system_type='Debian'
+            dist_type='Ubuntu'
                 ;;
             *)
                 log -n ERROR "Unsupported Linux OS"
@@ -157,20 +174,60 @@ if [ "${system_type}" = "Darwin" ]; then
     fi
 
 #################
-# Linux Mint
+# Debian
 #################
-elif [ "${system_type}" = "Mint" ]; then
+elif [ "${system_type}" = "Debian" ]; then
     packages=(
+        fd-find
+        fzf
         git
         neovim
+        python3-pip
         yadm
+        zsh
     )
+
+    # Add missing repositories
+    function add_ppa () {
+        for ppa in "$@"; do
+            grep -h "^deb.*${ppa}" /etc/apt/sources.list.d/* >/dev/null 2>&1
+            if [ $? -ne 0 ]; then
+                log -n INFO "Adding ppa:${ppa}"
+                sudo add-apt-repository -y ppa:${ppa}
+        fi
+        done
+    }
+    add_ppa \
+        neovim-ppa/stable
+
+    log -n INFO "Updating repository listing"
+    sudo apt update
+
+    # Install `aptitude` package manager
+    if ! exists "aptitude"; then
+        apt-get install aptitude
+    fi
 
     install_from_list \
         "packages" \
-        "apt-get install" \
+        "sudo aptitude install" \
         "dpkg-query -W" \
         "${packages[@]}"
+
+    if ! exists delta; then
+        log -n WARNING '`delta` must be installed manually on Debian-based systems'
+        log -n PROMPT 'Please download the latest release of `delta` and run `dpkg -i <file.deb>` to install'
+        log -n PROMPT 'https://github.com/dandavison/delta/releases'
+        pause
+    fi
+    # Symlink required for `fd` on Debian-based systems
+    if exists fdfind && ! exists fd; then
+        mkdir -p ${HOME}/.local/bin
+        ln -s $(which fdfind) ${HOME}/.local/bin/fd
+    fi
+
+    log -n INFO "Upgrading packages"
+    sudo apt upgrade
 
 fi
 
