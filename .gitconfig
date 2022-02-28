@@ -18,7 +18,7 @@
 [mergetool]
 	prompt = false
 [credential]
-	helper = manager-core
+	helper = store
 [credential "https://dev.azure.com"]
 	useHttpPath = true
 [alias]
