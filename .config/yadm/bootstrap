@@ -240,7 +240,11 @@ elif [ "${system_type}" = "Debian" ]; then
 ################
 elif [ "${system_type}" = 'Arch' ]; then
     core_packages=(
+        fd
+        fzf
         git
+        git-delta
+        neofetch
         neovim
     )
     user_packages=(
