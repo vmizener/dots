@@ -45,11 +45,9 @@ return require('packer').startup(function(use)
                 utils.buf_map('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
                 utils.buf_map('n', 'gt', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
                 utils.buf_map('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-                utils.buf_map('n', '<Leader>ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
                 utils.buf_map('n', '<Leader>j', '<cmd>lua vim.diagnostic.goto_next()<cr>', opts)
                 utils.buf_map('n', '<Leader>k', '<cmd>lua vim.diagnostic.goto_prev()<cr>', opts)
                 utils.buf_map('n', '<Leader>f', '<cmd>lua vim.diagnostic.open_float()<cr>', opts)
-                utils.buf_map('n', '<Leader>q', '<cmd>lua vim.diagnostic.setqflist()<cr>', opts)
 
             end
 
@@ -291,7 +289,9 @@ return require('packer').startup(function(use)
             utils.map('n', '<Leader>ob', ':Telescope buffers<CR>')
             utils.map('n', '<Leader>oh', ':Telescope help_tags<CR>')
 
-            utils.map('n', '<Leader>od', ':Telescope lsp_document_diagnostics<CR>')
+            utils.map('n', '<Leader>od', ':Telescope diagnostics<CR>')
+            utils.map('n', '<Leader>ca', ':Telescope lsp_code_actions<CR>')
+            utils.map('v', '<Leader>ca', ':Telescope lsp_range_code_actions<CR>')
 
             local actions = require('telescope.actions')
             require('telescope').setup({
