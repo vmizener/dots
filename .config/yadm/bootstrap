@@ -191,6 +191,7 @@ elif [ "${system_type}" = "Debian" ]; then
         nodejs
         npm
         python3-pip
+        ripgrep
         unzip
         yadm
         zip
