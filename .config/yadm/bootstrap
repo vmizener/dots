@@ -188,6 +188,8 @@ elif [ "${system_type}" = "Debian" ]; then
         git
         neofetch
         neovim
+        nodejs
+        npm
         python3-pip
         unzip
         yadm
@@ -195,7 +197,13 @@ elif [ "${system_type}" = "Debian" ]; then
         zsh
     )
 
-    # Add missing repositories
+    # Add NodeSource repository & signing key (with script)
+    if ! grep -h "^deb.*node_14.x" /etc/apt/sources.list.d/* >/dev/null 2>&1; then
+        log -n INFO "Adding NodeSource repository & signing key"
+        curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+    fi
+
+    # Add other missing repositories
     function add_ppa () {
         for ppa in "$@"; do
             grep -h "^deb.*${ppa}" /etc/apt/sources.list.d/* >/dev/null 2>&1
@@ -298,20 +306,19 @@ if command -v python3 >/dev/null 2>&1 && confirm "Update Python3?"; then
 fi
 
 # NPM
-if command -v npm >/dev/null 2>&1 && confirm "Update NPM?"; then
+if ! command -v npm >/dev/null 2>&1; then
+    log -n WARNING "NPM is not installed; some packages will be missing"
+elif confirm "Update NPM?"; then
     log -n INFO "Updating NPM"
     npm install -g npm
     node_packages=(
         json-server # Deploy a fake REST API server
-        pyright     # Python language server
     )
     install_from_list \
         "NPM packages" \
         "npm install -g" \
         "npm list -g --depth 0" \
         "${node_packages[@]}"
-else
-    log -n WARNING "NPM is not installed; some packages will be missing"
 fi
 
 # Neovim
