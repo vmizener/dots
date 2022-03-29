@@ -98,13 +98,13 @@ case $(uname -s) in
         case $dist_id in
             *Mint*)
                 log -n INFO "Starting bootstrap for Linux Mint"
-            system_type='Debian'
-            dist_type='Mint'
+                system_type='Debian'
+                dist_type='Mint'
                 ;;
             *Ubuntu*)
                 log -n INFO "Starting bootstrap for Ubuntu"
-            system_type='Debian'
-            dist_type='Ubuntu'
+                system_type='Debian'
+                dist_type='Ubuntu'
                 ;;
             *)
                 log -n ERROR "Unsupported Linux OS"
@@ -184,7 +184,9 @@ elif [ "${system_type}" = "Debian" ]; then
         neofetch
         neovim
         python3-pip
+        unzip
         yadm
+        zip
         zsh
     )
 
