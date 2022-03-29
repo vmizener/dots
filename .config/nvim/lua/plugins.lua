@@ -21,16 +21,17 @@ end
 
 return require('packer').startup(function(use)
 
-    -- LSP config {{{
+    -- LSP Config {{{
+    use 'neovim/nvim-lspconfig'
+    -- }}}
+    -- LSP Installer {{{
     use {
-        'neovim/nvim-lspconfig',
-        config = function()
-            local nvim_lsp = require('lspconfig')
+        'williamboman/nvim-lsp-installer',
+        config = function ()
+            local lsp_installer = require('nvim-lsp-installer')
 
-            -- Use an on_attach function to only map the following keys
-            -- after the language server attaches to the current buffer
-            local on_attach = function(client, bufnr)
-                --Enable completion triggered by <c-x><c-o>
+            local function on_attach(client, bufnr)
+                -- Enable completion triggered by <c-x><c-o>
                 utils.buf_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
                 -- Mappings
@@ -38,50 +39,38 @@ return require('packer').startup(function(use)
                 local opts = { noremap=true, silent=true }
                 utils.buf_map('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
                 utils.buf_map('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-                --utils.buf_map('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-                --utils.buf_map('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-                --utils.buf_map('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+                utils.buf_map('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+                utils.buf_map('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+                utils.buf_map('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
                 utils.buf_map('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
                 utils.buf_map('n', 'gt', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
-                --utils.buf_map('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-                --utils.buf_map('n', '<Leader>ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
-                utils.buf_map('n', '<Leader>ee', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>', opts)
-                utils.buf_map('n', '<Leader>j', '<cmd>lua vim.lsp.diagnostic.goto_next()<cr>', opts)
-                utils.buf_map('n', '<Leader>k', '<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>', opts)
-                utils.buf_map('n', '<Leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+                utils.buf_map('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+                utils.buf_map('n', '<Leader>ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+                utils.buf_map('n', '<Leader>j', '<cmd>lua vim.diagnostic.goto_next()<cr>', opts)
+                utils.buf_map('n', '<Leader>k', '<cmd>lua vim.diagnostic.goto_prev()<cr>', opts)
+                utils.buf_map('n', '<Leader>f', '<cmd>lua vim.diagnostic.open_float()<cr>', opts)
+                utils.buf_map('n', '<Leader>q', '<cmd>lua vim.diagnostic.setqflist()<cr>', opts)
 
             end
 
-            -- Use a loop to conveniently call 'setup' on multiple servers and
-            -- map buffer local keybindings when the language server attaches
-            local servers = { "pyright" }
-            for _, lsp in ipairs(servers) do
-                nvim_lsp[lsp].setup {
+            -- Register a handler that will be called for each installed server when it's ready
+            -- (i.e. when installation is finished or if the server is already installed).
+            lsp_installer.on_server_ready(function(server)
+                local opts = {
                     on_attach = on_attach,
-                    flags = {
-                        debounce_text_changes = 150,
-                    }
                 }
-            end
+
+                server:setup(opts)
+            end)
+
         end
+
     }
     -- }}}
-    -- LSP UI {{{
-    use {
-        'glepnir/lspsaga.nvim',
-        config = function()
-            require('lspsaga').init_lsp_saga()
-            local opts = { noremap=true, silent=true }
-            utils.map('n', 'K', ':Lspsaga hover_doc<CR>', opts)
-            utils.map('n', 'gr', ':Lspsaga lsp_finder<CR>', opts)
-            utils.map('n', '<Leader>rn', ':Lspsaga rename<CR>', opts)
-            utils.map('n', '<Leader>ca', ':Lspsaga code_action<CR>', opts)
-            utils.map('v', '<Leader>ca', '<C-u>:Lspsaga range_code_action<CR>', opts)
-
-            utils.map('n', '<M-d>', ':Lspsaga open_floaterm<CR>', opts)
-            utils.map('t', '<M-d>', '<C-\\><C-n>:Lspsaga close_floaterm<CR>', opts)
-        end
-    }
+    -- LSP-Rooter automatically sets the working directory to the project root {{{
+    use { "ahmedkhalf/lsp-rooter.nvim", config = function()
+        require("lsp-rooter").setup()
+    end }
     -- }}}
     -- LSP Symbols {{{
     use {
@@ -156,7 +145,7 @@ return require('packer').startup(function(use)
     -- }}}
 
     -- Bufferline adds fancy tabs for buffers {{{
-    use { 
+    use {
         'akinsho/nvim-bufferline.lua',
         requires = {'kyazdani42/nvim-web-devicons', opt = true },
         config = function ()
@@ -177,7 +166,7 @@ return require('packer').startup(function(use)
     use 'psf/black'
     -- }}}
     -- Colorizer automatically highlights color codes {{{
-    use { 
+    use {
         'norcalli/nvim-colorizer.lua',
         config = function()
             require('colorizer').setup(nil, {
@@ -247,11 +236,6 @@ return require('packer').startup(function(use)
         utils.map('n', '<Leader>i', ':IndentLinesToggle<CR>')
     end }
     -- }}}
-    -- LSP-rooter automatically sets the working directory to the project root {{{
-    use { "ahmedkhalf/lsp-rooter.nvim", config = function()
-        require("lsp-rooter").setup()
-    end }
-    -- }}}
     -- Lualine provides a better status line and a tab bar, in lua {{{
     use {
         'hoob3rt/lualine.nvim',
@@ -288,17 +272,6 @@ return require('packer').startup(function(use)
         utils.map('n', 'S', ':PounceRepeat<CR>')
         utils.map('v', 's', ':Pounce<CR>')
     end }
-    -- }}}
-    -- Sad provides project-wide replacement {{{
-    use {
-        'ray-x/sad.nvim',
-        config = function ()
-            require('sad').setup({
-                diff = 'delta',
-                exact = false,
-            })
-        end
-    }
     -- }}}
     -- Startify is a fancy start page for Vim {{{
     use 'mhinz/vim-startify'
