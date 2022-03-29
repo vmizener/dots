@@ -86,25 +86,32 @@ for file in ${(M)ZSHCONFIGFILES:#*/completion.zsh}; do
     source ${file}
 done
 
-unset ZSHCONFIGFILES
-
 # Load local init
 if [[ -e ${HOME}/.localrc ]]; then
     source ${HOME}/.localrc
 fi
 
 # Source submodules
-ZSH_SUBMOD_DIR=${HOME}/.config/zsh/submodules
-ZSH_SUBMODULES=(
-    ${ZSH_SUBMOD_DIR}/zsh-autosuggestions/zsh-autosuggestions.zsh
-    ${ZSH_SUBMOD_DIR}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh  # Must be last
+ZSH_SUBMODS=${HOME}/.config/zsh/submodules
+ZSH_PLUGINS=(
+    ${ZSH_SUBMODS}/zsh-autosuggestions/zsh-autosuggestions.zsh
+    # Following two plugins must be last, in this order:
+    ${ZSH_SUBMODS}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    ${ZSH_SUBMODS}/zsh-history-substring-search/zsh-history-substring-search.zsh
 )
-for file in ${ZSH_SUBMODULES}; do
+for file in ${ZSH_PLUGINS}; do
     if [[ -e ${file} ]]; then
         source ${file}
     fi
 done
-unset ZSH_SUBMOD_DIR
-unset ZSH_SUBMODULES
+
+# Bind history search keys
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
+
+# Cleanup
+unset ZSHCONFIGFILES ZSH_SUBMODS ZSH_PLUGINS
 
 # TODO: tab-completion not from initial character

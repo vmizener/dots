@@ -4,3 +4,6 @@
 [submodule ".config/zsh/submodules/zsh-autosuggestions"]
 	path = .config/zsh/submodules/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions
+[submodule ".config/zsh/submodules/zsh-history-substring-search"]
+	path = .config/zsh/submodules/zsh-history-substring-search
+	url = https://github.com/zsh-users/zsh-history-substring-search.git
