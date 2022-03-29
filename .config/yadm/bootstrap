@@ -295,6 +295,7 @@ if ! command -v yadm >/dev/null 2>&1; then
 elif ! $(yadm list >/dev/null 2>&1); then
     log -n INFO "Initializing YADM"
     yadm clone --no-bootstrap "https://github.com/vmizener/dots.git"
+    yadm submodule update --init --recursive
 fi
 
 # Python
@@ -310,13 +311,13 @@ if ! command -v npm >/dev/null 2>&1; then
     log -n WARNING "NPM is not installed; some packages will be missing"
 elif confirm "Update NPM?"; then
     log -n INFO "Updating NPM"
-    npm install -g npm
+    sudo npm install -g npm
     node_packages=(
         json-server # Deploy a fake REST API server
     )
     install_from_list \
         "NPM packages" \
-        "npm install -g" \
+        "sudo npm install -g" \
         "npm list -g --depth 0" \
         "${node_packages[@]}"
 fi

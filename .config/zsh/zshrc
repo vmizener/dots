@@ -8,6 +8,9 @@
 # (Default is 022)
 umask 002
 
+# Enable extended globbing
+setopt EXTENDED_GLOB
+
 # Color variables for convenience
 # To print all zshrc colors:
 # for i in {1..256}; do print -P "%F{$i}Color : $i"; done;
@@ -61,7 +64,7 @@ export HISTFILE=${HOME}/.zsh_history
 
 ###########
 # Startup
-ZSHCONFIGFILES=(${HOME}/.config/zsh/**/*.zsh)
+ZSHCONFIGFILES=(${HOME}/.config/zsh/(^submodules/)#*.zsh)  # Ignore submodule files
 
 # Load path files
 for file in ${(M)ZSHCONFIGFILES:#*/path.zsh}; do
@@ -90,5 +93,11 @@ if [[ -e ${HOME}/.localrc ]]; then
     source ${HOME}/.localrc
 fi
 
-# TODO: syntax highlighting: https://github.com/zsh-users/zsh-syntax-highlighting
+# Source syntax highlighting
+ZSH_SYNTAX_HIGHLIGHTING=${HOME}/.config/zsh/submodules/zsh-syntax-highlighting
+if [[ -d ${ZSH_SYNTAX_HIGHLIGHTING} ]]; then
+    source ${ZSH_SYNTAX_HIGHLIGHTING}/zsh-syntax-highlighting.zsh
+fi
+unset ZSH_SYNTAX_HIGHLIGHTING
+
 # TODO: tab-completion not from initial character
