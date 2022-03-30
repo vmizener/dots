@@ -9,11 +9,6 @@ if fn.empty(fn.glob(install_path)) > 0 then
     execute 'packadd packer.nvim'
 end
 -- }}}
--- Automatically reload configs after writing {{{
---vim.cmd([[
---   autocmd BufWritePost ~/.config/nvim/init.lua,~/.config/nvim/lua/*.lua source <afile> | PackerCompile
---]])
--- }}}
 
 --
 -- After modifying plugins, resync with :PackerSync
@@ -21,12 +16,10 @@ end
 
 return require('packer').startup(function(use)
 
-    -- LSP Config {{{
-    use 'neovim/nvim-lspconfig'
-    -- }}}
-    -- LSP Installer {{{
+    -- LSP Config/Installer {{{
     use {
         'williamboman/nvim-lsp-installer',
+        requires = { 'neovim/nvim-lspconfig' },
         config = function ()
             local lsp_installer = require('nvim-lsp-installer')
 
@@ -57,6 +50,19 @@ return require('packer').startup(function(use)
                 local opts = {
                     on_attach = on_attach,
                 }
+
+                if server.name == "sumneko_lua" then
+                    local runtimepath = vim.split(package.path, ';')
+                    table.insert(runtimepath, 'lua/?.lua')
+                    table.insert(runtimepath, 'lua/?/init.lua')
+                    opts.settings = {
+                        Lua = {
+                            runtime = { version = "LuaJIT", path = runtimepath, },
+                            diagnostics = { globals = { "vim" }, },
+                            telemetry = { enable = false, },
+                        }
+                    }
+                end
 
                 server:setup(opts)
             end)
@@ -138,8 +144,38 @@ return require('packer').startup(function(use)
     }
 
     -- }}}
-    -- GUI Library {{{
-    use 'ray-x/guihua.lua'
+
+    -- DAP {{{
+    use {
+        'mfussenegger/nvim-dap',
+        config = function ()
+            -- See `:help dap.txt` for documentation on how nvim-dap functions
+            local opts = { noremap=true, silent=true }
+            utils.map('n', '<F9>', ':lua require("dap").toggle_breakpoint()<CR>', opts)
+            utils.map('n', '<F10>', ':lua require("dap").step_over()<CR>', opts)
+            utils.map('n', '<F11>', ':lua require("dap").step_into()<CR>', opts)
+            utils.map('n', '<F12>', ':lua require("dap").step_out()<CR>', opts)
+            utils.map('n', '<F5>', ':lua require("dap").continue()<CR>', opts)
+            utils.map('n', '<S-F5>', ':lua require("dap").stop()<CR>', opts)
+            utils.map('n', '<Leader>dr', ':lua require("dap").repl.open()<CR>', opts)
+            utils.map('n', '<Leader>dj', ':lua require("dap").down()<CR>', opts)
+            utils.map('n', '<Leader>dk', ':lua require("dap").up()<CR>', opts)
+            utils.map('n', '<Leader>di', ':lua require("dap.ui.widgets").hover()()<CR>', opts)
+        end
+    }
+    use {
+        'theHamsta/nvim-dap-virtual-text',
+        after = { 'nvim-dap' },
+        config = function ()
+            require('nvim-dap-virtual-text').setup()
+            vim.fn.sign_define('DapBreakpoint', { text='🔴', texthl='', linehl='', numhl='' })
+        end
+    }
+    use {
+        'mfussenegger/nvim-dap-python', config = function ()
+            require('dap-python').setup(vim.g['python3_host_prog'])
+        end
+    }
     -- }}}
 
     -- Bufferline adds fancy tabs for buffers {{{
@@ -161,7 +197,10 @@ return require('packer').startup(function(use)
     }
     -- }}}
     -- Black is an autoformatter for Python {{{
-    use 'psf/black'
+    use {
+        'psf/black',
+        ft = 'python'
+    }
     -- }}}
     -- Colorizer automatically highlights color codes {{{
     use {
