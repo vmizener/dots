@@ -237,17 +237,7 @@ return require('packer').startup(function(use)
         'lewis6991/gitsigns.nvim',
         requires = { 'nvim-lua/plenary.nvim' },
         config = function()
-            require('gitsigns').setup({
-                yadm = { enable = true },
-                status_formatter = function (status)
-                    local added, changed, removed = status.added, status.changed, status.removed
-                    local status_txt = {}
-                    if added   and added   > 0 then table.insert(status_txt, '+'..added  ) end
-                    if changed and changed > 0 then table.insert(status_txt, '~'..changed) end
-                    if removed and removed > 0 then table.insert(status_txt, '-'..removed) end
-                    return table.concat(status_txt, ' ')
-                end
-            })
+            require('gitsigns').setup({ yadm = { enable = true }, })
             utils.map('n', '<Leader>gj', ':Gitsigns next_hunk<CR>', { noremap = true, silent = true } )
             utils.map('n', '<Leader>gk', ':Gitsigns prev_hunk<CR>', { noremap = true, silent = true } )
         end
@@ -279,14 +269,24 @@ return require('packer').startup(function(use)
         requires = {'kyazdani42/nvim-web-devicons', opt = true },
         after = { 'gitsigns.nvim' },
         config = function ()
+            local function get_git_status()
+                local status_dict = vim.b['gitsigns_status_dict']
+                if not status_dict then return {} else
+                    return {
+                        added = status_dict.added,
+                        modified = status_dict.changed,
+                        removed = status_dict.removed,
+                    }
+                end
+            end
             require('lualine').setup({
                 sections = {
-                    lualine_a = {'mode'},
-                    lualine_b = {{'b:gitsigns_head', icon = ''}, 'b:gitsigns_status'},
-                    lualine_c = {'filename'},
-                    lualine_x = {'encoding', 'fileformat', 'filetype'},
-                    lualine_y = { {'diagnostics', sources = {'nvim_lsp'}} },
-                    lualine_z = {'progress', {'location', icon = ''}}
+                    lualine_a = { 'mode', { function () return 'ᑭ' end, cond = function () return vim.o['paste'] end } },
+                    lualine_b = { { 'b:gitsigns_head', icon = '' }, { 'diff', source = get_git_status } },
+                    lualine_c = { 'filename'},
+                    lualine_x = { 'encoding', 'fileformat', 'filetype' },
+                    lualine_y = { { 'diagnostics', sources = { 'nvim_lsp' } } },
+                    lualine_z = { 'progress', { 'location', icon = '' } }
                 },
                 inactive_sections = {
                     lualine_a = {},
