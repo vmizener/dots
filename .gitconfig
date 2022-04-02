@@ -11,7 +11,7 @@
 	ui = always
 [core]
 	excludesfile = ~/.gitignore
-	pager = delta -n
+	pager = delta -sn
 [merge]
 	tool = vimdiff
 	conflictstyle = diff3
