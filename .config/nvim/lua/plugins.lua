@@ -60,6 +60,10 @@ return require('packer').startup(function(use)
                             runtime = { version = "LuaJIT", path = runtimepath, },
                             diagnostics = { globals = { "vim" }, },
                             telemetry = { enable = false, },
+                            workspace = {
+                                -- Make the server aware of Neovim config files
+                                library = vim.fn.stdpath("config")
+                            },
                         }
                     }
                 end
@@ -142,6 +146,14 @@ return require('packer').startup(function(use)
     }
     -- }}}
 
+    -- BQF provides a better quickfix list {{{
+    use {
+        'kevinhwang91/nvim-bqf',
+        config = function ()
+            require('bqf').setup({})
+        end
+    }
+    -- }}}
     -- Bufferline adds fancy tabs for buffers {{{
     use {
         'akinsho/nvim-bufferline.lua',
