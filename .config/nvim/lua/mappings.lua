@@ -4,7 +4,7 @@ local map = utils.map
 -- Hotkeys from plugins are assigned in plugins.lua
 -- LSP hotkeys are in lsp.lua
 
--- Leader is comma
+-- Leader is space
 utils.apply_globals({ mapleader = ' ' })
 
 -- Editor Controls {{{
@@ -21,14 +21,9 @@ utils.apply_globals({ mapleader = ' ' })
     map('v', '<S-Tab>', '<gv', { noremap = true, silent = true })
     -- Quickly close quickfix/loclist windows
     map('n', 'QQ', ':cclose | lclose<CR>', { noremap = true, silent = true })
-    -- Navigate auto-completion menu with tab key
-    map('i', '<Tab>', 'pumvisible() ? "<C-n>" : "<Tab>"', { expr = true })
-    map('i', '<S-Tab>', 'pumvisible() ? "<C-p>" : "<Tab>"', { expr = true })
 -- }}}
 
 -- Editor Behavior and Appearance {{{
-    -- Clear search
-    map('n', '<Leader>/', ':nohlsearch<CR>', { silent = true })
     -- Center view on search results
     map('n', 'n', 'nzz', { noremap = true, silent = true })
     map('n', 'N', 'Nzz', { noremap = true, silent = true })
