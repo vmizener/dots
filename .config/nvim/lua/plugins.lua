@@ -188,6 +188,14 @@ return require('packer').startup(function(use)
         end
     }
     -- }}}
+    -- Dressing improves nvim UI default interfaces (like using Telescope) {{{
+    use {
+        'stevearc/dressing.nvim',
+        config = function ()
+            require('dressing').setup()
+        end
+    }
+    -- }}}
     -- Fidget provides a progress indicator for the LSP {{{
     use {
         'j-hui/fidget.nvim',
@@ -323,6 +331,21 @@ return require('packer').startup(function(use)
                         '%.pyc',
                     },
                     layout_strategy = 'vertical'
+                },
+            })
+        end
+    }
+    -- }}}
+    -- ToggleTerm provides better terminal integration {{{
+    use {
+        'akinsho/toggleterm.nvim',
+        config = function ()
+            require('toggleterm').setup({
+                open_mapping = [[<C-\>]],
+                close_on_exit = true,
+                direction = 'float',
+                float_opts = {
+                    border = 'curved',
                 },
             })
         end
