@@ -50,7 +50,7 @@ utils.apply_globals({ mapleader = ' ' })
     map('n', '<Leader>bp', ':bprev<CR>', { noremap = true, silent = true })
     map('n', '<Leader>bn', ':bnext<CR>', { noremap = true, silent = true })
     map('n', '<Leader>bb', ':b#<CR>', { noremap = true, silent = true })
-    map('n', '<Leader>bd', ':lclose|bprev|bd #<CR>', { noremap = true })
+    map('n', '<Leader>bd', ':lclose|bprev|bd #<CR>', { noremap = true, silent = true })
     map('n', '<Leader>bk', ':lclose|bprev|bd! #<CR>', { noremap = true, silent = true })
 -- }}}
 
