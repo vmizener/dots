@@ -16,7 +16,7 @@ function screen-sty () {
 }
 function get-hostname () {
     if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-        echo "${c_ylw}$(hostname -i 2>/dev/null)${c_reset} "
+        echo "${c_ylw}$(hostname -s 2>/dev/null)${c_reset} "
     else
         echo "${c_ylw}Localhost${c_reset} "
     fi
