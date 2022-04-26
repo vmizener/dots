@@ -1,0 +1,11 @@
+layer=overlay
+background-color=#333333
+max-icon-size=64
+
+format=<span font="Overpass Nerd Font">%s</span>%b
+text-alignment=center
+
+height=200
+padding=20
+border-size=2
+border-color=#454555

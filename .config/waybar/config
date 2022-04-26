@@ -1,0 +1,71 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 30,
+
+    "modules-left": [
+        "sway/workspaces"
+    ],
+    "modules-right": [
+        "network",
+        "battery",
+        "pulseaudio",
+        "clock",
+        "custom/quit"
+    ],
+
+    "battery": {
+        "format": "{time} {capacity}% {icon}",
+        "format-alt": "{time} {icon}",
+        "format-icons": ["", "", "", "", "", "", "", "","", ""],
+
+        "format-charging": "🗲 {capacity}% {icon}",
+        "format-time": "~{H}h {M}m",
+        "interval": 30,
+        "states": {
+            "warning": 25,
+            "critical": 10
+        },
+        "tooltip": false
+    },
+    "clock": {
+        "format": "{:%b %d %H:%M}",
+        "tooltip": false
+    },
+    "custom/quit": {
+        "format": "⏻",
+        "on-click": "~/.config/sway/powermenu.sh",
+        "tooltip": false
+    },
+    "network": {
+        "format": "{ifname}",
+        "format-wifi": " {essid}",
+        "format-ethernet": " {ifname}",
+        "format-disconnected": "睊",
+        "tooltip-format-wifi": "{signalStrength}%",
+        "max-length": 20
+    },
+    "pulseaudio": {
+        "format": "{volume}% {icon}",
+        "format-bluetooth": "{volume}% {icon}",
+        "format-muted": "",
+
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+
+        },
+        "scroll-step": 1,
+        "on-click": "pavucontrol"
+    },
+    "sway/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": false,
+        "format": "{name}",
+    }
+}
