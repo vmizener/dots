@@ -21,6 +21,13 @@ alias sr='screen -r'
 alias sR='screen -dr'
 alias ss='screen -S'
 
+alias t='tmux'
+alias tl='tmux list-sessions'
+alias td='tmux detach'
+alias tr='tmux attach -t'
+alias tR='tmux attach'
+alias ts='tmux new -s'
+
 alias icat='kitty +kitten icat --align=left'
 
 [ -d ${HOME}/.bash_aliases ] && source ${HOME}/.bash_aliases
@@ -59,9 +66,11 @@ alias dict='dict-less'
 function dump {
     date
     if [ -n "${STY+x}" ]; then
-        print -P "Session ID:\t${c_wht}${STY}${c_reset}"
+        print -P "Screen Session:\t${c_wht}${STY}${c_reset}"
+    elif [ -n "${TMUX}" ]; then
+        print -P "TMUX Session:\t${c_wht}$(tmux display-message -p '#S')${c_reset}"
     else;
-        print -P "Session ID:\t${c_red}<No Session>${c_reset}"
+        print -P "Session Info:\t${c_red}<No Session>${c_reset}"
     fi
     print -P "Logged in as:\t${c_wht}$(whoami)${c_reset}@${c_wht}$(hostname)${c_reset}"
 }

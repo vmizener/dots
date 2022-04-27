@@ -14,6 +14,12 @@ function screen-sty () {
         echo "${c_wht}${sty_str}${c_reset} "
     fi
 }
+function tmux-session () {
+    if (( ${+TMUX} )); then
+        local tmux_session_str=$(tmux display-message -p '#S')
+        echo "${c_wht}${tmux_session_str}${c_reset} "
+    fi
+}
 function get-hostname () {
     if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
         echo "${c_ylw}$(hostname 2>/dev/null)${c_reset} "
@@ -36,7 +42,7 @@ function set-terminal-title () {
     print -Pn "\e]0;%(5~|%-1~/…/%3~|%4~)\a"
 }
 
-RPROMPT="$(screen-sty)$(get-hostname)[${C_wht}%D{%H:%M}${c_reset}]"
+RPROMPT="$(tmux-session)$(screen-sty)$(get-hostname)[${C_wht}%D{%H:%M}${c_reset}]"
 
 local NEWLINE=$'\n'
 precmd () {
