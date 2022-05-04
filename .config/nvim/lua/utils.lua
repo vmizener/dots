@@ -26,7 +26,7 @@ function M.apply_colorscheme(name, mode)
     guicursor = 'n-v-c-sm:block,i-ci-ve:ver50-Cursor,r-cr-o:hor50',
     background = mode
   })
-  
+
   M.apply_globals({
     colors_name = name
   })
@@ -41,12 +41,12 @@ end
 
 -- Buffer local keymap
 function M.buf_map(...)
-  vim.api.nvim_buf_set_keymap(bufnr, ...)
+  vim.api.nvim_buf_set_keymap(0, ...)
 end
 
 -- Buffer local option
 function M.buf_option(...)
-  vim.api.nvim_buf_set_option(bufnr, ...)
+  vim.api.nvim_buf_set_option(0, ...)
 end
 
 -- Check whether the current buffer is empty
