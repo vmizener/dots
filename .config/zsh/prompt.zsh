@@ -1,102 +1,14 @@
-autoload colors && colors
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
-function insert-mode () {}
-function normal-mode () { echo "-- NORMAL --" }
-function virtual-env () {
-    if (( ${+VIRTUAL_ENV} )); then
-        local venv_str=$(echo ${VIRTUAL_ENV} | awk -F'/' '{print $NF}')
-        echo "${C_grn}${venv_str}${c_reset} "
-    fi
-}
-function screen-sty () {
-    if (( ${+STY} )); then
-        local sty_str=$(echo ${STY} | awk -F'.' '{print $NF}')
-        echo "${c_wht}${sty_str}${c_reset} "
-    fi
-}
-function tmux-session () {
-    if (( ${+TMUX} )); then
-        local tmux_session_str=$(tmux display-message -p '#S')
-        echo "${c_wht}${tmux_session_str}${c_reset} "
-    fi
-}
-function get-hostname () {
-    if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-        echo "${c_ylw}$(hostname 2>/dev/null)${c_reset} "
-    else
-        echo "${c_ylw}Localhost${c_reset} "
-    fi
-}
-function git-branch () {
-    if git rev-parse --git-dir > /dev/null 2>&1; then
-        if [[ $(git status --porcelain) == "" ]]; then
-            local prefix="${c_grn}✓"
-        else
-            local prefix="${c_red}✗"
-        fi
-        echo "(${prefix} ${c_mag}$(git rev-parse --abbrev-ref HEAD)${c_reset})"
-    fi
-}
-function set-terminal-title () {
-    # Set terminal title to truncated working directory
-    print -Pn "\e]0;%(5~|%-1~/…/%3~|%4~)\a"
-}
-
-RPROMPT="$(tmux-session)$(screen-sty)$(get-hostname)[${C_wht}%D{%H:%M}${c_reset}]"
-
-local NEWLINE=$'\n'
-precmd () {
-    set-terminal-title
-    # Print directory info above the prompt
-    print -Pr "${NEWLINE}${c_blu}%~ ${c_reset}$(git-branch)"
-    set-prompt
-}
-function set-prompt () {
-    case ${KEYMAP} in
-      (vicmd)      VI_MODE="$(normal-mode)" ;;
-      (main|viins) VI_MODE="$(insert-mode)" ;;
-      (*)          VI_MODE="$(insert-mode)" ;;
-    esac
-    terminfo_down_sc=${terminfo[cud1]}${terminfo[cuu1]}${terminfo[sc]}${terminfo[cud1]}
-    VIMODE="%{${terminfo_down_sc}${VI_MODE}${terminfo[rc]}%}"
-    PS1="${VIMODE}$(virtual-env)%(?..${c_red})%# ${c_reset}"
-}
-
-function zle-line-init zle-keymap-select {
-    set-prompt
-    zle reset-prompt
-}
-preexec () { print -rn -- ${terminfo[el]}; }
+source ~/.config/zsh/submodules/powerlevel10k/powerlevel10k.zsh-theme
 
 # Enable vi mode
 bindkey -v
-zle -N zle-line-init
-zle -N zle-keymap-select
 
-# Yank to the system clipboard
-function vi-yank-xclip {
-    case $(uname -s) in 
-        # TODO: test other options
-        *Darwin*)   COPY_CMD="pbcopy -i" ;;
-        *Linux*)    COPY_CMD="xclip" ;;
-        *)          COPY_CMD="xclip" ;;
-    esac
-    zle vi-yank
-    eval "echo '${CUTBUFFER}' | ${COPY_CMD}"
-}
-zle -N vi-yank-xclip
-bindkey -M vicmd 'y' vi-yank-xclip
-
-# Make keys work
-bindkey "^[[1~" beginning-of-line   # Home
-bindkey "^[[4~" end-of-line         # End
-bindkey "^?" backward-delete-char   # Backspace
-bindkey "^U" backward-kill-line
-
-# Enable partial history search
-autoload -U history-search-end  # Have the cursor at the end of the line
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-bindkey "^[[A" history-beginning-search-backward-end
-bindkey "^[[B" history-beginning-search-forward-end
-
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

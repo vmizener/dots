@@ -7,3 +7,6 @@
 [submodule ".config/zsh/submodules/zsh-history-substring-search"]
 	path = .config/zsh/submodules/zsh-history-substring-search
 	url = https://github.com/zsh-users/zsh-history-substring-search.git
+[submodule ".config/zsh/submodules/powerlevel10k"]
+	path = .config/zsh/submodules/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k.git
