@@ -1,6 +1,5 @@
 profile laptop {
     output eDP-1 enable scale 2
-    exec swaymsg input type:touchpad events enabled
 }
 
 profile home {
@@ -9,5 +8,12 @@ profile home {
     output DP-4 enable scale 1 position 0,0
     exec swaymsg workspace 2, move workspace to output 'DP-3'
     exec swaymsg workspace 1, move workspace to output 'DP-4'
-    exec swaymsg input type:touchpad events disabled
+}
+
+profile work-desk {
+    output eDP-1 enable scale 2 position 0,0
+    output DP-3 enable scale 1 position 1920,0
+    exec swaymsg workspace 1, move workspace to output 'DP-3'
+    exec swaymsg workspace 3, move workspace to output 'DP-3'
+    exec swaymsg workspace 4, move workspace to output 'DP-3'
 }
