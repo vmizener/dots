@@ -10,3 +10,6 @@
 [submodule ".config/zsh/submodules/powerlevel10k"]
 	path = .config/zsh/submodules/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
+[submodule ".config/zsh/submodules/zsh-fzf-history-search"]
+	path = .config/zsh/submodules/zsh-fzf-history-search
+	url = https://github.com/joshskidmore/zsh-fzf-history-search.git

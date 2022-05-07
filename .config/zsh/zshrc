@@ -13,13 +13,13 @@ setopt EXTENDED_GLOB
 
 # Build path
 PATH=.
+PATH=$PATH:${HOME}/.local/bin
 PATH=$PATH:/usr/local/sbin
 PATH=$PATH:/usr/local/bin
 PATH=$PATH:/usr/sbin
 PATH=$PATH:/usr/bin
 PATH=$PATH:/sbin
 PATH=$PATH:/bin
-PATH=$PATH:${HOME}/.local/bin
 
 if [ ! -z $VIRTUAL_ENV ]; then
     PATH=${VIRTUAL_ENV}/bin:$PATH
@@ -95,6 +95,7 @@ fi
 ZSH_SUBMODS=${HOME}/.config/zsh/submodules
 ZSH_PLUGINS=(
     ${ZSH_SUBMODS}/zsh-autosuggestions/zsh-autosuggestions.zsh
+    ${ZSH_SUBMODS}/zsh-fzf-history-search/zsh-fzf-history-search.zsh
     # Following two plugins must be last, in this order:
     ${ZSH_SUBMODS}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
     ${ZSH_SUBMODS}/zsh-history-substring-search/zsh-history-substring-search.zsh

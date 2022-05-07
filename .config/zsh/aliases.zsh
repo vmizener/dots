@@ -24,7 +24,7 @@ alias ss='screen -S'
 alias t='tmux'
 alias tl='tmux list-sessions'
 alias td='tmux detach'
-alias tr='tmux attach -t'
+alias tt='tmux attach -t'
 alias tR='tmux attach'
 alias ts='tmux new -s'
 
