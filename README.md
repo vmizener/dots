@@ -9,3 +9,6 @@ Bootstrap:
 
 Note that updating neovim will produce spurious errors; just ignore them.
 (TODO: keep an eye on a vim-packer update regarding this)
+
+Configure p10k prompt by running `p10k configure`.
+Answer "NO" to the request to append to your zshrc at the end (it's already setup to use it)
