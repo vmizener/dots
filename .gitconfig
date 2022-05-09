@@ -23,5 +23,7 @@
 	tree-detail= log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
 [include]
 	path = .gitconfig.default_identity
-[includeIf "gitdir:~/repos/google/"]
+[includeIf "hasconfig:remote.*.url:https://*googlesource.com/*"]
+	path = .gitconfig.google
+[includeIf "hasconfig:remote.*.url:sso://gke-internal/*"]
 	path = .gitconfig.google

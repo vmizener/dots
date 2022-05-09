@@ -19,6 +19,6 @@
 [url "sso://user/rvonmizener/"]
 	insteadof = me:
 [http]
-	cookiefile = /home/rvonmizener/.gitcookies
+	cookiefile = "~/.gitcookies"
 
 # vim:ft=gitconfig
