@@ -1,1 +1,24 @@
-remote/.localgitconfig
+[user]
+	email = rvonmizener@google.com
+	name = Raymond von Mizener
+[branch]
+	autosetuprebase = always
+[pull]
+	rebase = true
+[alias]
+	review = "!f() { git push origin HEAD:refs/for/${1:-main}; }; f"
+	mark-ready= "!f() { git push -o ready origin HEAD:refs/for/${1:-main}; }; f"
+	mark-wip = "!f() { git push -o wip origin HEAD:refs/for/${1:-main}; }; f"
+[url "sso://gke-internal.googlesource.com"]
+	insteadOf = https://gke-internal.git.corp.google.com
+	insteadOf = https://gke-internal.googlesource.com
+	insteadOf = https://gke-internal.googlesource.com
+[url "sso://team"]
+	insteadOf = https://team.git.corp.google.com
+	insteadOf = https://team.git.corp.google.com
+[url "sso://user/rvonmizener/"]
+	insteadof = me:
+[http]
+	cookiefile = /home/rvonmizener/.gitcookies
+
+# vim:ft=gitconfig
