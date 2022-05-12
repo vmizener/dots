@@ -13,7 +13,7 @@ case $op in
         systemctl $op
         ;;
     lock)
-        swaylock
+        swaylock --grace 0
         ;;
     logout)
         swaymsg exit

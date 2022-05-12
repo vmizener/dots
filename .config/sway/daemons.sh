@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+# Clipboard manager
+killall -q wl-paste
+wl-paste -t text --watch clipman store &
+
+# Clipboard sync (needs Julia on system path)
+ps -ef | grep "[c]lipboard_sync" | cut -d' ' -f2 | xargs kill
+~/.config/sway/clipboard_sync.jl >/dev/null 2>&1 &
+
 # Gesture control
 killall -q fusuma
 fusuma -d
@@ -11,4 +19,3 @@ kanshi &
 # Notification manager
 killall -q mako
 mako &
-

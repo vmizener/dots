@@ -13,10 +13,10 @@ swipe:
   4:
     left:
       # Switch to Next Workspace
-      sendkey: "LEFTMETA+TAB"
+      sendkey: "LEFTMETA+RIGHTBRACE"
     right:
       # Switch to Previous Workspace
-      sendkey: "LEFTMETA+LEFTSHIFT+TAB"
+      sendkey: "LEFTMETA+LEFTBRACE"
 
 interval:
   swipe: 0.5

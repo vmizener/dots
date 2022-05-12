@@ -2,3 +2,13 @@
     font-family:    Hack Nerd Font;
     font-size:      15px;
 }
+
+window,
+#input,
+#inner-box,
+#outer-box,
+#scroll,
+#text {
+    margin: 5px;
+    border: 2px;
+}

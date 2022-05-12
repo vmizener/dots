@@ -6,6 +6,8 @@
     "modules-left": [
         "sway/workspaces"
     ],
+    "modules-center": [
+    ],
     "modules-right": [
         "network",
         "battery",
@@ -15,11 +17,10 @@
     ],
 
     "battery": {
-        "format": "{time} {capacity}% {icon}",
-        "format-alt": "{time} {icon}",
-        "format-icons": ["", "", "", "", "", "", "", "","", ""],
-
-        "format-charging": "🗲 {capacity}% {icon}",
+        "format": "<span font=\"Hack Nerd Font\">{icon}</span> {capacity}% {time}",
+        "format-alt": "<span font=\"Hack Nerd Font\">{icon}</span> {time}",
+        "format-icons": ["", "", "", "", "", "", "", "", "", ""],
+        "format-charging": "<span font=\"Hack Nerd Font\">🗲 {icon}</span> {capacity}%",
         "format-time": "~{H}h {M}m",
         "interval": 30,
         "states": {
@@ -33,21 +34,21 @@
         "tooltip": false
     },
     "custom/quit": {
-        "format": "⏻",
+        "format": "<span font=\"Hack Nerd Font\">⏻</span>",
         "on-click": "~/.config/sway/powermenu.sh",
         "tooltip": false
     },
     "network": {
         "format": "{ifname}",
-        "format-wifi": " {essid}",
-        "format-ethernet": " {ifname}",
-        "format-disconnected": "睊",
+        "format-wifi": "<span font=\"Hack Nerd Font\"></span> {essid}",
+        "format-ethernet": "<span font=\"Hack Nerd Font\"></span> {ifname}",
+        "format-disconnected": "<span font=\"Hack Nerd Font\">睊</span>",
         "tooltip-format-wifi": "{signalStrength}%",
         "max-length": 20
     },
     "pulseaudio": {
-        "format": "{volume}% {icon}",
-        "format-bluetooth": "{volume}% {icon}",
+        "format": "<span font=\"Hack Nerd Font\">{icon}</span> {volume}%",
+        "format-bluetooth": "<span font=\"Hack Nerd Font\">{icon}</span> {volume}%",
         "format-muted": "",
 
         "format-icons": {
@@ -58,7 +59,6 @@
             "portable": "",
             "car": "",
             "default": ["", "", ""]
-
         },
         "scroll-step": 1,
         "on-click": "pavucontrol"
@@ -66,6 +66,18 @@
     "sway/workspaces": {
         "disable-scroll": true,
         "all-outputs": false,
-        "format": "{name}",
+        "format": "{icon}",
+        "format-icons": {
+            "1": "壹",
+            "2": "貳",
+            "3": "參",
+            "4": "肆",
+            "5": "伍",
+            "6": "陸",
+            "7": "柒",
+            "8": "捌",
+            "9": "玖",
+            "10": "零"
+        }
     }
 }
