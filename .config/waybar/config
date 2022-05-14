@@ -44,6 +44,7 @@
         "format-ethernet": "<span font=\"Hack Nerd Font\"></span> {ifname}",
         "format-disconnected": "<span font=\"Hack Nerd Font\">睊</span>",
         "tooltip-format-wifi": "{signalStrength}%",
+        "on-click": "~/.config/sway/nm.sh",
         "max-length": 20
     },
     "pulseaudio": {
