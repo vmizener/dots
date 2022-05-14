@@ -10,5 +10,25 @@ source ~/.config/zsh/submodules/powerlevel10k/powerlevel10k.zsh-theme
 # Enable vi mode
 bindkey -v
 
+# Yank to the system clipboard
+function vi-yank-xclip {
+    case $(uname -s) in 
+        # TODO: test other options
+        *Darwin*)   COPY_CMD="pbcopy -i" ;;
+        *Linux*)    COPY_CMD="xclip" ;;
+        *)          COPY_CMD="xclip" ;;
+    esac
+    zle vi-yank
+    eval "echo '${CUTBUFFER}' | ${COPY_CMD}"
+}
+zle -N vi-yank-xclip
+bindkey -M vicmd 'y' vi-yank-xclip
+
+# Make keys work
+bindkey "^[[1~" beginning-of-line   # Home
+bindkey "^[[4~" end-of-line         # End
+bindkey "^?" backward-delete-char   # Backspace
+bindkey "^U" backward-kill-line     # Ctrl+U
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
