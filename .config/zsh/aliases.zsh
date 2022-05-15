@@ -34,17 +34,18 @@ alias icat='kitty +kitten icat --align=left'
 
 function weather () {
     # Print the current weather.
-    local url="wttr.in/${*}"
+    local url="v2d.wttr.in/${*}"
     if command -v curl &>/dev/null; then
         # Try with `curl` first
-        curl -m 10 ${url} 2>/dev/null \
-            || printf "%s\n" "[ERROR] weather: Could not connect to weather service. Try again later."
+        curl -m 10 ${url} 2>/dev/null
     elif command -v wget &>/dev/null; then
         # Try with `wget` next
-        wget -O - -q -T 600 ${url} 2>/dev/null \
-            || printf "%s\n" "[ERROR] weather: Could not connect to weather service. Try again later."
+        wget -O - -q -T 600 ${url} 2>/dev/null
     else
         printf "%s\n" "[ERROR] weather: This command requires either 'curl' or 'wget' to be installed."
+    fi
+    if [ $? -ne 0 ]; then
+        printf "%s\n" "[ERROR] weather: Could not connect to weather service. Try again later."
     fi
 }
 
