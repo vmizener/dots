@@ -11,6 +11,8 @@
     "modules-right": [
         "network",
         "battery",
+        "custom/weather",
+        "custom/separator",
         "pulseaudio",
         "clock",
         "custom/quit"
@@ -32,6 +34,15 @@
     "clock": {
         "format": "{:%b %d %H:%M}",
         "tooltip": false
+    },
+    "custom/separator": {
+        "format": "|",
+        "tooltip": false
+    },
+    "custom/weather": {
+        "format": "{}",
+        "exec": "~/.config/waybar/modules/weather.sh",
+        "interval": 3600
     },
     "custom/quit": {
         "format": "<span font=\"Hack Nerd Font\">⏻</span>",

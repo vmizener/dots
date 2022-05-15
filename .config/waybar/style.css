@@ -24,6 +24,8 @@ window#waybar {
 
 #battery,
 #clock,
+#custom-separator,
+#custom-weather,
 #custom-quit,
 #pulseaudio {
     color: #c5c8c6;
