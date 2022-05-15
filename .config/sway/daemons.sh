@@ -8,6 +8,10 @@ wl-paste -t text --watch clipman store &
 ps -ef | grep "[c]lipboard_sync" | cut -d' ' -f2 | xargs kill
 ~/.config/sway/clipboard_sync.jl >/dev/null 2>&1 &
 
+# Inhibit idle while playing audio or listening on mic
+killall -q sway-audio-idle
+sway-audio-idle-inhibit &
+
 # Gesture control
 killall -q fusuma
 fusuma -d
