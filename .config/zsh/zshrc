@@ -109,6 +109,9 @@ for file in ${ZSH_PLUGINS}; do
         source ${file}
     fi
 done
+# Submodule specific settings
+export ZSH_FZF_HISTORY_SEARCH_FZF_ARGS='+s +m'  # Allow fuzzy searching
+export ZSH_FZF_HISTORY_SEARCH_END_OF_LINE='y'   # Put cursor at end of line after select
 
 # Bind history search keys
 bindkey '^[[A' history-substring-search-up
