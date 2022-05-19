@@ -21,6 +21,15 @@
 [alias]
 	tree = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
 	tree-detail= log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+
+[url "sso://gke-internal"]
+	insteadof = https://gke-internal.git.corp.google.com
+	insteadof = https://gke-internal.googlesource.com
+[url "sso://team"]
+	insteadOf = https://team.git.corp.google.com
+[url "sso://user/rvonmizener/"]
+	insteadof = me:
+
 [include]
 	path = .gitconfig.default_identity
 [includeIf "hasconfig:remote.*.url:https://*googlesource.com/*"]
