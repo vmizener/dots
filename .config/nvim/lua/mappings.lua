@@ -40,8 +40,7 @@ utils.apply_globals({ mapleader = ' ' })
     map('n', 'z<Space>', 'za', { noremap = true, silent = true })
     map('v', 'z<Space>', 'za', { noremap = true, silent = true })
     -- Use system clipboard
-    map('n', '<Leader>y', '"+y', { noremap = true, silent = true })
-    map('v', '<Leader>y', '"+y', { noremap = true, silent = true })
+    map('v', '<Leader>y', '"+y:OSCYankReg +<CR>', { noremap = true, silent = true })
     map('n', '<Leader>p', '"+p', { noremap = true, silent = true })
     map('v', '<Leader>p', '"+p', { noremap = true, silent = true })
 -- }}}
@@ -56,7 +55,7 @@ utils.apply_globals({ mapleader = ' ' })
 
 -- File Management {{{
     -- Write as root
-    map('c', 'w!!', 'w !sudo tee > /dev/null %<CR>')
+    map('c', 'w!!', 'w !sudo tee > /dev/null % | e!<CR>')
     -- Open config
     map('n', '<Leader>ec', ':e $MYVIMRC<CR>', { noremap = true, silent = true})
     -- Source config

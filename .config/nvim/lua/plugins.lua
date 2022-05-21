@@ -304,6 +304,7 @@ return require('packer').startup(function(use)
     use {
         'nvim-telescope/telescope.nvim',
         requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
+        after = { 'telescope-fzf-native.nvim' },
         config = function ()
             utils.map('n', '<Leader>ot', ':Telescope file_browser<CR>')
             utils.map('n', '<Leader>of', ':Telescope find_files<CR>')
@@ -330,11 +331,25 @@ return require('packer').startup(function(use)
                         'node_modules/.*',
                         '%.pyc',
                     },
-                    layout_strategy = 'vertical'
+                    layout_strategy = 'flex',
+                },
+                pickers = {
+                    find_files = {
+                        theme = "dropdown",
+                        previewer = false,
+                    },
                 },
             })
+            require('telescope').load_extension('fzf')
         end
     }
+    -- Telescope Extensions {{{
+    -- Telescope-fzf-native allows telescope to leverage fzf through native lua {{{
+    use {
+        'nvim-telescope/telescope-fzf-native.nvim',
+        run = 'make',
+    }
+    -- }}} }}}
     -- }}}
     -- ToggleTerm provides better terminal integration {{{
     use {
@@ -367,6 +382,9 @@ return require('packer').startup(function(use)
     -- }}}
     -- Vim-cool smartly toggles search highlighting automatically {{{
     use 'romainl/vim-cool'
+    -- }}}
+    -- Vim-OSCyank has vim use OSC52 to copy to the system clipboard {{{
+    use 'ojroques/vim-oscyank'
     -- }}}
     -- VimTex for Tex {{{
     use {
