@@ -28,7 +28,6 @@ set $term ~/.local/bin/kitty -1
 # on the original workspace that the command was run on.
 #set $menu dmenu_path | dmenu | xargs swaymsg exec --
 set $menu wofi -Ii --show=drun
-bindsym $mod+c exec swaynag -m $PATH
 
 
 include /etc/sway/config-vars.d/*
@@ -144,7 +143,7 @@ bindswitch lid:off output eDP-1 enable
     bindsym $mod+Up focus up
     bindsym $mod+Right focus right
 
-    # Move the focused window with the same, but add Shift
+    # Move the focused window around by adding Shift
     bindsym $mod+Shift+$left move left
     bindsym $mod+Shift+$down move down
     bindsym $mod+Shift+$up move up
@@ -154,6 +153,17 @@ bindswitch lid:off output eDP-1 enable
     bindsym $mod+Shift+Down move down
     bindsym $mod+Shift+Up move up
     bindsym $mod+Shift+Right move right
+
+    # Move the focused workspace around by adding Control+Shift
+    bindsym $mod+Control+Shift+$left move workspace to left
+    bindsym $mod+Control+Shift+$down move workspace to down
+    bindsym $mod+Control+Shift+$up move workspace to up
+    bindsym $mod+Control+Shift+$right move workspace to right
+    # them arrow keys
+    bindsym $mod+Control+Shift+Left move workspace to left
+    bindsym $mod+Control+Shift+Down move workspace to down
+    bindsym $mod+Control+Shift+Up move workspace to up
+    bindsym $mod+Control+Shift+Right move workspace to right
 #
 # Workspaces:
 #
@@ -251,11 +261,15 @@ bindswitch lid:off output eDP-1 enable
     # Unmute, modify volume, then pipe result to wob
     bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ +5% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
     bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ -5% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
+    bindsym Shift+XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ +1% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
+    bindsym Shift+XF86AudioLowerVolume exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ -1% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
     # Toggle mute, then pipe either 0 or original volume to wob
     bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && ([[ $(pactl get-sink-mute @DEFAULT_SINK@ | cut -d' ' -f2) = 'yes' ]] && echo '0' || pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}') > $WOBSOCK
     # Pipe brightness to wob
     bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +5% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
     bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+    bindsym Shift+XF86MonBrightnessUp exec --no-startup-id brightnessctl set +1% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+    bindsym Shift+XF86MonBrightnessDown exec --no-startup-id brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
     bindsym XF86AudioPlay exec playerctl play-pause
     bindsym XF86AudioNext exec playerctl next
     bindsym XF86AudioPrev exec playerctl previous
