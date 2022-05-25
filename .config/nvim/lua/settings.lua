@@ -6,7 +6,6 @@ utils.apply_options({
     autoindent = true,      -- Automatic indentation
     smartindent = true,     -- Detect language-based indentation levels
     breakindent = true,     -- Indent line-breaks to align with code
-    colorcolumn = '90,120', -- Draw rulers at columns 80 & 120
     confirm = true,         -- Confirm quit if there're unsaved changes
     expandtab = true,       -- Fill tabs with spaces
     hidden = true,          -- Don't require writing buffers before hiding them
@@ -61,10 +60,24 @@ utils.apply_options({
 })
 
 -- Automatically show absolute numbering while in insert mode
-vim.cmd([[
-    autocmd InsertEnter * :set norelativenumber
-    autocmd InsertLeave * :set relativenumber
-]])
+vim.api.nvim_create_augroup('InsertRelNum', { clear = true })
+vim.api.nvim_create_autocmd('InsertEnter', { command = 'set norelativenumber', group = 'InsertRelNum'})
+vim.api.nvim_create_autocmd('InsertLeave', { command = 'set relativenumber', group = 'InsertRelNum' })
+
+-- Highlight characters in column 90 and columns 120+
+vim.api.nvim_create_augroup('ColorCol', { clear = true })
+vim.api.nvim_create_autocmd('ColorScheme', {
+    command = 'highlight ColorColumn ctermbg=darkred guibg=darkred',
+    group = 'ColorCol'
+})
+vim.api.nvim_create_autocmd('ColorScheme', {
+    command = 'match ColorColumn /\\%>89v.*\\%<91v/',
+    group = 'ColorCol'
+})
+vim.api.nvim_create_autocmd('ColorScheme', {
+    command = '2match ColorColumn /\\%>120v/',
+    group = 'ColorCol'
+})
 
 -- Determine python3 provider
 if vim.env.VIRTUAL_ENV then
