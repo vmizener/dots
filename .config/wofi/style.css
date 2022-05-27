@@ -1,9 +1,21 @@
 * {
-    font-family:    Hack Nerd Font;
-    font-size:      15px;
+    font-family: Hack Nerd Font;
+    font-size: 15px;
 }
 
-window,
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+window {
+    animation-name: fadeIn;
+    animation-duration: 0.2s;
+    margin: 5px;
+    border: 2px;
+    background-color: rgba (0,0,0,0.7);
+}
+
 #input,
 #inner-box,
 #outer-box,
@@ -11,4 +23,25 @@ window,
 #text {
     margin: 5px;
     border: 2px;
+    border-radius: 0px;
+    background-color: transparent;
+}
+
+#text {
+    background-color: transparent;
+}
+
+#img {
+    margin-right: 8px;
+    background-color: transparent;
+}
+
+#entry {
+    border-radius: 0px;
+    padding: 5px 2px 5px 2px;
+    margin: 0px 4px 0px 4px;
+}
+#entry:selected {
+    background-color: rgba (0,0,0,0.7);
+    padding: 7px;
 }

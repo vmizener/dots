@@ -4,25 +4,29 @@
     "height": 30,
 
     "modules-left": [
-        "sway/workspaces"
+        "sway/workspaces",
+        "sway/window",
+        "custom/end-right"
     ],
     "modules-center": [
     ],
     "modules-right": [
+        "custom/end-left",
         "network",
         "battery",
         "custom/weather",
         "custom/separator",
+        "idle_inhibitor",
         "pulseaudio",
         "clock",
         "custom/quit"
     ],
 
     "battery": {
-        "format": "<span font=\"Hack Nerd Font\">{icon}</span> {capacity}% {time}",
-        "format-alt": "<span font=\"Hack Nerd Font\">{icon}</span> {time}",
+        "format": "{icon} {capacity}% {time}",
         "format-icons": ["", "", "", "", "", "", "", "", "", ""],
-        "format-charging": "<span font=\"Hack Nerd Font\">🗲 {icon}</span> {capacity}%",
+        "format-charging": "🗲 {capacity}%",
+        "format-not-charging": " {capacity}%",
         "format-time": "~{H}h {M}m",
         "interval": 30,
         "states": {
@@ -35,6 +39,14 @@
         "format": "{:%b %d %H:%M}",
         "tooltip": false
     },
+    "custom/end-left": {
+        "format": " ",
+        "tooltip": false
+    },
+    "custom/end-right": {
+        "format": " ",
+        "tooltip": false
+    },
     "custom/separator": {
         "format": "|",
         "tooltip": false
@@ -45,22 +57,29 @@
         "interval": 3600
     },
     "custom/quit": {
-        "format": "<span font=\"Hack Nerd Font\">⏻</span>",
+        "format": "⏻",
         "on-click": "~/.config/sway/powermenu.sh",
         "tooltip": false
     },
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "",
+            "deactivated": ""
+        }
+    },
     "network": {
         "format": "{ifname}",
-        "format-wifi": "<span font=\"Hack Nerd Font\"></span> {essid}",
-        "format-ethernet": "<span font=\"Hack Nerd Font\"></span> {ifname}",
-        "format-disconnected": "<span font=\"Hack Nerd Font\">睊</span>",
+        "format-wifi": " {essid}",
+        "format-ethernet": "{ifname}",
+        "format-disconnected": "睊",
         "tooltip-format-wifi": "{signalStrength}%",
         "on-click": "~/.config/sway/nm.sh",
         "max-length": 20
     },
     "pulseaudio": {
-        "format": "<span font=\"Hack Nerd Font\">{icon}</span> {volume}%",
-        "format-bluetooth": "<span font=\"Hack Nerd Font\">{icon}</span> {volume}%",
+        "format": "{icon} {volume}%",
+        "format-bluetooth": "{icon} {volume}%",
         "format-muted": "",
 
         "format-icons": {
@@ -74,6 +93,9 @@
         },
         "scroll-step": 1,
         "on-click": "pavucontrol"
+    },
+    "sway/window": {
+        "tooltip": false
     },
     "sway/workspaces": {
         "disable-scroll": true,

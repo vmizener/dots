@@ -1,106 +1,88 @@
 * {
     border: none;
     border-radius: 0;
-    font-family: Overpass Nerd Font;
+    font-family: Hack Nerd Font;
     font-size: 15px;
     min-height: 0;
 }
 
 window#waybar {
-    background: transparent;
+    background:rgba (0, 0, 0, 0.55);
 }
 
-#workspaces {
+#custom-end-left {
     color: #c5c8c6;
-    background: #1d1f21;
     margin: 0px;
-    padding: 0px;
-    border-right: 0px;
-    border-left: 0px;
-    border-top: 0px;
-    border-bottom: 0px;
-    border-bottom-right-radius: 10px;
-}
-
-#battery,
-#clock,
-#custom-separator,
-#custom-weather,
-#custom-quit,
-#pulseaudio {
-    color: #c5c8c6;
-    background: #1d1f21;
-    margin: 0px;
-    padding: 0px 10px;
-    border-right: 0px;
-    border-left: 0px;
-    border-top: 0px;
-    border-bottom: 0px;
-}
-#network {
-    color: #c5c8c6;
-    background: #1d1f21;
-    margin: 0px;
-    padding: 0px 10px;
+    padding: 0px 2px;
     border-right: 0px;
     border-left: 0px;
     border-top: 0px;
     border-bottom: 0px;
     border-bottom-left-radius: 10px;
 }
-
-#battery {
+#custom-end-right {
     color: #c5c8c6;
-    background: #1d1f21;
+    margin: 0px;
+    padding: 0px 2px;
+    border-right: 0px;
+    border-left: 0px;
+    border-top: 0px;
+    border-bottom: 0px;
+    border-bottom-right-radius: 10px;
+}
+#custom-quit,
+#custom-separator {
+    margin: 0px;
+    padding: 0px 10px;
+    border-right: 0px;
+    border-left: 0px;
+    border-top: 0px;
+    border-bottom: 0px;
+}
+
+#battery,
+#clock,
+#custom-weather,
+#idle_inhibitor,
+#network,
+#pulseaudio,
+#window,
+#workspaces {
+    color: #c5c8c6;
+    margin: 3px;
+    padding: 0px 10px;
+    border-right: 0px;
+    border-left: 0px;
+    border-top: 0px;
+    border-bottom: 2px;
+    padding-bottom: 2px;
+    border-style: solid;
 }
 
 #battery.warning {
-    color:  rgba(255, 210, 4, 1);
+    color: rgba(255, 210, 4, 1);
 }
-
 #battery.critical {
     color: rgba(238, 46, 36, 1);
 }
-
 #battery.charging {
     color: rgba(217, 216, 216, 1);
-}
-
-#clock {
-    color: #c5c8c6;
-    background: #1d1f21;
-}
-
-#custom-quit {
-    color: #c5c8c6;
-    background: #1d1f21;
 }
 
 #custom-storage.warning {
     color: rgba(255, 210, 4, 1);
 }
-
 #custom-storage.critical {
     color: rgba(238, 46, 36, 1);
 }
 
-#network {
-    color: #c5c8c6;
-    background: #1d1f21;
-}
-
-#pulseaudio {
-    color: #c5c8c6;
-    background: #1d1f21;
-}
-
 #workspaces button:hover {
-    background: lightblue;
     color: black;
-    border-bottom-right-radius: 10px;
+    background: lightblue;
+    border-radius: 50px;
 }
 #workspaces button.focused {
     color: #c5c8c6;
     background: #3d3f41;
-    border-bottom-right-radius: 10px;
+    border-radius: 50px;
 }
