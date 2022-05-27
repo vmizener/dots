@@ -307,8 +307,8 @@ return require('packer').startup(function(use)
         after = { 'telescope-fzf-native.nvim' },
         config = function ()
             utils.map('n', '<Leader>ot', ':Telescope file_browser<CR>')
-            utils.map('n', '<Leader>of', ':Telescope find_files<CR>')
-            utils.map('n', '<Leader>oF', ':Telescope find_files cwd=~<CR>')
+            utils.map('n', '<Leader>of', ':Telescope find_files hidden=true<CR>')
+            utils.map('n', '<Leader>oF', ':Telescope find_files cwd=~ hidden=true<CR>')
             utils.map('n', '<Leader>og', ':Telescope live_grep<CR>')
             utils.map('n', '<Leader>ob', ':Telescope buffers<CR>')
             utils.map('n', '<Leader>oh', ':Telescope help_tags<CR>')
@@ -327,6 +327,7 @@ return require('packer').startup(function(use)
                         }
                     },
                     file_ignore_patterns = {
+                        '.cache/.*',
                         '.git/.*',
                         'node_modules/.*',
                         '%.pyc',
