@@ -1,9 +1,3 @@
-# Default config for sway
-#
-# Copy this to ~/.config/sway/config and edit it to your liking.
-#
-# Read `man 5 sway` for a complete reference.
-
 ### Variables
 #
 # Mod4 for logo key. Mod1 for alt.
@@ -11,7 +5,8 @@ set $mod Mod4
 set $alt Mod1
 
 # Background
-set $background /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png
+#set $background /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png
+set $background ~/.config/sway/wallpapers/serene_view.jpg
 #/usr/share/backgrounds/Gwallpaper-gLinux-vertical.png
 
 # Home row direction keys, like vim
@@ -65,7 +60,7 @@ exec_always ~/.config/waybar/waybar.sh
 #
 
 # Default wallpaper
-output * bg $background fill
+output * bg $background stretch
 
 # Disable laptop's display when lid is closed
 bindswitch lid:on output eDP-1 disable
@@ -127,8 +122,6 @@ bindswitch lid:off output eDP-1 enable
     # Reload the configuration file
     bindsym $mod+Shift+c reload
 
-    # Exit sway (logs you out of your Wayland session)
-    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
 #
 # Moving around:
 #
