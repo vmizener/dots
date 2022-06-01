@@ -24,6 +24,9 @@ set $term ~/.local/bin/kitty -1
 #set $menu dmenu_path | dmenu | xargs swaymsg exec --
 set $menu wofi -Ii --show=drun
 
+# Screen lock
+set $lock swaylock --grace 0
+
 
 include /etc/sway/config-vars.d/*
 
@@ -54,7 +57,6 @@ exec rm -f $WOBSOCK && mkfifo $WOBSOCK && tail -f $WOBSOCK | wob
 # Startup scripts
 exec_always ~/.config/sway/daemons.sh
 exec_always ~/.config/sway/swayidle.sh
-exec_always ~/.config/waybar/waybar.sh
 
 ### Output configuration
 #
@@ -63,8 +65,8 @@ exec_always ~/.config/waybar/waybar.sh
 output * bg $background stretch
 
 # Disable laptop's display when lid is closed
-bindswitch lid:on output eDP-1 disable
-bindswitch lid:off output eDP-1 enable
+bindswitch --reload lid:on output eDP-1 disable
+bindswitch --reload lid:off output eDP-1 enable
 
 #
 # Example configuration:
@@ -298,13 +300,13 @@ bindsym $mod+r mode "resize"
 #
 
 # Manual lock
-bindsym $mod+Escape exec "swaylock --grace 0"
+bindsym $mod+Escape exec $lock
 # Power menu
 bindsym $mod+Shift+Escape exec "~/.config/sway/powermenu.sh"
 # Dismiss notifications
 bindsym $mod+q exec "makoctl dismiss -a"
 # Clipboard manager
-bindsym $mod+o exec clipman pick
+bindsym $mod+o exec clipman pick -t wofi
 
 #
 # Specific app settings
