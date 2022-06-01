@@ -1,96 +1,112 @@
-### Variables
-#
-# Mod4 for logo key. Mod1 for alt.
-set $mod Mod4
-set $alt Mod1
-
-# Background
-#set $background /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png
-set $background ~/.config/sway/wallpapers/serene_view.jpg
-#/usr/share/backgrounds/Gwallpaper-gLinux-vertical.png
-
-# Home row direction keys, like vim
-set $left h
-set $down j
-set $up k
-set $right l
-
-# Your preferred terminal emulator
-set $term ~/.local/bin/kitty -1
-
-# Your preferred application launcher
-# Note: pass the final command to swaymsg so that the resulting window can be opened
-# on the original workspace that the command was run on.
-#set $menu dmenu_path | dmenu | xargs swaymsg exec --
-set $menu wofi -Ii --show=drun
-
-# Screen lock
-set $lock swaylock --grace 0
-
-
-include /etc/sway/config-vars.d/*
-
-
-### General Settings
-
-# Use auto-orientation (as opposed to horizontal)
-default_orientation auto
-# Use gaps
-gaps {
-    inner 5
-    outer 5
-}
-# Don't include title-bar in border
-default_border pixel 5
-smart_borders on
-
-# Initialize ssh-agent keyring
-exec sh -c "ssh-agent -s -a $SSH_AUTH_SOCK"
-
-# Export display settings to D-Bus
-exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
-
-# Overlay bar (for e.g. volume control)
-set $WOBSOCK $XDG_RUNTIME_DIR/wob.sock
-exec rm -f $WOBSOCK && mkfifo $WOBSOCK && tail -f $WOBSOCK | wob
-
-# Startup scripts
-exec_always ~/.config/sway/daemons.sh
-exec_always ~/.config/sway/swayidle.sh
-
-### Output configuration
-#
-
-# Default wallpaper
-output * bg $background stretch
-
-# Disable laptop's display when lid is closed
-bindswitch --reload lid:on output eDP-1 disable
-bindswitch --reload lid:off output eDP-1 enable
+#  _____ _    _  _____   __
+# /  ___| |  | |/ _ \ \ / /
+# \ `--.| |  | / /_\ \ V /
+#  `--. | |/\| |  _  |\ /
+# /\__/ \  /\  | | | || |
+# \____/ \/  \/\_| |_/\_/
 
 #
-# Example configuration:
+# Common Variables
 #
-#   output HDMI-A-1 resolution 1920x1080 position 1920,0
-#
-# You can get the names of your outputs by running: swaymsg -t get_outputs
 
+    # Mod4 for logo key. Mod1 for alt.
+    set $mod Mod4
+    set $alt Mod1
 
-### Input configuration
-#
-# Example configuration:
-#
-#   input "2:14:SynPS/2_Synaptics_TouchPad" {
-#       dwt enabled
-#       tap enabled
-#       natural_scroll enabled
-#       middle_emulation enabled
-#   }
-#
-# You can get the names of your inputs by running: swaymsg -t get_inputs
-# Read `man 5 sway-input` for more information about this section.
+    # Background
+    #set $background /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png
+    set $background ~/.config/sway/wallpapers/serene_view.jpg
+    #/usr/share/backgrounds/Gwallpaper-gLinux-vertical.png
 
-# Config touchpad controls
+    # Home row direction keys, like vim
+    set $left h
+    set $down j
+    set $up k
+    set $right l
+
+#
+# Common applications
+#
+
+    # Your preferred terminal emulator
+    set $term ~/.local/bin/kitty -1
+
+    # Your preferred application launcher
+    # Note: pass the final command to swaymsg so that the resulting window can be opened
+    # on the original workspace that the command was run on.
+    #set $menu dmenu_path | dmenu | xargs swaymsg exec --
+    set $menu wofi -Ii --show=drun
+
+    # Screen lock
+    set $lock swaylock --grace 0
+
+#
+# System Variables
+#
+    include /etc/sway/config-vars.d/*
+
+#
+# System settings
+#
+
+    # Use auto-orientation (as opposed to horizontal)
+    default_orientation auto
+    # Use gaps
+    gaps {
+        inner 5
+        outer 5
+    }
+    # Don't include title-bar in border
+    default_border pixel 5
+    smart_borders on
+
+    # Initialize ssh-agent keyring
+    exec sh -c "ssh-agent -s -a $SSH_AUTH_SOCK"
+
+    # Export display settings to D-Bus
+    exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+
+    # Overlay bar (for e.g. volume control)
+    set $WOBSOCK $XDG_RUNTIME_DIR/wob.sock
+    exec rm -f $WOBSOCK && mkfifo $WOBSOCK && tail -f $WOBSOCK | wob
+
+    # Startup scripts
+    exec_always ~/.config/sway/daemons.sh
+    exec_always ~/.config/sway/swayidle.sh
+
+#
+# I/O configuration
+#
+
+    # Default wallpaper
+    output * bg $background stretch
+
+    # Disable laptop's display when lid is closed
+    bindswitch --reload lid:on output eDP-1 disable
+    bindswitch --reload lid:off output eDP-1 enable
+
+    #
+    # Example configuration:
+    #
+    #   output HDMI-A-1 resolution 1920x1080 position 1920,0
+    #
+    # You can get the names of your outputs by running: swaymsg -t get_outputs
+
+    ### Input configuration
+    #
+    # Example configuration:
+    #
+    #   input "2:14:SynPS/2_Synaptics_TouchPad" {
+    #       dwt enabled
+    #       tap enabled
+    #       natural_scroll enabled
+    #       middle_emulation enabled
+    #   }
+    #
+    # You can get the names of your inputs by running: swaymsg -t get_inputs
+    # Read `man 5 sway-input` for more information about this section.
+
+    # Config touchpad controls
     input type:touchpad {
         dwt enabled
         tap enabled
@@ -101,10 +117,13 @@ bindswitch --reload lid:off output eDP-1 enable
         xkb_numlock enabled
     }
 
-### Key bindings
 #
-# Basics:
+# Key bindings
 #
+    #
+    # Basics
+    #
+
     # Start a terminal
     bindsym $mod+Return exec $term
 
@@ -124,9 +143,10 @@ bindswitch --reload lid:off output eDP-1 enable
     # Reload the configuration file
     bindsym $mod+Shift+c reload
 
-#
-# Moving around:
-#
+    #
+    # Moving around
+    #
+
     # Move your focus around
     bindsym $mod+$left focus left
     bindsym $mod+$down focus down
@@ -159,9 +179,11 @@ bindswitch --reload lid:off output eDP-1 enable
     bindsym $mod+Control+Shift+Down move workspace to down
     bindsym $mod+Control+Shift+Up move workspace to up
     bindsym $mod+Control+Shift+Right move workspace to right
-#
-# Workspaces:
-#
+
+    #
+    # Workspaces
+    #
+
     # Note: workspaces can have any name you want, not just numbers.
     # We just use 1-10 as the default.
 
@@ -192,9 +214,10 @@ bindswitch --reload lid:off output eDP-1 enable
     # Move to next workspace on output
     bindsym $mod+bracketright workspace next_on_output
 
-#
-# Layout stuff:
-#
+    #
+    # Layout stuff
+    #
+
     # You can "split" the current object of your focus with
     # $mod+b or $mod+v, for horizontal and vertical splits
     # respectively.
@@ -218,9 +241,10 @@ bindswitch --reload lid:off output eDP-1 enable
     # Move focus to the parent container
     bindsym $mod+a focus parent
 
-#
-# Screenshots:
-#
+    #
+    # Screenshots
+    #
+
     # Screenshots will copy to the clipboard by default
     # When holding Control, write to the ~/Pictures directory instead
 
@@ -237,9 +261,10 @@ bindswitch --reload lid:off output eDP-1 enable
     bindsym $mod+Control+Print exec --no-startup-id grim -g "$(slurp)"
 
 
-#
-# Scratchpad:
-#
+    #
+    # Scratchpad
+    #
+
     # Sway has a "scratchpad", which is a bag of holding for windows.
     # You can send windows there and get them back later.
 
@@ -250,9 +275,10 @@ bindswitch --reload lid:off output eDP-1 enable
     # If there are multiple scratchpad windows, this command cycles through them.
     bindsym $mod+minus scratchpad show
 
-#
-# Media/brightness buttons:
-#
+    #
+    # Media/brightness buttons
+    #
+
     # Unmute, modify volume, then pipe result to wob
     bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ +5% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
     bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ -5% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
@@ -269,57 +295,60 @@ bindswitch --reload lid:off output eDP-1 enable
     bindsym XF86AudioNext exec playerctl next
     bindsym XF86AudioPrev exec playerctl previous
 
-#
-# Resizing containers:
-#
-mode "resize" {
-    # left will shrink the containers width
-    # right will grow the containers width
-    # up will shrink the containers height
-    # down will grow the containers height
-    bindsym $left resize shrink width 10px
-    bindsym $down resize grow height 10px
-    bindsym $up resize shrink height 10px
-    bindsym $right resize grow width 10px
+    #
+    # Resizing containers
+    #
+    mode "resize" {
+        # left will shrink the containers width
+        # right will grow the containers width
+        # up will shrink the containers height
+        # down will grow the containers height
+        bindsym $left resize shrink width 10px
+        bindsym $down resize grow height 10px
+        bindsym $up resize shrink height 10px
+        bindsym $right resize grow width 10px
 
-    # Ditto, with arrow keys
-    bindsym Left resize shrink width 10px
-    bindsym Down resize grow height 10px
-    bindsym Up resize shrink height 10px
-    bindsym Right resize grow width 10px
+        # Ditto, with arrow keys
+        bindsym Left resize shrink width 10px
+        bindsym Down resize grow height 10px
+        bindsym Up resize shrink height 10px
+        bindsym Right resize grow width 10px
 
-    # Return to default mode
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-    bindsym Space mode "default"
-}
-bindsym $mod+r mode "resize"
+        # Return to default mode
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym Space mode "default"
+    }
+    bindsym $mod+r mode "resize"
 
-#
-# System controls:
-#
+    #
+    # System controls:
+    #
 
-# Manual lock
-bindsym $mod+Escape exec $lock
-# Power menu
-bindsym $mod+Shift+Escape exec "~/.config/sway/powermenu.sh"
-# Dismiss notifications
-bindsym $mod+q exec "makoctl dismiss -a"
-# Clipboard manager
-bindsym $mod+o exec clipman pick -t wofi
+    # Manual lock
+    bindsym $mod+Escape exec $lock
+    # Power menu
+    bindsym $mod+Shift+Escape exec "~/.config/sway/powermenu.sh"
+    # Dismiss notifications
+    bindsym $mod+q exec "makoctl dismiss -a"
+    # Clipboard manager
+    bindsym $mod+o exec clipman pick -t wofi
 
 #
 # Specific app settings
 #
 
-# No borders for browsers
-for_window [app_id="firefox"] border none
-for_window [app_id="google-chrome"] border none
-# Disable swayidle during browser fullscreen
-for_window [app_id="firefox"] inhibit_idle fullscreen
-for_window [app_id="google-chrome"] inhibit_idle fullscreen
-# Always float some applications by default
-for_window [app_id="pavucontrol"] floating enable
-for_window [title="nmtui"] floating enable
+    # No borders for browsers
+    for_window [app_id="firefox"] border none
+    for_window [app_id="google-chrome"] border none
+    # Disable swayidle during browser fullscreen
+    for_window [app_id="firefox"] inhibit_idle fullscreen
+    for_window [app_id="google-chrome"] inhibit_idle fullscreen
+    # Always float some applications by default
+    for_window [app_id="pavucontrol"] floating enable
+    for_window [title="nmtui"] floating enable
 
-include /etc/sway/config.d/*
+#
+# System config
+#
+    include /etc/sway/config.d/*
