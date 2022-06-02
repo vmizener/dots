@@ -30,6 +30,15 @@ alias ts='tmux new -s'
 
 alias icat='kitty +kitten icat --align=left'
 
+if command -v batcat &>/dev/null; then
+    # Bat is 'batcat' in Debian
+    alias cat='batcat'
+    export MANPAGER="sh -c 'col -bx | batcat -l man -p'"
+elif command -v bat &>/dev/null; then
+    alias cat='bat'
+    export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+fi
+
 [ -d ${HOME}/.bash_aliases ] && source ${HOME}/.bash_aliases
 
 function weather () {
