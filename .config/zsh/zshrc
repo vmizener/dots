@@ -36,6 +36,7 @@ export PATH
 
 
 # Enable history
+setopt INC_APPEND_HISTORY
 export HISTSIZE=10000
 export SAVEHIST=10000
 export HISTFILE=${HOME}/.zsh_history
@@ -90,11 +91,6 @@ for file in ${(M)ZSHCONFIGFILES:#*/completion.zsh}; do
     source ${file}
 done
 
-# Load local init
-if [[ -e ${HOME}/.localrc ]]; then
-    source ${HOME}/.localrc
-fi
-
 # Source submodules
 ZSH_SUBMODS=${HOME}/.config/zsh/submodules
 ZSH_PLUGINS=(
@@ -110,16 +106,25 @@ for file in ${ZSH_PLUGINS}; do
     fi
 done
 # Submodule specific settings
-export ZSH_FZF_HISTORY_SEARCH_FZF_ARGS='+s +m'  # Allow fuzzy searching
-export ZSH_FZF_HISTORY_SEARCH_END_OF_LINE='y'   # Put cursor at end of line after select
+export ZSH_FZF_HISTORY_SEARCH_FZF_ARGS='+s +m'      # Allow fuzzy searching
+export ZSH_FZF_HISTORY_SEARCH_END_OF_LINE='y'       # Put cursor at end of line after select
+export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE='y'   # Unique history results only
 
 # Bind history search keys
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
+bindkey '^[[A' history-substring-search-up          # Up arrow
+bindkey '^[[B' history-substring-search-down        # Down arrow
+bindkey '^k' history-substring-search-up            # Ctrl+k
+bindkey '^j' history-substring-search-down          # Ctrl+j
+bindkey '^ ' autosuggest-accept                     # Ctrl+Space
+bindkey -M vicmd 'k' history-substring-search-up    # k in vi-mode
+bindkey -M vicmd 'j' history-substring-search-down  # j in vi-mode
 
 # Cleanup
 unset ZSHCONFIGFILES ZSH_SUBMODS ZSH_PLUGINS
+
+# Load local init
+if [[ -e ${HOME}/.localrc ]]; then
+    source ${HOME}/.localrc
+fi
 
 # TODO: tab-completion not from initial character

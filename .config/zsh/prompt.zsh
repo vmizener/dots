@@ -12,14 +12,26 @@ bindkey -v
 
 # Yank to the system clipboard
 function vi-yank-xclip {
-    case $(uname -s) in 
+    case $(uname -s) in
         # TODO: test other options
-        *Darwin*)   COPY_CMD="pbcopy -i" ;;
-        *Linux*)    COPY_CMD="xclip" ;;
-        *)          COPY_CMD="xclip" ;;
+        *Darwin*)
+            COPY_CMD="pbcopy -i" ;;
+        *Linux*)
+            # Check compositor
+            session_id=$(loginctl | grep $(whoami) | head -n1 | awk '{print $1}')
+            compositor=$(loginctl show-session ${session_id} -p Type | awk -F= '{print $2}')
+            case ${compositor} in
+                *wayland*) COPY_CMD="wl-copy" ;;
+                *) COPY_CMD="xclip -i -selection clipboard" ;;
+            esac
+            ;;
+        *)
+            COPY_CMD="xclip -i -selection clipboard" ;;
     esac
     zle vi-yank
-    eval "echo '${CUTBUFFER}' | ${COPY_CMD}"
+    # Use zsh 'q' flag to escape shell-special characters
+    # See `man zshexpn`
+    eval "echo ${(q-)CUTBUFFER} | ${COPY_CMD}"
 }
 zle -N vi-yank-xclip
 bindkey -M vicmd 'y' vi-yank-xclip
