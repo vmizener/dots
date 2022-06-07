@@ -55,7 +55,7 @@ utils.apply_globals({ mapleader = ' ' })
 
 -- File Management {{{
     -- Write as root
-    map('c', 'w!!', 'w !sudo tee > /dev/null % | e!<CR>')
+    vim.cmd([[cnoreabbrev w!! lua utils.sudo_write()]])
     -- Open config
     map('n', '<Leader>ec', ':e $MYVIMRC<CR>', { noremap = true, silent = true})
     -- Source config
