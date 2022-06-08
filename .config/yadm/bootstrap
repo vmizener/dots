@@ -183,6 +183,7 @@ if [ "${system_type}" = "Darwin" ]; then
 #################
 elif [ "${system_type}" = "Debian" ]; then
     packages=(
+        bat
         fd-find
         fzf
         git
@@ -215,7 +216,8 @@ elif [ "${system_type}" = "Debian" ]; then
         done
     }
     add_ppa \
-        neovim-ppa/stable
+        neovim-ppa/stable \
+        neovim-ppa/unstable
 
     log -n INFO "Updating repository listing"
     sudo apt update
