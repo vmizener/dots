@@ -156,7 +156,7 @@ return require('packer').startup(function(use)
     -- }}}
     -- Bufferline adds fancy tabs for buffers {{{
     use {
-        'akinsho/nvim-bufferline.lua',
+        'akinsho/nvim-bufferline.lua', tag = 'v2.*',
         requires = {'kyazdani42/nvim-web-devicons', opt = true },
         config = function ()
             require("bufferline").setup({
@@ -354,7 +354,7 @@ return require('packer').startup(function(use)
     -- }}}
     -- ToggleTerm provides better terminal integration {{{
     use {
-        'akinsho/toggleterm.nvim',
+        'akinsho/toggleterm.nvim', tag = 'v1.*',
         config = function ()
             require('toggleterm').setup({
                 open_mapping = [[<C-\>]],
