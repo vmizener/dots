@@ -1,5 +1,3 @@
-utils = require('utils')
-
 -- Bootstrap Packer if necessary {{{
 local execute = vim.api.nvim_command
 local fn = vim.fn
@@ -20,59 +18,6 @@ return require('packer').startup(function(use)
     use {
         'williamboman/nvim-lsp-installer',
         requires = { 'neovim/nvim-lspconfig' },
-        config = function ()
-            local lsp_installer = require('nvim-lsp-installer')
-
-            local function on_attach(client, bufnr)
-                -- Enable completion triggered by <c-x><c-o>
-                utils.buf_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-                -- Mappings
-                -- See `:help vim.lsp.*` for documentation on any of the below functions
-                local opts = { noremap=true, silent=true }
-                utils.buf_map('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-                utils.buf_map('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-                utils.buf_map('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-                utils.buf_map('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-                utils.buf_map('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
-                utils.buf_map('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
-                utils.buf_map('n', 'gt', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
-                utils.buf_map('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-                utils.buf_map('n', '<Leader>j', '<cmd>lua vim.diagnostic.goto_next()<cr>', opts)
-                utils.buf_map('n', '<Leader>k', '<cmd>lua vim.diagnostic.goto_prev()<cr>', opts)
-                utils.buf_map('n', '<Leader>f', '<cmd>lua vim.diagnostic.open_float()<cr>', opts)
-
-            end
-
-            -- Register a handler that will be called for each installed server when it's ready
-            -- (i.e. when installation is finished or if the server is already installed).
-            lsp_installer.on_server_ready(function(server)
-                local opts = {
-                    on_attach = on_attach,
-                }
-
-                if server.name == "sumneko_lua" then
-                    local runtimepath = vim.split(package.path, ';')
-                    table.insert(runtimepath, 'lua/?.lua')
-                    table.insert(runtimepath, 'lua/?/init.lua')
-                    opts.settings = {
-                        Lua = {
-                            runtime = { version = "LuaJIT", path = runtimepath, },
-                            diagnostics = { globals = { "vim" }, },
-                            telemetry = { enable = false, },
-                            workspace = {
-                                -- Make the server aware of Neovim config files
-                                library = vim.fn.stdpath("config")
-                            },
-                        }
-                    }
-                end
-
-                server:setup(opts)
-            end)
-
-        end
-
     }
     -- }}}
     -- LSP-Rooter automatically sets the working directory to the project root {{{
@@ -84,7 +29,7 @@ return require('packer').startup(function(use)
     use {
         'simrat39/symbols-outline.nvim',
         config = function ()
-            utils.map('n', '<Leader>ss', ':SymbolsOutline<CR>', { noremap = true, silent = true } )
+            vim.keymap.set('n', '<Leader>ss', ':SymbolsOutline<CR>', { noremap = true, silent = true } )
         end
     }
     -- }}}
@@ -119,16 +64,16 @@ return require('packer').startup(function(use)
         config = function ()
             -- See `:help dap.txt` for documentation on how nvim-dap functions
             local opts = { noremap=true, silent=true }
-            utils.map('n', '<F9>', ':lua require("dap").toggle_breakpoint()<CR>', opts)
-            utils.map('n', '<F10>', ':lua require("dap").step_over()<CR>', opts)
-            utils.map('n', '<F11>', ':lua require("dap").step_into()<CR>', opts)
-            utils.map('n', '<F12>', ':lua require("dap").step_out()<CR>', opts)
-            utils.map('n', '<F5>', ':lua require("dap").continue()<CR>', opts)
-            utils.map('n', '<S-F5>', ':lua require("dap").stop()<CR>', opts)
-            utils.map('n', '<Leader>dr', ':lua require("dap").repl.open()<CR>', opts)
-            utils.map('n', '<Leader>dj', ':lua require("dap").down()<CR>', opts)
-            utils.map('n', '<Leader>dk', ':lua require("dap").up()<CR>', opts)
-            utils.map('n', '<Leader>di', ':lua require("dap.ui.widgets").hover()()<CR>', opts)
+            vim.keymap.set('n', '<F9>', ':lua require("dap").toggle_breakpoint()<CR>', opts)
+            vim.keymap.set('n', '<F10>', ':lua require("dap").step_over()<CR>', opts)
+            vim.keymap.set('n', '<F11>', ':lua require("dap").step_into()<CR>', opts)
+            vim.keymap.set('n', '<F12>', ':lua require("dap").step_out()<CR>', opts)
+            vim.keymap.set('n', '<F5>', ':lua require("dap").continue()<CR>', opts)
+            vim.keymap.set('n', '<S-F5>', ':lua require("dap").stop()<CR>', opts)
+            vim.keymap.set('n', '<Leader>dr', ':lua require("dap").repl.open()<CR>', opts)
+            vim.keymap.set('n', '<Leader>dj', ':lua require("dap").down()<CR>', opts)
+            vim.keymap.set('n', '<Leader>dk', ':lua require("dap").up()<CR>', opts)
+            vim.keymap.set('n', '<Leader>di', ':lua require("dap.ui.widgets").hover()()<CR>', opts)
         end
     }
     use {
@@ -209,10 +154,10 @@ return require('packer').startup(function(use)
         'tpope/vim-fugitive',
         config = function ()
             local opts = { noremap=true, silent=true }
-            utils.map('n', '<Leader>gd', ':Gdiffsplit!<CR>', opts)
-            utils.map('n', '<Leader>gD', '<C-w>h<C-w>c', opts)
-            --utils.map('n', '<Leader>gc', ':G commit<CR>', opts)
-            utils.map('n', '<Leader>gs', ':G status<CR>', opts)
+            vim.keymap.set('n', '<Leader>gd', ':Gdiffsplit!<CR>', opts)
+            vim.keymap.set('n', '<Leader>gD', '<C-w>h<C-w>c', opts)
+            --vim.keymap.set('n', '<Leader>gc', ':G commit<CR>', opts)
+            vim.keymap.set('n', '<Leader>gs', ':G status<CR>', opts)
         end
     }
     -- }}}
@@ -222,29 +167,22 @@ return require('packer').startup(function(use)
         requires = { 'nvim-lua/plenary.nvim' },
         config = function()
             require('gitsigns').setup({ yadm = { enable = true }, })
-            utils.map('n', '<Leader>gj', ':Gitsigns next_hunk<CR>', { noremap = true, silent = true } )
-            utils.map('n', '<Leader>gk', ':Gitsigns prev_hunk<CR>', { noremap = true, silent = true } )
+            vim.keymap.set('n', '<Leader>gj', ':Gitsigns next_hunk<CR>', { noremap = true, silent = true } )
+            vim.keymap.set('n', '<Leader>gk', ':Gitsigns prev_hunk<CR>', { noremap = true, silent = true } )
         end
     }
     -- }}}
     -- Gruvbox is a colorscheme for Vim {{{
     use { 'sainnhe/gruvbox-material', config = function ()
-        utils.apply_options({
-            termguicolors = true,
-            -- Options: 'dark', 'light'
-            background = 'dark',
-        })
-        utils.apply_globals({
-            -- Options: 'hard', 'medium', 'soft'
-            gruvbox_material_background = 'medium',
-        })
+        -- Options: 'hard', 'medium', 'soft'
+        vim.g['gruvbox_material_background'] = 'medium'
         vim.api.nvim_command('colorscheme gruvbox-material')
     end }
     -- }}}
     -- IndentLine provides an indentation guide {{{
     use { 'Yggdroot/indentLine', config = function ()
-        utils.apply_globals({ indentLine_char = '┆' })
-        utils.map('n', '<Leader>i', ':IndentLinesToggle<CR>')
+        vim.g['indentLine_char'] = '┆'
+        vim.keymap.set('n', '<Leader>i', ':IndentLinesToggle<CR>')
     end }
     -- }}}
     -- Lualine provides a better status line and a tab bar, in lua {{{
@@ -289,9 +227,8 @@ return require('packer').startup(function(use)
     -- }}}
     -- Pounce is a motion plugin akin to Hop/Sneak/Lightspeed with fuzzy matching {{{
     use { 'rlane/pounce.nvim', config = function ()
-        utils.map('n', 's', ':Pounce<CR>')
-        utils.map('n', 'S', ':PounceRepeat<CR>')
-        utils.map('v', 's', ':Pounce<CR>')
+        vim.keymap.set('n', 's', ':Pounce<CR>')
+        vim.keymap.set('n', 'S', ':PounceRepeat<CR>')
     end }
     -- }}}
     -- Startify is a fancy start page for Vim {{{
@@ -306,16 +243,17 @@ return require('packer').startup(function(use)
         requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
         after = { 'telescope-fzf-native.nvim' },
         config = function ()
-            utils.map('n', '<Leader>ot', ':Telescope file_browser<CR>')
-            utils.map('n', '<Leader>of', ':Telescope find_files hidden=true<CR>')
-            utils.map('n', '<Leader>oF', ':Telescope find_files cwd=~ hidden=true<CR>')
-            utils.map('n', '<Leader>og', ':Telescope live_grep<CR>')
-            utils.map('n', '<Leader>ob', ':Telescope buffers<CR>')
-            utils.map('n', '<Leader>oh', ':Telescope help_tags<CR>')
+            local opts = { noremap=true, silent=true }
+            vim.keymap.set('n', '<Leader>ot', ':Telescope file_browser<CR>', opts)
+            vim.keymap.set('n', '<Leader>of', ':Telescope find_files hidden=true<CR>', opts)
+            vim.keymap.set('n', '<Leader>oF', ':Telescope find_files cwd=~ hidden=true<CR>', opts)
+            vim.keymap.set('n', '<Leader>og', ':Telescope live_grep<CR>', opts)
+            vim.keymap.set('n', '<Leader>ob', ':Telescope buffers<CR>', opts)
+            vim.keymap.set('n', '<Leader>oh', ':Telescope help_tags<CR>', opts)
 
-            utils.map('n', '<Leader>od', ':Telescope diagnostics<CR>')
-            utils.map('n', '<Leader>ca', ':Telescope lsp_code_actions<CR>')
-            utils.map('v', '<Leader>ca', ':Telescope lsp_range_code_actions<CR>')
+            vim.keymap.set('n', '<Leader>od', ':Telescope diagnostics<CR>', opts)
+            vim.keymap.set('n', '<Leader>ca', ':Telescope lsp_code_actions<CR>', opts)
+            vim.keymap.set('v', '<Leader>ca', ':Telescope lsp_range_code_actions<CR>', opts)
 
             local actions = require('telescope.actions')
             require('telescope').setup({

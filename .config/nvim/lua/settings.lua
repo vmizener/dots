@@ -1,10 +1,9 @@
-local utils = require('utils')
-
-utils.apply_options({
+local options = {
     encoding = 'utf-8',     -- Okay
 
     autoindent = true,      -- Automatic indentation
     smartindent = true,     -- Detect language-based indentation levels
+    background = 'dark',    -- Use dark colorscheme for background.  Options: 'dark', 'light'
     breakindent = true,     -- Indent line-breaks to align with code
     confirm = true,         -- Confirm quit if there're unsaved changes
     expandtab = true,       -- Fill tabs with spaces
@@ -57,7 +56,8 @@ utils.apply_options({
     foldlevelstart = 99,  -- Open files with open folds
     foldmethod = 'expr',
     foldexpr = 'nvim_treesitter#foldexpr()',  -- Use treesitter for folding rules
-})
+}
+for k, v in pairs(options) do vim.o[k] = v end
 
 -- Automatically show absolute numbering while in insert mode
 vim.api.nvim_create_augroup('InsertRelNum', { clear = true })
