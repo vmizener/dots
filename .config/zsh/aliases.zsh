@@ -38,6 +38,9 @@ elif command -v bat &>/dev/null; then
     alias cat='bat'
     export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 fi
+if command -v delta &>/dev/null; then
+    alias diff='delta'
+fi
 
 [ -d ${HOME}/.bash_aliases ] && source ${HOME}/.bash_aliases
 
