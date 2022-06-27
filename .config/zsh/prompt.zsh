@@ -33,7 +33,7 @@ function vi-yank-xclip {
             COPY_CMD="xclip -i -selection clipboard" ;;
     esac
     zle vi-yank
-    eval "echo $CUTBUFFER | ${COPY_CMD} &2>/dev/null"
+    echo $CUTBUFFER | ${COPY_CMD} >/dev/null 2>&1
     # Also use OSC52
     maxbuf=8388608
     printf "\033]52;c;$(printf %s $CUTBUFFER | head -c $maxbuf | base64 | tr -d '\r\n')\a"
