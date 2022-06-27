@@ -12,6 +12,10 @@ bindkey -v
 
 # Yank to the system clipboard
 function vi-yank-xclip {
+    # Use zsh 'q' flag to escape shell-special characters
+    # See `man zshexpn`
+    CUTBUFFER="${(q-)CUTBUFFER}"
+    # Use appropriate clipboard
     case $(uname -s) in
         # TODO: test other options
         *Darwin*)
@@ -29,9 +33,10 @@ function vi-yank-xclip {
             COPY_CMD="xclip -i -selection clipboard" ;;
     esac
     zle vi-yank
-    # Use zsh 'q' flag to escape shell-special characters
-    # See `man zshexpn`
-    eval "echo ${(q-)CUTBUFFER} | ${COPY_CMD}"
+    eval "echo $CUTBUFFER | ${COPY_CMD} &2>/dev/null"
+    # Also use OSC52
+    maxbuf=8388608
+    printf "\033]52;c;$(printf %s $CUTBUFFER | head -c $maxbuf | base64 | tr -d '\r\n')\a"
 }
 zle -N vi-yank-xclip
 bindkey -M vicmd 'y' vi-yank-xclip
