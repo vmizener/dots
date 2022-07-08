@@ -42,7 +42,30 @@ if command -v delta &>/dev/null; then
     alias diff='delta'
 fi
 
-[ -d ${HOME}/.bash_aliases ] && source ${HOME}/.bash_aliases
+
+function copy () {
+    # Copy input to clipboard.
+    local copy_cmd
+    local input
+    # Determine selection tool
+    if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+        copy_cmd='wl-copy'
+    else
+        copy_cmd='xclip -i -selection clipboard'
+    fi
+    # Escape input
+    if [ -p /dev/stdin ]; then
+        while IFS= read line; do
+            input="$input${(q-)line}"
+        done
+    else
+        input="${(q-)1}"
+    fi
+    # Copy
+    eval "$copy_cmd $input" >/dev/null 2>&1
+    # Emit OSC52 keycode
+    printf "\033]52;c;$(printf "%s" "$input" | base64)\a"
+}
 
 function weather () {
     # Print the current weather.
@@ -87,5 +110,7 @@ function dump {
     fi
     print -P "Logged in as:\t${c_wht}$(whoami)${c_reset}@${c_wht}$(hostname)${c_reset}"
 }
+
+[ -d ${HOME}/.bash_aliases ] && source ${HOME}/.bash_aliases
 
 # vim:foldmethod=marker:foldlevel=0:filetype=zsh
