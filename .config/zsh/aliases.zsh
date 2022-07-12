@@ -48,11 +48,16 @@ function copy () {
     local copy_cmd
     local input
     # Determine selection tool
-    if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
-        copy_cmd='wl-copy'
-    else
-        copy_cmd='xclip -i -selection clipboard'
-    fi
+    case $(uname -s) in
+        *Darwin*)
+            copy_cmd="pbcopy -i" ;;
+        *Linux*)
+            if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+                copy_cmd='wl-copy'
+            else
+                copy_cmd='xclip -i -selection clipboard'
+            fi
+    esac
     # Escape input
     if [ -p /dev/stdin ]; then
         while IFS= read line; do
@@ -62,9 +67,10 @@ function copy () {
         input="${(q-)1}"
     fi
     # Copy
-    eval "$copy_cmd $input" >/dev/null 2>&1
+    echo $input | $copy_cmd >/dev/null 2>&1
     # Emit OSC52 keycode
-    printf "\033]52;c;$(printf "%s" "$input" | base64)\a"
+    maxbuf=8388608
+    printf "\033]52;c;$(printf "%s" "$input" | head -c $maxbuf | base64 | tr -d '\r\n')\a"
 }
 
 function weather () {
