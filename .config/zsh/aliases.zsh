@@ -33,10 +33,10 @@ alias icat='kitty +kitten icat --align=left'
 if command -v batcat &>/dev/null; then
     # Bat is 'batcat' in Debian
     alias cat='batcat'
-    export MANPAGER="sh -c 'col -bx | batcat -l man -p'"
+    export MANPAGER="sh -c 'col -bx | batcat -l man -p --paging=always'"
 elif command -v bat &>/dev/null; then
     alias cat='bat'
-    export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+    export MANPAGER="sh -c 'col -bx | bat -l man -p --paging=always'"
 fi
 if command -v delta &>/dev/null; then
     alias diff='delta'
