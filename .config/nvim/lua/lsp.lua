@@ -1,4 +1,3 @@
-require("nvim-lsp-installer").setup({})
 local lspconfig = require("lspconfig")
 
 local function on_attach(_, bufnr)
@@ -39,4 +38,9 @@ lspconfig.sumneko_lua.setup({
             },
         }
     }
+})
+
+-- Python
+lspconfig.pyright.setup({
+    on_attach = on_attach,
 })

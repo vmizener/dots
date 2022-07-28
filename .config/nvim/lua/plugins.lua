@@ -1,11 +1,21 @@
 -- Bootstrap Packer if necessary {{{
-local execute = vim.api.nvim_command
-local fn = vim.fn
-local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
-if fn.empty(fn.glob(install_path)) > 0 then
-    fn.system({'git', 'clone', 'https://github.com/wbthomason/packer.nvim', install_path})
-    execute 'packadd packer.nvim'
+local install_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
+    vim.fn.system({'git', 'clone', 'https://github.com/wbthomason/packer.nvim', install_path})
+    vim.api.nvim_command('packadd packer.nvim')
 end
+-- }}}
+-- Recompile on write {{{
+local config_root_path = vim.fn.stdpath('config')
+vim.api.nvim_create_augroup('PackerConfig', { clear = true })
+vim.api.nvim_create_autocmd('BufWritePost', {
+    pattern =  {
+        config_root_path .. '/lua/*.lua',
+        config_root_path .. '/init.lua',
+    },
+    command = 'PackerCompile',
+    group = 'PackerConfig',
+})
 -- }}}
 
 --
@@ -14,14 +24,31 @@ end
 
 return require('packer').startup(function(use)
 
-    -- LSP Config/Installer {{{
+    -- Mason: external tooling package manager {{{
     use {
-        'williamboman/nvim-lsp-installer',
-        requires = { 'neovim/nvim-lspconfig' },
+        'williamboman/mason.nvim',
+        requires = {
+            'neovim/nvim-lspconfig',
+            'williamboman/mason-lspconfig.nvim',
+        },
+        config = function ()
+            require("mason").setup({
+                ui = {
+                    icons = {
+                        package_installed = "✓",
+                        package_pending = "➜",
+                        package_uninstalled = "✗",
+                    }
+                }
+            })
+            require("mason-lspconfig").setup({
+                ensure_installed = { "sumneko_lua" },
+            })
+        end
     }
     -- }}}
     -- LSP-Rooter automatically sets the working directory to the project root {{{
-    use { "ahmedkhalf/lsp-rooter.nvim", config = function()
+    use { "ahmedkhalf/lsp-rooter.nvim", config = function ()
         require("lsp-rooter").setup()
     end }
     -- }}}
@@ -30,6 +57,18 @@ return require('packer').startup(function(use)
         'simrat39/symbols-outline.nvim',
         config = function ()
             vim.keymap.set('n', '<Leader>ss', ':SymbolsOutline<CR>', { noremap = true, silent = true } )
+        end
+    }
+    -- }}}
+    -- LSP Diagnostic Lines {{{
+    use {
+        'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
+        config = function ()
+            local lsp_lines = require('lsp_lines')
+            lsp_lines.setup()
+            -- Disable default diagnostics as it's redundant with this plugin
+            vim.diagnostic.config({ virtual_text = false })
+            vim.keymap.set('n', '<Leader>l', lsp_lines.toggle, { desc = "Toggle lsp_lines" })
         end
     }
     -- }}}
