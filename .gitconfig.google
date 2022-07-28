@@ -1,15 +1,27 @@
 [user]
 	email = rvonmizener@google.com
 	name = Raymond von Mizener
-[branch]
-	autosetuprebase = always
-[pull]
-	rebase = true
+
 [alias]
 	review = "!f() { git push origin HEAD:refs/for/${1:-main}; }; f"
 	mark-ready= "!f() { git push -o ready origin HEAD:refs/for/${1:-main}; }; f"
 	mark-wip = "!f() { git push -o wip origin HEAD:refs/for/${1:-main}; }; f"
+
+[branch]
+	autosetuprebase = always
 [http]
 	cookiefile = /usr/local/google/home/rvonmizener/.gitcookies
+[pull]
+	rebase = true
+
+[url "sso://gke-internal"]
+	insteadof = https://gke-internal.git.corp.google.com
+	insteadof = https://gke-internal.googlesource.com
+[url "sso://graybox"]
+	insteadOf = https://graybox.git.corp.google.com
+[url "sso://team"]
+	insteadOf = https://team.git.corp.google.com
+[url "sso://user/rvonmizener/"]
+	insteadof = me:
 
 # vim:ft=gitconfig
