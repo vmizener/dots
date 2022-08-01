@@ -14,7 +14,7 @@ profile home {
     exec swaymsg workspace 10, move workspace to output 'DP-3'
 }
 
-profile work-desk {
+profile work-desk-3 {
     output eDP-1 enable scale 2 position 0,0
     output DP-3 enable scale 1 position 1920,0
     exec swaymsg workspace 1, move workspace to output 'DP-3'
@@ -22,5 +22,29 @@ profile work-desk {
     exec swaymsg workspace 3, move workspace to output 'DP-3'
     exec swaymsg workspace 4, move workspace to output 'DP-3'
     exec swaymsg workspace 5, move workspace to output 'DP-3'
+    exec swaymsg workspace 9, move workspace to output 'DP-3'
     exec swaymsg workspace 10, move workspace to output 'eDP-1'
+}
+profile work-desk-5 {
+    output eDP-1 enable scale 2 position 0,0
+    output DP-5 enable scale 1 position 1920,0
+    exec swaymsg workspace 1, move workspace to output 'DP-5'
+    exec swaymsg workspace 2, move workspace to output 'eDP-1'
+    exec swaymsg workspace 3, move workspace to output 'DP-5'
+    exec swaymsg workspace 4, move workspace to output 'DP-5'
+    exec swaymsg workspace 5, move workspace to output 'DP-5'
+    exec swaymsg workspace 9, move workspace to output 'DP-5'
+    exec swaymsg workspace 10, move workspace to output 'eDP-1'
+}
+profile work-desk-main {
+    output eDP-1 disable
+    output 'Unknown HP Z27u G3 CN41411JSV' enable scale 1 position 0,0
+    output 'Unknown HP Z27u G3 CN41411JSL' enable scale 1 position 2560,0
+    exec swaymsg workspace 1, move workspace to output '"Unknown HP Z27u G3 CN41411JSV"'
+    exec swaymsg workspace 2, move workspace to output '"Unknown HP Z27u G3 CN41411JSL"'
+    exec swaymsg workspace 3, move workspace to output '"Unknown HP Z27u G3 CN41411JSL"'
+    exec swaymsg workspace 4, move workspace to output '"Unknown HP Z27u G3 CN41411JSL"'
+    exec swaymsg workspace 5, move workspace to output '"Unknown HP Z27u G3 CN41411JSL"'
+    exec swaymsg workspace 9, move workspace to output '"Unknown HP Z27u G3 CN41411JSL"'
+    exec swaymsg workspace 10, move workspace to output '"Unknown HP Z27u G3 CN41411JSL"'
 }
