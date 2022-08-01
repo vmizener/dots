@@ -5,29 +5,29 @@
 
     "modules-left": [
         "sway/workspaces",
-        "sway/window",
-        "custom/end-right"
+        "sway/mode",
+        "sway/window"
     ],
     "modules-center": [
     ],
     "modules-right": [
-        "custom/end-left",
         "network",
         "battery",
         "custom/weather",
         "custom/separator",
         "idle_inhibitor",
+        "bluetooth",
         "pulseaudio",
         "clock",
         "custom/quit"
     ],
 
     "battery": {
-        "format": "{icon} {capacity}% {time}",
+        "format": "{icon} {capacity}%{time}",
         "format-icons": ["", "", "", "", "", "", "", "", "", ""],
         "format-charging": "🗲 {capacity}%",
         "format-not-charging": " {capacity}%",
-        "format-time": "~{H}h {M}m",
+        "format-time": " ~{H}h {M}m",
         "interval": 30,
         "states": {
             "warning": 25,
@@ -35,16 +35,20 @@
         },
         "tooltip": false
     },
+    "bluetooth": {
+        // Show nothing by default
+        "format": "",
+        // Indicate if bluetooth is off
+        "format-disabled": " {status}",
+        "format-off": " {status}",
+        // Show connections only when connected
+        "format-connected": " {num_connections}",
+        "tooltip-format": "{controller_alias}\t{controller_address}",
+        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}"
+    },
     "clock": {
         "format": "{:%b %d %H:%M}",
-        "tooltip": false
-    },
-    "custom/end-left": {
-        "format": " ",
-        "tooltip": false
-    },
-    "custom/end-right": {
-        "format": " ",
         "tooltip": false
     },
     "custom/separator": {
@@ -79,20 +83,24 @@
     },
     "pulseaudio": {
         "format": "{icon} {volume}%",
-        "format-bluetooth": "{icon} {volume}%",
+        "format-bluetooth": "{icon} {volume}%",
         "format-muted": "",
 
         "format-icons": {
             "headphone": "",
-            "hands-free": "",
-            "headset": "",
+            "hands-free": "",
+            "headset": "",
             "phone": "",
             "portable": "",
             "car": "",
             "default": ["", "", ""]
         },
         "scroll-step": 1,
-        "on-click": "pavucontrol"
+        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+        "on-click-right": "pavucontrol"
+    },
+    "sway/mode": {
+        "tooltip": false
     },
     "sway/window": {
         "tooltip": false
