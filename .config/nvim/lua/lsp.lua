@@ -21,6 +21,11 @@ local function on_attach(_, bufnr)
 
 end
 
+-- Golang
+lspconfig.gopls.setup({
+    on_attach = on_attach,
+})
+
 -- Lua
 local luaruntimepath = vim.split(package.path, ';')
 table.insert(luaruntimepath, 'lua/?.lua')
@@ -42,5 +47,10 @@ lspconfig.sumneko_lua.setup({
 
 -- Python
 lspconfig.pyright.setup({
+    on_attach = on_attach,
+})
+
+-- Shell
+lspconfig.bashls.setup({
     on_attach = on_attach,
 })
