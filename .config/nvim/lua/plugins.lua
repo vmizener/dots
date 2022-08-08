@@ -42,7 +42,11 @@ return require('packer').startup(function(use)
                 }
             })
             require("mason-lspconfig").setup({
-                ensure_installed = { "sumneko_lua" },
+                ensure_installed = {
+                    "bash-language-server",
+                    "pyright",
+                    "sumneko_lua",
+                },
             })
         end
     }
@@ -69,6 +73,24 @@ return require('packer').startup(function(use)
             -- Disable default diagnostics as it's redundant with this plugin
             vim.diagnostic.config({ virtual_text = false })
             vim.keymap.set('n', '<Leader>l', lsp_lines.toggle, { desc = "Toggle lsp_lines" })
+            -- Set diagnostic virtual text colorscheme
+            vim.api.nvim_create_augroup('ColorLspLines', { clear = true })
+            vim.api.nvim_create_autocmd('ColorScheme', {
+                command = 'hi link DiagnosticVirtualTextError DiagnosticFloatingError',
+                group = 'ColorLspLines'
+            })
+            vim.api.nvim_create_autocmd('ColorScheme', {
+                command = 'hi link DiagnosticVirtualTextWarn DiagnosticFloatingWarn',
+                group = 'ColorLspLines'
+            })
+            vim.api.nvim_create_autocmd('ColorScheme', {
+                command = 'hi link DiagnosticVirtualTextInfo DiagnosticFloatingInfo',
+                group = 'ColorLspLines'
+            })
+            vim.api.nvim_create_autocmd('ColorScheme', {
+                command = 'hi link DiagnosticVirtualTextHint DiagnosticFloatingHint',
+                group = 'ColorLspLines'
+            })
         end
     }
     -- }}}
@@ -362,7 +384,7 @@ return require('packer').startup(function(use)
     use 'romainl/vim-cool'
     -- }}}
     -- Vim-OSCyank has vim use OSC52 to copy to the system clipboard {{{
-    use 'ojroques/vim-oscyank'
+    use 'ojroques/nvim-osc52'
     -- }}}
     -- VimTex for Tex {{{
     use {
