@@ -39,7 +39,7 @@ local opts = { noremap = true, silent = true }
     map('n', 'z<Space>', 'za', opts)
     map('v', 'z<Space>', 'za', opts)
     -- Use system clipboard
-    map('x', '<Leader>y', require('osc52').copy_visual, opts)
+    map('x', '<Leader>y', require('osc52').copy_visual)
     map('n', '<Leader>p', '"+p', opts)
     map('v', '<Leader>p', '"+p', opts)
 -- }}}
