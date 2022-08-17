@@ -1,2 +1,4 @@
+# Rescan in advance
 nmcli dev wifi rescan
-kitty -1 nmtui
+# Set window class ("app_id" in Wayland) so Sway can detect it
+kitty --class nmtui nmtui

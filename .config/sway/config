@@ -249,6 +249,9 @@
     # Make the current focus fullscreen
     bindsym $mod+f fullscreen
 
+    # Make the current focus follow on workspace change
+    bindsym $mod+Shift+f sticky enable
+
     # Toggle the current focus between tiling and floating mode
     bindsym $mod+Shift+space floating toggle
 
@@ -339,6 +342,44 @@
     bindsym $mod+r mode "resize"
 
     #
+    # Modify container opacity
+    #
+    mode "opacity" {
+        bindsym $left opacity minus 0.1
+        bindsym $down opacity minus 0.05
+        bindsym $up opacity plus 0.05
+        bindsym $right opacity plus 0.1
+
+        # Ditto, with arrow keys
+        bindsym Left opacity minus 0.1
+        bindsym Down opacity minus 0.05
+        bindsym Up opacity plus 0.05
+        bindsym Right opacity plus 0.1
+
+        bindsym minus opacity minus 0.1
+        bindsym equal opacity plus 0.1
+
+        bindsym 1 opacity 0.1
+        bindsym 2 opacity 0.2
+        bindsym 3 opacity 0.3
+        bindsym 4 opacity 0.4
+        bindsym 5 opacity 0.5
+        bindsym 6 opacity 0.6
+        bindsym 7 opacity 0.7
+        bindsym 8 opacity 0.8
+        bindsym 9 opacity 0.9
+        bindsym 0 opacity 1
+
+        # Return to default mode
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym Space mode "default"
+    }
+    bindsym $mod+o mode "opacity"
+    bindsym $mod+less opacity minus 0.1
+    bindsym $mod+greater opacity plus 0.1
+
+    #
     # System controls:
     #
 
@@ -349,7 +390,7 @@
     # Dismiss notifications
     bindsym $mod+q exec "makoctl dismiss -a"
     # Clipboard manager
-    bindsym $mod+o exec clipman pick -t wofi
+    bindsym $mod+p exec clipman pick -t wofi
 
 #
 # Specific app settings
@@ -363,7 +404,26 @@
     for_window [app_id="google-chrome"] inhibit_idle fullscreen
     # Always float some applications by default
     for_window [app_id="pavucontrol"] floating enable
-    for_window [title="nmtui"] floating enable
+    for_window [app_id="blueman-manager"] {
+        floating enable
+        resize set height 50 ppt
+        resize set width 10 ppt
+        move position 69 ppt 1 ppt
+    }
+    for_window [app_id="nmtui"] {
+        floating enable
+        resize set height 75 ppt
+        resize set width 50 ppt
+    }
+    for_window [title="Picture in picture"] {
+        floating enable
+        resize set height 50 ppt
+        resize set width 50 ppt
+        sticky enable
+    }
+    for_window [title="meet.google.com is sharing your screen."] {
+        move scratchpad
+    }
 
 #
 # System config

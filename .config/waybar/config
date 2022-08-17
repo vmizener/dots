@@ -1,3 +1,10 @@
+//  __    __            _
+// / / /\ \ \__ _ _   _| |__   __ _ _ __
+// \ \/  \/ / _` | | | | '_ \ / _` | '__|
+//  \  /\  | (_| | |_| | |_) | (_| | |
+//   \/  \/ \__,_|\__, |_.__/ \__,_|_|
+//                |___/
+
 {
     "layer": "top",
     "position": "top",
@@ -36,13 +43,11 @@
         "tooltip": false
     },
     "bluetooth": {
-        // Show nothing by default
-        "format": "",
-        // Indicate if bluetooth is off
+        "format": "",
         "format-disabled": " {status}",
         "format-off": " {status}",
-        // Show connections only when connected
         "format-connected": " {num_connections}",
+        "on-click": "blueman-manager",
         "tooltip-format": "{controller_alias}\t{controller_address}",
         "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}"
