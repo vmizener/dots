@@ -28,7 +28,7 @@
 #
 
     # Your preferred terminal emulator
-    set $term ~/.local/bin/kitty -1
+    set $term ~/.local/bin/kitty
 
     # Your preferred application launcher
     # Note: pass the final command to swaymsg so that the resulting window can be opened
@@ -40,13 +40,15 @@
     set $lock swaylock --grace 0
 
 #
-# System Variables
+# System variables
 #
     include /etc/sway/config-vars.d/*
 
 #
 # System settings
 #
+
+    include ~/.config/sway/google.config
 
     # Use auto-orientation (as opposed to horizontal)
     default_orientation auto
