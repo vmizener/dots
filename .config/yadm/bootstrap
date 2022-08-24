@@ -78,6 +78,42 @@ function install_from_list () {
     unset missing_packages
 }
 
+function install_repos_from_list () {
+    local repos=( "${@}" )
+
+    REPO_DIR=$(mktemp -d)
+    d=$(pwd)
+
+    function get_repo_name () {
+        name=$(basename "${1##*\/}")
+        echo "${name%.*}"
+    }
+
+    declare -a install_repos
+    for (( i=0; i<${#repos[@]} ; i+=2 )) ; do
+        repo="${repos[i]}"
+        echo $(get_repo_name "$repo")
+        if confirm "Install ${repo}?"; then
+            install_repos+=("${repos[i]}" "${repos[i+1]}")
+        fi
+    done
+
+    for (( i=0; i<${#install_repos[@]} ; i+=2 )) ; do
+        repo="${install_repos[i]}"
+        builder="${install_repos[i+1]}"
+        repo_name=$(get_repo_name "${repo}")
+        log -n "Installing ${repo}"
+        git clone "${repo}" "${REPO_DIR}/${repo_name}"
+        cd "${REPO_DIR}/${repo_name}"
+        eval "${builder}"
+        log -n "Installed!"
+    done
+    unset install_repos
+
+    rm -Rf "${REPO_DIR}"
+    cd "$d"
+}
+
 #################
 # Initializer
 #################
@@ -90,11 +126,12 @@ case $(uname -s) in
         dist_type='Darwin'
         ;;
     *Linux*)
+        log -n INFO "Identified system as Linux"
         if [ ! -f /etc/lsb-release ]; then
             log -n ERROR "Failed to identify distro; terminating"
             exit 1
         fi
-        dist_id=$(head -n1 /etc/lsb-release | cut -f2 -d"=")
+        dist_id=$(cat /etc/lsb-release | grep DISTRIB_RELEASE | cut -f2 -d"=")
         case $dist_id in
             *Mint*)
                 log -n INFO "Starting bootstrap for Linux Mint"
@@ -106,13 +143,18 @@ case $(uname -s) in
                 system_type='Debian'
                 dist_type='Ubuntu'
                 ;;
+            *rodete*)
+                log -n INFO "Starting bootstrap for Rodete"
+                system_type='Debian'
+                dist_type='Rodete'
+                ;;
             *Manjaro*)
                 log -n INFO "Starting bootstrap for Manjaro Linux"
                 system_type='Arch'
                 dist_type='Manjaro'
                 ;;
             *)
-                log -n ERROR "Unsupported Linux OS"
+                log -n ERROR "Unsupported Linux OS: $dist_id"
                 exit 1
                 ;;
         esac
@@ -184,53 +226,69 @@ if [ "${system_type}" = "Darwin" ]; then
 elif [ "${system_type}" = "Debian" ]; then
     packages=(
         bat
+        cmake
         fd-find
         fzf
         git
+        golang-go
+        meson
         neofetch
         neovim
         nodejs
         npm
         python3-pip
         ripgrep
+        scdoc
         unzip
         yadm
         zip
         zsh
     )
 
-    # Add NodeSource repository & signing key (with script)
-    if ! grep -h "^deb.*node_14.x" /etc/apt/sources.list.d/* >/dev/null 2>&1; then
-        log -n INFO "Adding NodeSource repository & signing key"
-        curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-    fi
-
-    # Add other missing repositories
-    function add_ppa () {
-        for ppa in "$@"; do
-            grep -h "^deb.*${ppa}" /etc/apt/sources.list.d/* >/dev/null 2>&1
-            if [ $? -ne 0 ]; then
-                log -n INFO "Adding ppa:${ppa}"
-                sudo add-apt-repository -y ppa:${ppa}
+    # Don't add custom PPAs on Rodete
+    if [ ! "${dist_type}" = "Rodete" ]; then
+        # Add NodeSource repository & signing key (with script)
+        if ! grep -h "^deb.*node_14.x" /etc/apt/sources.list.d/* >/dev/null 2>&1; then
+            log -n INFO "Adding NodeSource repository & signing key"
+            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
         fi
-        done
-    }
-    add_ppa \
-        neovim-ppa/stable \
-        neovim-ppa/unstable
 
-    log -n INFO "Updating repository listing"
-    sudo apt update
+        # Add other missing repositories
+        function add_ppa () {
+            for ppa in "$@"; do
+                grep -h "^deb.*${ppa}" /etc/apt/sources.list.d/* >/dev/null 2>&1
+                if [ $? -ne 0 ]; then
+                    log -n INFO "Adding ppa:${ppa}"
+                    sudo add-apt-repository -y ppa:${ppa}
+            fi
+            done
+        }
+        add_ppa \
+            neovim-ppa/stable \
+            neovim-ppa/unstable
+
+        log -n INFO "Updating repository listing"
+        sudo apt update
+    fi
 
     # Install `aptitude` package manager
     if ! exists "aptitude"; then
-        apt-get install aptitude
+    echo 1
+        sudo apt-get install aptitude
+    echo 2
     fi
+
+    # Install missing packages
+    function check_package () {
+        pkg=$1
+        dpkg-query -W "$pkg" >/dev/null 2>&1 && dpkg-query -s "$pkg" >/dev/null 2>&1
+    return $!
+    }
 
     install_from_list \
         "packages" \
         "sudo aptitude install" \
-        "dpkg-query -W" \
+        "check_package" \
         "${packages[@]}"
 
     if ! exists "delta"; then
@@ -243,6 +301,42 @@ elif [ "${system_type}" = "Debian" ]; then
     if exists "fdfind" && ! exists "fd"; then
         mkdir -p ${HOME}/.local/bin
         ln -s $(which fdfind) ${HOME}/.local/bin/fd
+    fi
+
+    # Sway
+    if ! exists "neofetch"; then
+        log -n WARNING "Cannot check WM without neofetch; install first"
+    elif [ $(neofetch wm | cut -f2 -d' ') = 'sway' ]; then
+        sway_packages=(
+            clipman
+            grimshot
+            libinih-dev
+            libwayland-dev
+            libxkbcommon-dev
+            waybar
+            wayland-protocols
+            wdisplays
+            wofi
+            xdg-desktop-portal-wlr
+        )
+        build_repos=(
+            # Swaylock-effects: fancier swaylock
+            "https://github.com/mortie/swaylock-effects.git"
+                "meson build && ninja -C build && sudo ninja -C build install"
+            # Kanshi: display/workspace manager
+            "https://git.sr.ht/~emersion/kanshi"
+                "meson build && ninja -C build && sudo ninja -C build install"
+            # Wob: "Wayland Overlay Bar"
+            "https://github.com/francma/wob.git"
+                "meson build && ninja -C build && sudo ninja -C build install"
+        )
+        install_from_list \
+            "sway packages" \
+            "sudo aptitude install" \
+            "check_package" \
+            "${sway_packages[@]}"
+        install_repos_from_list \
+            "${build_repos[@]}"
     fi
 
     log -n INFO "Upgrading packages"
@@ -301,6 +395,9 @@ elif ! $(yadm list >/dev/null 2>&1); then
     yadm submodule update --init --recursive
 fi
 
+log -n INFO "!!! Base install completed successfully !!!"
+log -n INFO "Hit CTRL-C at any time to skip post-install configuration"
+
 # Python
 if command -v python3 >/dev/null 2>&1 && confirm "Update Python3?"; then
     log -n INFO "Installing Python packages"
@@ -322,7 +419,7 @@ elif confirm "Update NPM?"; then
         "NPM packages" \
         "sudo npm install -g" \
         "npm list -g --depth 0" \
-        "${node_packages[@]}"
+        ${node_packages}
 fi
 
 # Neovim
@@ -341,6 +438,19 @@ if command -v nvim >/dev/null 2>&1 && confirm "Bootstrap Neovim?"; then
     # log -n INFO "Updating Neovim plugins"
     nvim '+autocmd User PackerComplete sleep 100m | qall' +PackerSync
     # nvim '+PlugUpdate' '+PlugClean!' '+PlugUpdate' '+qall'
+fi
+
+# Kitty
+if ! command -v kitty >/dev/null 2>&1 && confirm "Install Kitty terminal?"; then
+    log -n INFO "Installing Kitty"
+    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+    if [ ! "${system_type}" = "Darwin" ]; then
+        ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/
+        cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
+        cp ~/.local/kitty.app/share/applications/kitty-open.desktop ~/.local/share/applications/
+        sed -i "s|Icon=kitty|Icon=/home/$USER/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty*.desktop
+        sed -i "s|Exec=kitty|Exec=/home/$USER/.local/kitty.app/bin/kitty|g" ~/.local/share/applications/kitty*.desktop
+    fi
 fi
 
 #################
