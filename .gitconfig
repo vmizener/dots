@@ -24,8 +24,4 @@
 	default = current
 
 [include]
-	path = .gitconfig.default_identity
-[includeIf "hasconfig:remote.*.url:https://*googlesource.com/*"]
-	path = .gitconfig.google
-[includeIf "hasconfig:remote.*.url:sso://gke-internal/*"]
-	path = .gitconfig.google
+	path = ~/.gitconfig.local
