@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-#################
-# Lib utilities
-#################
+# Lib utilities {{{
 NAME=BOOTSTRAPPER
 
 function curtime () {
@@ -113,15 +111,11 @@ function install_repos_from_list () {
     rm -Rf "${REPO_DIR}"
     cd "$d"
 }
+# }}}
 
-#################
-# Initializer
-#################
-
-cd ${HOME}
+# Initializer {{{
 case $(uname -s) in
     *Darwin*)
-        log -n INFO "Starting bootstrap for MacOS"
         system_type='Darwin'
         dist_type='Darwin'
         ;;
@@ -134,12 +128,10 @@ case $(uname -s) in
         dist_id=$(cat /etc/lsb-release | grep DISTRIB_ID | cut -f2 -d"=")
         case $dist_id in
             *Mint*)
-                log -n INFO "Starting bootstrap for Linux Mint"
                 system_type='Debian'
                 dist_type='Mint'
                 ;;
             *Ubuntu*)
-                log -n INFO "Starting bootstrap for Ubuntu"
                 system_type='Debian'
                 dist_type='Ubuntu'
                 ;;
@@ -147,16 +139,18 @@ case $(uname -s) in
                 dist_release=$(cat /etc/lsb-release | grep DISTRIB_RELEASE | cut -f2 -d"=")
                 system_type='Debian'
                 if [ "${dist_release}" = "rodete" ]; then
-                    log -n INFO "Starting bootstrap for Rodete"
                     dist_type='Rodete'
                 else
                     dist_type='Debian'
                 fi
                 ;;
             *Manjaro*)
-                log -n INFO "Starting bootstrap for Manjaro Linux"
                 system_type='Arch'
                 dist_type='Manjaro'
+                ;;
+            *SteamOS*)
+                system_type='Arch'
+                dist_type='SteamOS'
                 ;;
             *)
                 log -n ERROR "Unsupported Linux OS: $dist_id"
@@ -169,11 +163,12 @@ case $(uname -s) in
         exit 1
         ;;
 esac
+# }}}
 
-#################
-# MacOS
-#################
+# MacOS {{{
 if [ "${system_type}" = "Darwin" ]; then
+    log -n INFO "Starting bootstrap for MacOS"
+
     casks=(
         docker
         dropbox
@@ -224,11 +219,11 @@ if [ "${system_type}" = "Darwin" ]; then
         brew tap homebrew/cask-fonts
         brew install --cask font-hack-nerd-font
     fi
+# }}}
 
-#################
-# Debian
-#################
+# Debian {{{
 elif [ "${system_type}" = "Debian" ]; then
+    log -n INFO "Starting bootstrap for Debian"
     packages=(
         bat
         cmake
@@ -253,6 +248,7 @@ elif [ "${system_type}" = "Debian" ]; then
 
     # Rodete doesn't allow custom PPAs; use glinux-add-repo instead
     if [ "${dist_type}" = "Rodete" ]; then
+        log -n INFO "Detected distribution as Rodete"
         repos=(
             "github-cli stable"
         )
@@ -358,11 +354,71 @@ elif [ "${system_type}" = "Debian" ]; then
 
     log -n INFO "Upgrading packages"
     sudo apt upgrade
+# }}}
 
-################
-# Arch
-################
+# SteamOS {{{
+elif [ "${system_type}" = 'Arch' ] && [ "${dist_type}" = 'SteamOS' ]; then
+    log -n INFO "Starting bootstrap for SteamOS"
+
+    packages=(
+        nixpkgs.clang
+        nixpkgs.cmake
+        nixpkgs.delta
+        nixpkgs.fzf
+        nixpkgs.git
+        nixpkgs.neofetch
+        nixpkgs.neovim
+        nixpkgs.yadm
+    )
+
+    # Install Rust
+    if [ ! -d "${HOME}/.cargo" ]; then
+        log -n INFO "Installing Rust"
+        curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
+        source "${HOME}/.cargo/env"
+    elif ! exists "cargo"; then
+        source "${HOME}/.cargo/env"
+    fi
+
+    # Install Nix
+    if ! exists "nix-user-chroot"; then
+        log -n INFO "Installing Nix-user-chroot"
+        cargo install nix-user-chroot
+    fi
+    if [ ! -d "${HOME}/.nix" ]; then
+        log -n INFO "Installing Nix"
+        mkdir -m 0755 "${HOME}/.nix"
+        nix-user-chroot "${HOME}/.nix" bash -c "curl -L https://nixos.org/nix/install | bash"
+    fi
+
+    # Enable Nix
+    if [ ! -d /nix ]; then
+        log -n INFO "Restarting bootstrap in Nix-enabled env"
+        echo
+        nix-user-chroot "${HOME}/.nix" bash -l "$0"
+        exit $?
+    fi
+
+    function check_pkg () {
+        pkg=$(echo "$1" | cut -d'.' -f2)
+	nix-env -q '.*'"$pkg"'.*'
+	return $?
+    }
+
+    install_from_list \
+        "packages" \
+        "nix-env -iA" \
+        "check_pkg" \
+        "${packages[@]}"
+
+    # Upgrade packages
+    log -n INFO "Updating nix-env (this may take a bit)"
+    nix-env -u
+# }}}
+
+# Arch {{{
 elif [ "${system_type}" = 'Arch' ]; then
+    log -n INFO "Starting bootstrap for Arch"
     core_packages=(
         fd
         fzf
@@ -397,18 +453,20 @@ elif [ "${system_type}" = 'Arch' ]; then
         "pacman -Qi" \
         "${user_packages[@]}"
 fi
+# }}}
 
-#################
-# Post-Install
-#################
+# Post-Install {{{
 
 # YADM
-if ! command -v yadm >/dev/null 2>&1; then
+if ! exists yadm >/dev/null 2>&1; then
     log -n ERROR "YADM is required to proceed; please install YADM"
     exit 1
 elif ! $(yadm list >/dev/null 2>&1); then
     log -n INFO "Initializing YADM"
     yadm clone --no-bootstrap "https://github.com/vmizener/dots.git"
+    yadm submodule update --init --recursive
+else
+    log -n INFO "Updating YADM subrepos"
     yadm submodule update --init --recursive
 fi
 
@@ -416,15 +474,21 @@ log -n INFO "!!! Base install completed successfully !!!"
 log -n INFO "Hit CTRL-C at any time to skip post-install configuration"
 
 # Python
-if command -v python3 >/dev/null 2>&1 && confirm "Update Python3?"; then
+if exists python3 >/dev/null 2>&1 && confirm "Update Python3?"; then
+    if ! exists pip3; then
+        log -n INFO "Installing Pip"
+	# Ensure .local/bin is on path (it's where pip gets installed)
+	export PATH="${PATH}:${HOME}/.local/bin"
+        python3 -m ensurepip --default-pip
+    fi
     log -n INFO "Installing Python packages"
-    pip3 install -r .config/yadm/requirements.txt --user
+    pip3 install -r "${HOME}/.config/yadm/requirements.txt" --user
     log -n INFO "Updating Pip"
     pip3 install --upgrade pip --user
 fi
 
 # NPM
-if ! command -v npm >/dev/null 2>&1; then
+if ! exists npm >/dev/null 2>&1; then
     log -n WARNING "NPM is not installed; some packages will be missing"
 elif confirm "Update NPM?"; then
     log -n INFO "Updating NPM"
@@ -469,9 +533,10 @@ if ! command -v kitty >/dev/null 2>&1 && confirm "Install Kitty terminal?"; then
         sed -i "s|Exec=kitty|Exec=/home/$USER/.local/kitty.app/bin/kitty|g" ~/.local/share/applications/kitty*.desktop
     fi
 fi
+# }}}
 
-#################
-# Cleanup
-#################
-
+# Cleanup {{{
 log -n INFO "Bootstrap completed successfully!"
+# }}}
+
+# vim: set foldmethod=marker foldlevel=0 :
