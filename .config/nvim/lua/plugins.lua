@@ -353,7 +353,7 @@ return require('packer').startup(function(use)
     -- }}}
     -- ToggleTerm provides better terminal integration {{{
     use {
-        'akinsho/toggleterm.nvim', tag = 'v1.*',
+        'akinsho/toggleterm.nvim', tag = 'v2.*',
         config = function ()
             require('toggleterm').setup({
                 open_mapping = [[<C-\>]],
