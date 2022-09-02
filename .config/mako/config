@@ -1,11 +1,21 @@
 layer=overlay
-background-color=#333333
+default-timeout=10000
+background-color=#333333DD
 max-icon-size=64
 
-format=<span font="Overpass Nerd Font">%s</span>%b
+font=Hack Nerd Font 10
 text-alignment=center
 
 height=200
 padding=20
 border-size=2
+
+[urgency=low]
+border-color=#222222
+
+[urgency=normal]
 border-color=#454555
+
+[urgency=critical]
+border-color=#bf616a
+default-timeout=0
