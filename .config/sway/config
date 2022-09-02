@@ -244,7 +244,7 @@
     bindsym $mod+v splitv
 
     # Switch the current container between different layout styles
-    bindsym $mod+s layout stacking
+    bindsym $mod+s layout toggle stacking split
     bindsym $mod+w layout toggle tabbed split
     bindsym $mod+e layout toggle split
 
@@ -252,7 +252,7 @@
     bindsym $mod+f fullscreen
 
     # Make the current focus follow on workspace change
-    bindsym $mod+Shift+f sticky enable
+    bindsym $mod+Shift+f sticky toggle
 
     # Toggle the current focus between tiling and floating mode
     bindsym $mod+Shift+space floating toggle
@@ -321,20 +321,12 @@
     # Resizing containers
     #
     mode "resize" {
-        # left will shrink the containers width
-        # right will grow the containers width
-        # up will shrink the containers height
-        # down will grow the containers height
-        bindsym $left resize shrink width 10px
-        bindsym $down resize grow height 10px
-        bindsym $up resize shrink height 10px
-        bindsym $right resize grow width 10px
-
-        # Ditto, with arrow keys
-        bindsym Left resize shrink width 10px
-        bindsym Down resize grow height 10px
-        bindsym Up resize shrink height 10px
-        bindsym Right resize grow width 10px
+        # Minus/Equal will shrink/grow container width
+        # Add Shift to shrink/grow height
+        bindsym minus resize shrink width 10px
+        bindsym equal resize grow width 10px
+        bindsym Shift+minus resize shrink height 10px
+        bindsym Shift+equal resize grow height 10px
 
         # Return to default mode
         bindsym Return mode "default"
@@ -391,8 +383,12 @@
     bindsym $mod+Shift+Escape exec "~/.config/sway/powermenu.sh"
     # Dismiss notifications
     bindsym $mod+q exec "makoctl dismiss -a"
+    # Restore most-recent dismissed notification
+    bindsym $mod+grave exec "makoctl restore"
     # Clipboard manager
     bindsym $mod+p exec clipman pick -t wofi
+    # Show hotkeys
+    bindsym $mod+Shift+slash exec "~/.config/sway/hotkeys.sh"
 
 #
 # Specific app settings
@@ -423,6 +419,7 @@
         resize set width 50 ppt
         sticky enable
     }
+    # Hide some windows automatically
     for_window [title="meet.google.com is sharing your screen."] {
         move scratchpad
     }
