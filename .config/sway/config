@@ -413,6 +413,9 @@
         resize set height 75 ppt
         resize set width 50 ppt
     }
+    for_window [app_id="prompt"] {
+        floating enable
+    }
     for_window [title="Picture in picture"] {
         floating enable
         resize set height 50 ppt
