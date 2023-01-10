@@ -4,7 +4,7 @@ alias la='ls -Fha'
 alias ll='ls -Fhal'
 
 alias cdr='cd $(git rev-parse --show-toplevel)'
-alias pip='pip3'
+alias pip='python -m pip'
 alias python='python3'
 alias resrc='. ~/.zshrc'
 
