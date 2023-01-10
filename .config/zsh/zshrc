@@ -26,11 +26,16 @@ PATH=$PATH:/bin
 if [ ! -z $VIRTUAL_ENV ]; then
     PATH=${VIRTUAL_ENV}/bin:$PATH
 fi
-for d (
+declare -a EXTRA_PATHS
+EXTRA_PATHS=(
     /opt/X11/bin
+    /usr/local/go/bin
     /Library/TeX/texbin
-    ${HOME}/.pyenv/bin
-) do;
+    # WSL paths
+    /mnt/c/Windows/System32
+    /mnt/c/Windows/System32/WindowsPowerShell/v1.0
+)
+for d in $EXTRA_PATHS; do
     [ -d $d ] && PATH=$PATH:$d
 done
 
