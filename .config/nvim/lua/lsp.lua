@@ -1,5 +1,9 @@
 local lspconfig = require("lspconfig")
 
+-- Global hotkeys
+vim.keymap.set('n', '<Leader>l', require("lsp_lines").toggle, { desc = "Toggle lsp_lines" })
+
+-- LSP hotkeys
 local function on_attach(_, bufnr)
     -- Enable completion triggered by <c-x><c-o>
     vim.bo['omnifunc'] = 'v:lua.vim.lsp.omnifunc'
@@ -30,7 +34,7 @@ lspconfig.gopls.setup({
 local luaruntimepath = vim.split(package.path, ';')
 table.insert(luaruntimepath, 'lua/?.lua')
 table.insert(luaruntimepath, 'lua/?/init.lua')
-lspconfig.sumneko_lua.setup({
+lspconfig.lua_ls.setup({
     on_attach = on_attach,
     settings = {
         Lua = {

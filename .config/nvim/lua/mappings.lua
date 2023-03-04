@@ -6,6 +6,33 @@ vim.g['mapleader'] = ' '
 
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
+
+-- Plugins {{{
+    -- SymbolsOutline
+    map('n', '<Leader>ss', ':SymbolsOutline<CR>', opts)
+    -- IndentLinesToggle
+    map('n', '<Leader>i', ':IndentLinesToggle<CR>')
+    -- Fugitive
+    map('n', '<Leader>gd', ':Gdiffsplit!<CR>', opts)
+    map('n', '<Leader>gD', '<C-w>h<C-w>c', opts)
+    --map('n', '<Leader>gc', ':G commit<CR>', opts)
+    map('n', '<Leader>gs', ':G status<CR>', opts)
+    -- Gitsigns
+    map('n', '<Leader>gj', ':Gitsigns next_hunk<CR>', opts)
+    map('n', '<Leader>gk', ':Gitsigns prev_hunk<CR>', opts)
+    -- Telescope
+    map('n', '<Leader>ot', ':Telescope file_browser<CR>', opts)
+    map('n', '<Leader>of', ':Telescope find_files hidden=true<CR>', opts)
+    map('n', '<Leader>oF', ':Telescope find_files cwd=~ hidden=true<CR>', opts)
+    map('n', '<Leader>og', ':Telescope live_grep<CR>', opts)
+    map('n', '<Leader>ob', ':Telescope buffers<CR>', opts)
+    map('n', '<Leader>oh', ':Telescope help_tags<CR>', opts)
+
+    map('n', '<Leader>od', ':Telescope diagnostics<CR>', opts)
+    map('n', '<Leader>ca', ':Telescope lsp_code_actions<CR>', opts)
+    map('v', '<Leader>ca', ':Telescope lsp_range_code_actions<CR>', opts)
+-- }}}
+
 -- Editor Controls {{{
     -- Get to normal mode with `jk` or `<Space>`
     map('i', 'jk', '<Esc>', opts)

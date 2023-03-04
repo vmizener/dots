@@ -246,18 +246,24 @@ elif [ "${system_type}" = "Debian" ]; then
         zsh
     )
 
-    # Rodete doesn't allow custom PPAs; use glinux-add-repo instead
+    # Special handling for Rodete
     if [ "${dist_type}" = "Rodete" ]; then
         log -n INFO "Detected distribution as Rodete"
-        repos=(
+        # Rodete doesn't allow custom PPAs; use glinux-add-repo instead
+        g_repos=(
             "github-cli stable"
         )
-        for repo in "${repos[@]}"; do
-            log -n INFO "Adding glinux repo: ${repo}"
-            glinux-add-repo -c $repo
+        for g_repo in "${g_repos[@]}"; do
+            log -n INFO "Adding glinux repo: ${g_repo}"
+            glinux-add-repo -c "$g_repo"
         done
+        # We also need some google-specific packages on rodete
+        g_packages=(
+            git-remote-google
+        )
+        packages=("${packages[@]}" "${g_packages[@]}")
 
-    # Otherwise add PPAs as normal
+
     else
         # Add NodeSource repository & signing key (with script)
         if ! grep -h "^deb.*node_14.x" /etc/apt/sources.list.d/* >/dev/null 2>&1; then

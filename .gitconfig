@@ -22,6 +22,8 @@
 	rebase = false
 [push]
 	default = current
+[stash]
+	showPatch = true    # Display diff patch when using `git stash show`
 
 [include]
 	path = ~/.gitconfig.local

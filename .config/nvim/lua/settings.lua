@@ -47,7 +47,7 @@ local options = {
     listchars = 'tab:→ ,nbsp:␣,trail:·,extends:⟩,precedes:⟨',
     showbreak = '↪ ',
     -- Enable auto-completion menu
-    completeopt = "menuone,noselect",
+    completeopt = "menuone,preview,noselect",
     -- Set terminal title
     title = true,
     titlelen = 40,
