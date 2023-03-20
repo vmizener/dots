@@ -29,8 +29,8 @@ local opts = { noremap = true, silent = true }
     map('n', '<Leader>oh', ':Telescope help_tags<CR>', opts)
 
     map('n', '<Leader>od', ':Telescope diagnostics<CR>', opts)
-    map('n', '<Leader>ca', ':Telescope lsp_code_actions<CR>', opts)
-    map('v', '<Leader>ca', ':Telescope lsp_range_code_actions<CR>', opts)
+    map('n', '<Leader>ca', ':lua vim.lsp.buf.code_action()<CR>', opts)
+    map('v', '<Leader>ca', ':lua vim.lsp.buf.code_action()<CR>', opts)
 -- }}}
 
 -- Editor Controls {{{

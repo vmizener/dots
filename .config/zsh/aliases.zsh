@@ -44,33 +44,34 @@ fi
 
 
 function copy () {
-    # Copy input to clipboard.
-    local copy_cmd
-    local input
-    # Determine selection tool
-    case $(uname -s) in
-        *Darwin*)
-            copy_cmd="pbcopy -i" ;;
-        *Linux*)
-            if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
-                copy_cmd='wl-copy'
-            else
-                copy_cmd='xclip -i -selection clipboard'
-            fi
-    esac
-    # Escape input
-    if [ -p /dev/stdin ]; then
-        while IFS= read line; do
-            input="$input${(q-)line}"
-        done
-    else
-        input="${(q-)1}"
-    fi
-    # Copy
-    echo $input | $copy_cmd >/dev/null 2>&1
+    # # Copy input to clipboard.
+    # local copy_cmd
+    # local input
+    # # Determine selection tool
+    # case $(uname -s) in
+    #     *Darwin*)
+    #         copy_cmd="pbcopy -i" ;;
+    #     *Linux*)
+    #         if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    #             copy_cmd='wl-copy'
+    #         else
+    #             copy_cmd='xclip -i -selection clipboard'
+    #         fi
+    # esac
+    # # Escape input
+    # if [ -p /dev/stdin ]; then
+    #     while IFS= read line; do
+    #         input="$input${(q-)line}"
+    #     done
+    # else
+    #     input="${(q-)1}"
+    # fi
+    # # Copy
+    # echo $input | $copy_cmd >/dev/null 2>&1
+
     # Emit OSC52 keycode
-    maxbuf=8388608
-    printf "\033]52;c;$(printf "%s" "$input" | head -c $maxbuf | base64 | tr -d '\r\n')\a"
+    input=$(</dev/stdin)
+    echo "$input" | base64 | xargs -0 printf "\e]52;c;%s\a"
 }
 
 function weather () {

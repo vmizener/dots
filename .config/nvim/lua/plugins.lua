@@ -294,7 +294,9 @@ local plugins = {
         'nvim-telescope/telescope.nvim',
         dependencies = {
             'nvim-lua/popup.nvim',
-            'nvim-lua/plenary.nvim'
+            'nvim-lua/plenary.nvim',
+            'nvim-telescope/telescope-ui-select.nvim'
+
         },
         config = function ()
 
@@ -322,6 +324,7 @@ local plugins = {
                     },
                 },
             })
+            require("telescope").load_extension("ui-select")
         end
     },
     -- }}}

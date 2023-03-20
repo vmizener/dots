@@ -28,6 +28,19 @@ end
 -- Golang
 lspconfig.gopls.setup({
     on_attach = on_attach,
+    settings = {
+        gopls = {
+            env = {
+                GOPACKAGESDRIVER = vim.env.HOME .. '/tools/gopackagesdriver.sh'
+            },
+            directoryFilters = {
+                "-bazel-bin",
+                "-bazel-out",
+                "-bazel-testlogs",
+                "-bazel-mypkg",
+            }
+    }
+  }
 })
 
 -- Lua
