@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 SCRIPTNAME=$(basename $0)
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+TITLE="Sway: Window Picker"
 IFS=$'\n'
 
 header="Select window"
@@ -8,7 +9,7 @@ if [[ -n $fifo ]]; then
     str=$(cat $fifo)
     rm -rf $fifo
 
-    selection=$(printf $str | fzf --header=$header)
+    selection=$(printf $str | fzf --header=$header --no-info)
 
     id=$(echo $selection | cut -d ":" -f1)
     if [[ -z $id ]]; then
@@ -23,7 +24,7 @@ else
             recurse(.nodes[]?) | 
             recurse(.floating_nodes[]?) | 
             select(.type=="con"), select(.type=="floating_con") | 
-            select((.app_id != null) or .name != null) | 
+            select(.app_id != null or .name != null) | 
             {id, app_id, name} | .id, .app_id, .name
         ')
     )
@@ -60,7 +61,7 @@ else
     mkfifo $fifo
     fifo=$fifo foot \
         --app-id prompt \
-        --title "Sway: Window Picker" \
+        --title "${TITLE}" \
         -W "${columns}x${lines}" \
         -f 'monospace:size=12' \
         "${SCRIPTPATH}/${SCRIPTNAME}" &

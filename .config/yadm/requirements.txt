@@ -1,2 +1,3 @@
-black
-neovim
+black   # Python code formatter (https://github.com/psf/black)
+grip    # GitHub markdown previewer (https://github.com/joeyespo/grip)
+neovim  # Neovim Python API

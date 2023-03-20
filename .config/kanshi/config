@@ -1,15 +1,25 @@
 profile laptop {
-    output eDP-1 enable scale 2
+    output eDP-1 enable scale 1.7
 }
 
 profile home {
     output 'Dell Inc. DELL U2415 CFV9N7CN28NL' enable scale 1 position 0,0
-    output eDP-1 enable scale 2 position 1920,0
+    output eDP-1 enable scale 1.7 position 1920,0
     exec swaymsg workspace 1, move workspace to output '"Dell Inc. DELL U2415 CFV9N7CN28NL"'
     exec swaymsg workspace 2, move workspace to output 'eDP-1'
-    exec swaymsg workspace 3, move workspace to output '"Dell Inc. DELL U2415 CFV9N7CN28NL"'
-    exec swaymsg workspace 4, move workspace to output '"Dell Inc. DELL U2415 CFV9N7CN28NL"'
+    exec swaymsg workspace 3, move workspace to output 'eDP-1'
+    exec swaymsg workspace 4, move workspace to output 'eDP-1'
     exec swaymsg workspace 5, move workspace to output '"Dell Inc. DELL U2415 CFV9N7CN28NL"'
+    exec swaymsg workspace 10, move workspace to output 'eDP-1'
+}
+profile home-alt {
+    output DP-3 enable scale 1 position 0,0
+    output eDP-1 enable scale 1.7 position 1920,0
+    exec swaymsg workspace 1, move workspace to output 'DP-3'
+    exec swaymsg workspace 2, move workspace to output 'eDP-1'
+    exec swaymsg workspace 3, move workspace to output 'eDP-1'
+    exec swaymsg workspace 4, move workspace to output 'eDP-1'
+    exec swaymsg workspace 5, move workspace to output 'DP-3'
     exec swaymsg workspace 10, move workspace to output 'eDP-1'
 }
 

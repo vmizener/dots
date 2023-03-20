@@ -114,17 +114,16 @@ local plugins = {
         'mfussenegger/nvim-dap',
         config = function ()
             -- See `:help dap.txt` for documentation on how nvim-dap functions
-            local opts = { noremap=true, silent=true }
-            vim.keymap.set('n', '<F9>', ':lua require("dap").toggle_breakpoint()<CR>', opts)
-            vim.keymap.set('n', '<F10>', ':lua require("dap").step_over()<CR>', opts)
-            vim.keymap.set('n', '<F11>', ':lua require("dap").step_into()<CR>', opts)
-            vim.keymap.set('n', '<F12>', ':lua require("dap").step_out()<CR>', opts)
-            vim.keymap.set('n', '<F5>', ':lua require("dap").continue()<CR>', opts)
-            vim.keymap.set('n', '<S-F5>', ':lua require("dap").stop()<CR>', opts)
-            vim.keymap.set('n', '<Leader>dr', ':lua require("dap").repl.open()<CR>', opts)
-            vim.keymap.set('n', '<Leader>dj', ':lua require("dap").down()<CR>', opts)
-            vim.keymap.set('n', '<Leader>dk', ':lua require("dap").up()<CR>', opts)
-            vim.keymap.set('n', '<Leader>di', ':lua require("dap.ui.widgets").hover()()<CR>', opts)
+            vim.keymap.set('n', '<F9>', ':lua require("dap").toggle_breakpoint()<CR>', {noremap=true, silent=true, desc='[Debug] Toggle breakpoint'})
+            vim.keymap.set('n', '<F10>', ':lua require("dap").step_over()<CR>', {noremap=true, silent=true, desc='[Debug] Step over'})
+            vim.keymap.set('n', '<F11>', ':lua require("dap").step_into()<CR>', {noremap=true, silent=true, desc='[Debug] Step in'})
+            vim.keymap.set('n', '<F12>', ':lua require("dap").step_out()<CR>', {noremap=true, silent=true, desc='[Debug] Step out'})
+            vim.keymap.set('n', '<F5>', ':lua require("dap").continue()<CR>', {noremap=true, silent=true, desc='[Debug] Continue'})
+            vim.keymap.set('n', '<S-F5>', ':lua require("dap").stop()<CR>', {noremap=true, silent=true, desc='[Debug] Stop'})
+            vim.keymap.set('n', '<Leader>dr', ':lua require("dap").repl.open()<CR>', {noremap=true, silent=true, desc='[Debug] Open REPL'})
+            vim.keymap.set('n', '<Leader>dj', ':lua require("dap").down()<CR>', {noremap=true, silent=true, desc='[Debug] Go down without stepping'})
+            vim.keymap.set('n', '<Leader>dk', ':lua require("dap").up()<CR>', {noremap=true, silent=true, desc='[Debug] Go up without stepping'})
+            vim.keymap.set('n', '<Leader>di', ':lua require("dap.ui.widgets").hover()()<CR>', {noremap=true, silent=true, desc='[Debug] View value'})
         end
     },
     {
@@ -187,6 +186,7 @@ local plugins = {
     -- Dressing improves nvim UI default interfaces (like using Telescope) {{{
     {
         'stevearc/dressing.nvim',
+        event = 'VeryLazy',  -- Load last
         config = function ()
             require('dressing').setup()
         end
@@ -207,6 +207,7 @@ local plugins = {
     {
         'lewis6991/gitsigns.nvim',
         dependencies = { 'nvim-lua/plenary.nvim' },
+        event = 'VeryLazy',
         config = function()
             require('gitsigns').setup({ yadm = { enable = true }, })
         end
@@ -215,6 +216,8 @@ local plugins = {
     -- Gruvbox is a colorscheme for Vim {{{
     {
         'sainnhe/gruvbox-material',
+        lazy = false,
+        priority = 1000,  -- Load colorscheme first
         config = function ()
             vim.o.termguicolors = true
             -- Options: 'hard', 'medium', 'soft'
@@ -298,6 +301,7 @@ local plugins = {
             'nvim-telescope/telescope-ui-select.nvim'
 
         },
+        priority = 10,
         config = function ()
 
             local actions = require('telescope.actions')
@@ -346,14 +350,16 @@ local plugins = {
     -- Transparent makes Neovim transparent {{{
     {
         'xiyaowong/nvim-transparent',
+        lazy = false,
+        priority = 10,
         config = function ()
             require("transparent").setup({
-                enable = true, -- boolean: enable transparent
                 extra_groups = {
                     "Folded",
                 },
-                exclude = {}, -- table: groups you don't want to clear
+                exclude_groups = {}, -- table: groups you don't want to clear
             })
+            vim.api.nvim_command('TransparentEnable')
         end
     },
     -- }}}
@@ -368,6 +374,9 @@ local plugins = {
         'lervag/vimtex',
         ft = 'tex'
     },
+    -- }}}
+    -- Which-Key for displaying a key-binding cheatsheet {{{
+    'folke/which-key.nvim',
     -- }}}
 }
 

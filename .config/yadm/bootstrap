@@ -47,13 +47,13 @@ function install_from_list () {
     local input_type=$1         # Name of the input type; e.g. "packages"
     local installer=$2          # Installer prefix; e.g. "brew install"
     local checker=$3            # Checker prefix; e.g. "brew list"
-    local packages=( ${@:4} )   # Input list; e.g. "(neofetch nethack)"
+    local packages=( ${@:4} )   # Input list; e.g. "(cmatrix lolcat toilet nethack)"
 
     log INFO "Checking ${input_type}.."
     declare -a missing_packages
     for package in "${packages[@]}"; do
         echo -n "."
-        if ! eval ${checker} ${package} >/dev/null 2>&1; then
+        if ! eval "${checker} ${package}" >/dev/null 2>&1; then
             missing_packages+=(${package})
         fi
     done
@@ -62,11 +62,11 @@ function install_from_list () {
     if [[ ${num_missing} -gt 0 ]]; then
         log -n INFO "The following ${input_type} are missing: ${missing_packages[*]}"
         if [[ ${num_missing} -gt 1 ]] && confirm "Install all ${input_type}?"; then
-            eval ${installer} ${missing_packages[@]}
+            eval "${installer} ${missing_packages[@]}"
         else
             for package in "${missing_packages[@]}"; do
                 if confirm "Install \"${package}\"?"; then
-                    eval ${installer} ${package}
+                    eval "${installer} ${package}"
                 fi
             done
         fi
@@ -226,20 +226,30 @@ elif [ "${system_type}" = "Debian" ]; then
     log -n INFO "Starting bootstrap for Debian"
     packages=(
         bat
+        brightnessctl
         cmake
+        cmatrix
         fd-find
+        figlet
+        fortune
         fzf
         gh
         git
         golang-go
+        lolcat
         meson
+        ncal
         neofetch
         neovim
         nodejs
         npm
+        playerctl
         python3-pip
+        ranger
         ripgrep
+        ruby-dev
         scdoc
+        toilet
         unzip
         yadm
         zip
@@ -255,7 +265,7 @@ elif [ "${system_type}" = "Debian" ]; then
         )
         for g_repo in "${g_repos[@]}"; do
             log -n INFO "Adding glinux repo: ${g_repo}"
-            glinux-add-repo -c "$g_repo"
+            glinux-add-repo -k -c "$g_repo"
         done
         # We also need some google-specific packages on rodete
         g_packages=(
@@ -264,6 +274,7 @@ elif [ "${system_type}" = "Debian" ]; then
         packages=("${packages[@]}" "${g_packages[@]}")
 
 
+    # Otherwise add PPAs as normal
     else
         # Add NodeSource repository & signing key (with script)
         if ! grep -h "^deb.*node_14.x" /etc/apt/sources.list.d/* >/dev/null 2>&1; then
@@ -301,7 +312,7 @@ elif [ "${system_type}" = "Debian" ]; then
     function check_package () {
         pkg=$1
         dpkg-query -W "$pkg" >/dev/null 2>&1 && dpkg-query -s "$pkg" >/dev/null 2>&1
-    return $!
+        return $!
     }
 
     install_from_list \
@@ -330,13 +341,20 @@ elif [ "${system_type}" = "Debian" ]; then
             clipman
             grimshot
             libinih-dev
+            libinput-tools
+            libpam-dev
             libwayland-dev
             libxkbcommon-dev
             waybar
             wayland-protocols
             wdisplays
+            wl-clipboard
             wofi
             xdg-desktop-portal-wlr
+        )
+        sway_gems=(
+            fusuma
+            fusuma-plugin-sendkey
         )
         build_repos=(
             # Swaylock-effects: fancier swaylock
@@ -345,17 +363,32 @@ elif [ "${system_type}" = "Debian" ]; then
             # Kanshi: display/workspace manager
             "https://git.sr.ht/~emersion/kanshi"
                 "meson build && ninja -C build && sudo ninja -C build install"
-            # Wob: "Wayland Overlay Bar"
+            # Wob: "Wayland Overlay Bar" (status bar overlay)
             "https://github.com/francma/wob.git"
                 "meson build && ninja -C build && sudo ninja -C build install"
+            # Sov: "Sway OverView" (workspace previews)
+            "https://github.com/milgra/sov.git"
+                "meson build --buildtype=release && ninja -C build && sudo ninja -C build install"
         )
         install_from_list \
             "sway packages" \
             "sudo aptitude install" \
             "check_package" \
             "${sway_packages[@]}"
+        install_from_list \
+            "sway gems" \
+            "sudo gem install" \
+            "gem list | grep" \
+            "${sway_gems[@]}"
         install_repos_from_list \
             "${build_repos[@]}"
+
+        # Add ourselves to "input" group (needed for fusuma)
+        if ! groups | tr ' ' '\n' | grep 'input' >/dev/null; then
+            log -n INFO "Adding user to group \"input\""
+            sudo gpasswd -a $USER input
+            newgrp input
+        fi
     fi
 
     log -n INFO "Upgrading packages"
@@ -538,6 +571,8 @@ if ! command -v kitty >/dev/null 2>&1 && confirm "Install Kitty terminal?"; then
         sed -i "s|Icon=kitty|Icon=/home/$USER/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty*.desktop
         sed -i "s|Exec=kitty|Exec=/home/$USER/.local/kitty.app/bin/kitty|g" ~/.local/share/applications/kitty*.desktop
     fi
+    # Have something for installing kitty terminfo?
+    # `kitty +kitten ssh <host>`
 fi
 # }}}
 

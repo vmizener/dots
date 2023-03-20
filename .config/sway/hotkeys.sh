@@ -5,11 +5,11 @@ TITLE="Sway: Cheat Sheet"
 HOTKEYS_TXT="${SCRIPTPATH}/hotkeys.txt"
 if [[ -n $SR ]]; then
     # Run FZF and exit if `SR` is set
-    cat "${HOTKEYS_TXT}" | grep '[^\n]' | fzf
+    cat "${HOTKEYS_TXT}" | grep '^[^\n#]' | fzf --no-info
     exit
 else
     # Otherwise relaunch script in foot with `SR` exported
-    WIDTH="$(( $(wc -L ${HOTKEYS_TXT} | cut -f1 -d' ')+3 ))"
+    WIDTH="$(( $(wc -L ${HOTKEYS_TXT} | cut -f1 -d' ')+5 ))"
     SR=true foot \
         --app-id prompt \
         --title "${TITLE}" \

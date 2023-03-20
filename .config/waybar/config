@@ -30,6 +30,7 @@
     ],
 
     "battery": {
+        // Check battery status at /sys/class/power_supply/BAT0/status
         "format": "{icon} {capacity}%{time}",
         "format-icons": ["", "", "", "", "", "", "", "", "", ""],
         "format-charging": "🗲 {capacity}%",
@@ -79,8 +80,8 @@
     },
     "network": {
         "format": "{ifname}",
-        "format-wifi": " {essid}",
-        "format-ethernet": "{ifname}",
+        "format-wifi": "  {essid}",
+        "format-ethernet": " {ifname}",
         "format-disconnected": "睊",
         "tooltip-format-wifi": "{signalStrength}%",
         "on-click": "~/.config/sway/nm.sh",

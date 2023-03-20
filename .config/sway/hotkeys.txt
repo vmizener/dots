@@ -1,6 +1,18 @@
+###################
+# Hotkeys reference
+#
+# Empty lines and lines starting with '#' are ignored
+
 Super+Return                Start a terminal
 Super+d                     Start application launcher
+Super+i                     Open window switcher selection
+Super+p                     Open clipboard manager
+Super+?                     Show hotkeys; help cheatsheet
 Super+Shift+q               Kill focused window
+Super+Escape                Lock the screen
+Super+Shift+Escape          Open the power menu
+Super+q                     Dismiss all notifications
+Super+`                     Restore most recently dismissed notification
 
 Super+h                     Move focus left
 Super+j                     Move focus down
@@ -136,13 +148,3 @@ Super+o                     Enable "opacity" mode (disable with Escape/Space/Ent
 [opacity] 8                 In "opacity" mode, set focused container opacity to 80%
 [opacity] 9                 In "opacity" mode, set focused container opacity to 90%
 [opacity] 0                 In "opacity" mode, set focused container opacity to 100%
-
-Super+Escape                Lock the screen
-Super+Shift+Escape          Open the power menu
-
-Super+q                     Dismiss all notifications
-Super+`                     Restore most recently dismissed notification
-
-Super+p                     Open clipboard manager
-
-Super+?                     Show hotkeys

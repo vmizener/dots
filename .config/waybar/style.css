@@ -52,11 +52,14 @@ window#waybar {
     border-style: solid;
 }
 
+#battery.full {
+    color: #0ff800
+}
 #battery.warning {
-    color: #eff0af
+    color: #ffe800
 }
 #battery.critical {
-    color: #e46464
+    color: #ff5555
 }
 #battery.charging,
 #battery.not-charging {

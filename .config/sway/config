@@ -131,14 +131,14 @@
     # Start a terminal
     bindsym $mod+Return exec $term
 
-    # Kill focused window
-    bindsym $mod+Shift+q kill
-
     # Start your launcher
     bindsym $mod+d exec $menu
 
     # Window switcher
-    bindsym $mod+c exec "~/.config/sway/window_picker.sh"
+    bindsym $mod+i exec "~/.config/sway/window_picker.sh"
+
+    # Kill focused window
+    bindsym $mod+Shift+q kill
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -403,6 +403,9 @@
     # Disable swayidle during browser fullscreen
     for_window [app_id="firefox"] inhibit_idle fullscreen
     for_window [app_id="google-chrome"] inhibit_idle fullscreen
+    # Set default workspace for some apps
+    for_window [class="Google-chrome" title="^Google Chat -.*"] move container to workspace 3
+    for_window [class="Google-chrome" title="^Chrome Remote Desktop - Remote Access -.*"] move container to workspace 4
     # Always float some applications by default
     for_window [app_id="pavucontrol"] floating enable
     for_window [app_id="blueman-manager"] {

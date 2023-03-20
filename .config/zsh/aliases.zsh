@@ -89,6 +89,7 @@ function weather () {
     if [ $? -ne 0 ]; then
         printf "%s\n" "[ERROR] weather: Could not connect to weather service. Try again later."
     fi
+    printf "%s\n" "[INFO]  weather: Input ':help' to get service help."
 }
 
 function fg-bg () {
