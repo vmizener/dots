@@ -37,7 +37,7 @@ end
     map('n', '<Leader>ca', ':lua vim.lsp.buf.code_action()<CR>', opts({desc='[Telescope] Code actions'}))
     map('v', '<Leader>ca', ':lua vim.lsp.buf.code_action()<CR>', opts({desc='[Telescope] Code actions'}))
     -- WhichKey
-    map('n', '<Leader>?', ':WhichKey', opts({desc='[WhichKey] Open WhichKey'}))
+    map('n', '<Leader>?', ':WhichKey<CR>', opts({desc='[WhichKey] Open WhichKey'}))
 -- }}}
 
 -- Editor Controls {{{
