@@ -359,7 +359,7 @@ local plugins = {
                 },
                 exclude_groups = {}, -- table: groups you don't want to clear
             })
-            vim.api.nvim_command('TransparentEnable')
+            -- vim.api.nvim_command('TransparentEnable')  -- Transparency setting is cached; no need to run every time.
         end
     },
     -- }}}
