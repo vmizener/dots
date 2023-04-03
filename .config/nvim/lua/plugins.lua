@@ -42,16 +42,13 @@ local plugins = {
         end
     },
     -- }}}
-    -- LSP-Rooter automatically sets the working directory to the project root {{{
+    -- LSP Symbols {{{
     {
-        "ahmedkhalf/lsp-rooter.nvim",
+        'simrat39/symbols-outline.nvim',
         config = function ()
-            require("lsp-rooter").setup()
+            require("symbols-outline").setup()
         end
     },
-    -- }}}
-    -- LSP Symbols {{{
-    'simrat39/symbols-outline.nvim',
     -- }}}
     -- LSP Diagnostic Lines {{{
     {
@@ -218,7 +215,7 @@ local plugins = {
         'sainnhe/gruvbox-material',
         lazy = false,
         priority = 1000,  -- Load colorscheme first
-        config = function ()
+        init = function ()
             vim.o.termguicolors = true
             -- Options: 'hard', 'medium', 'soft'
             vim.g['gruvbox_material_background'] = 'medium'
@@ -277,8 +274,57 @@ local plugins = {
         end
     },
     -- }}}
+    -- Nvim-Tree provides a lua-based file-explorer {{{
+    {
+        'nvim-tree/nvim-tree.lua',
+        init = function ()
+            vim.g.loaded_netrw = 1
+            vim.g.loaded_netrwPlugin = 1
+            vim.opt.termguicolors = true
+        end,
+        config = function ()
+            local api = require("nvim-tree.api")
+
+            M = {}
+            function M.print_node_path()
+              local node = api.tree.get_node_under_cursor()
+              print(node.absolute_path)
+            end
+            function M.on_attach(bufnr)
+                api.config.mappings.default_on_attach(bufnr)
+                -- Additional mappings
+                local function opts(desc)
+                    return { desc = desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+                end
+                vim.keymap.set('n', 'h', api.tree.toggle_help, opts('Help'))
+                vim.keymap.set('n', '?', api.tree.toggle_help, opts('Help'))
+                vim.keymap.set('n', 'p', M.print_node_path, opts('Print'))
+            end
+
+            -- See project.nvim setup: https://github.com/ahmedkhalf/project.nvim#-features
+            require("nvim-tree").setup({
+                sync_root_with_cwd = true,
+                respect_buf_cwd = true,
+                update_focused_file = {
+                    enable = true,
+                    update_root = true
+                },
+                -- Add settings
+                on_attach = M.on_attach,
+            })
+        end
+    },
+    -- }}}
     -- Peekaboo displays a preview window of register contents {{{
     'junegunn/vim-peekaboo',
+    -- }}}
+    -- Project provides "superior project management", but primarily cd'ing to a project root {{{
+    {
+        'ahmedkhalf/project.nvim',
+        config = function ()
+            require('project_nvim').setup()
+        end
+    },
     -- }}}
     -- Pounce is a motion plugin akin to Hop/Sneak/Lightspeed with fuzzy matching {{{
     {

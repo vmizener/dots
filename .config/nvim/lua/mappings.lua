@@ -25,8 +25,9 @@ end
     -- Gitsigns
     map('n', '<Leader>gj', ':Gitsigns next_hunk<CR>', opts({desc='[Git] Next hunk'}))
     map('n', '<Leader>gk', ':Gitsigns prev_hunk<CR>', opts({desc='[Git] Previous hunk'}))
+    -- Nvim-Tree
+    map('n', '<Leader>t', ':NvimTreeToggle<CR>', opts({desc='[NvimTree] Toggle file tree'}))
     -- Telescope
-    map('n', '<Leader>ot', ':Telescope file_browser<CR>', opts({desc='[Telescope] File browser'}))
     map('n', '<Leader>of', ':Telescope find_files hidden=true<CR>', opts({desc='[Telescope] File browser (show hidden)'}))
     map('n', '<Leader>oF', ':Telescope find_files cwd=~ hidden=true<CR>', opts({desc='[Telescope] File browser (from $HOME)'}))
     map('n', '<Leader>og', ':Telescope live_grep<CR>', opts({desc='[Telescope] Live grep'}))
