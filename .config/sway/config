@@ -432,6 +432,8 @@
     for_window [title="meet.google.com is sharing your screen."] {
         move scratchpad
     }
+    # Switch to urgent windows automatically
+    for_window [urgent="latest"] focus
 
 #
 # System config
