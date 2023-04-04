@@ -35,6 +35,7 @@ local plugins = {
             require("mason-lspconfig").setup({
                 ensure_installed = {
                     "bashls",
+                    "cssls",
                     "pyright",
                     "lua_ls",
                 },
@@ -94,6 +95,12 @@ local plugins = {
         end
     },
     -- }}}
+    -- Syntax Plugins {{{
+    'elkowar/yuck.vim',                     -- eww syntax
+    'theRealCarneiro/hyprland-vim-syntax',  -- hypr syntax
+    'gpanders/nvim-parinfer',               -- parentheses balancing for Lisp-like languages
+    -- }}}
+
 
     -- Auto-Completion {{{
     'hrsh7th/nvim-cmp',
@@ -414,6 +421,12 @@ local plugins = {
     -- }}}
     -- Vim-OSCyank has vim use OSC52 to copy to the system clipboard {{{
     'ojroques/nvim-osc52',
+    -- }}}
+    -- Vim-yaml-folds for yaml folding {{{
+    {
+        'pedrohdz/vim-yaml-folds',
+        ft = 'yaml'
+    },
     -- }}}
     -- VimTex for Tex {{{
     {

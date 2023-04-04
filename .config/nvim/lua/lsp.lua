@@ -25,6 +25,10 @@ local function on_attach(_, bufnr)
 
 end
 
+---------------
+-- LSP Configs:
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+
 -- Golang
 lspconfig.gopls.setup({
     on_attach = on_attach,
