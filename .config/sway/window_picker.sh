@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 SCRIPTNAME=$(basename $0)
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+# shellcheck source=./lib.sh
+source "$SCRIPTPATH/lib.sh"
 TITLE="Sway: Window Picker"
 IFS=$'\n'
 
@@ -9,7 +11,7 @@ if [[ -n $fifo ]]; then
     str=$(cat $fifo)
     rm -rf $fifo
 
-    selection=$(printf $str | fzf --header=$header --no-info)
+    selection=$(echo -e "$str" | fzf --header=$header --no-info)
 
     id=$(echo $selection | cut -d ":" -f1)
     if [[ -z $id ]]; then
@@ -19,23 +21,20 @@ if [[ -n $fifo ]]; then
     swaymsg "[con_id=$id]" focus
     exit
 else
-    windows=(
-        $(swaymsg -t get_tree | jq -r '
-            recurse(.nodes[]?) | 
-            recurse(.floating_nodes[]?) | 
-            select(.type=="con"), select(.type=="floating_con") | 
-            select(.app_id != null or .name != null) | 
-            {id, app_id, name} | .id, .app_id, .name
-        ')
-    )
-
+    # Windows listed in sequence with
+    #  - window ID
+    #  - window app ID
+    #  - window name
+    #  - window urgency
+    windows=($(lib::get_windows id app_id name urgent))
     str=""
     columns="${#header}"
     lines=0
-    for ((i=0; i<"${#windows[@]}"; i=i+3,lines++)); do
+    for ((i=0; i<"${#windows[@]}"; i=i+4,lines++)); do
         id="${windows[i]}"
         app_id="${windows[i+1]}"
         name="${windows[i+2]}"
+        is_urgent="${windows[i+3]}"
 
         if [[ $app_id = "null" ]]; then
             app_id=""
@@ -43,13 +42,18 @@ else
         if [[ $name = "null" ]]; then
             name=""
         fi
-        building_string="$id:$app_id:$name"
+        if [[ $is_urgent = "true" ]]; then
+            urgent='*'
+        else
+            urgent=''
+        fi
+        building_string="$urgent$id:$app_id:$name"
         if [[ ${#building_string} -gt $columns ]]; then
             columns=${#building_string}
         fi
         str="$str$building_string\n" 
     done
-    echo $str
+    echo "$str"
 
     lines=$((lines+3))
     columns=$((columns+3))
@@ -66,7 +70,7 @@ else
         -f 'monospace:size=12' \
         "${SCRIPTPATH}/${SCRIPTNAME}" &
     pid=$!
-    echo -n $str > $fifo
+    echo -n "$str" > $fifo
 
     # Kill when focus is lost
     while kill -0 $pid 2&>/dev/null; do
