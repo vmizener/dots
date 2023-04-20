@@ -95,10 +95,13 @@ local plugins = {
         end
     },
     -- }}}
-    -- Syntax Plugins {{{
-    'elkowar/yuck.vim',                     -- eww syntax
-    'theRealCarneiro/hyprland-vim-syntax',  -- hypr syntax
-    'gpanders/nvim-parinfer',               -- parentheses balancing for Lisp-like languages
+    -- Syntax & Language-Specific Plugins {{{
+    {'elkowar/yuck.vim', ft = 'yuck'},          -- eww syntax
+    'theRealCarneiro/hyprland-vim-syntax',      -- hypr syntax
+    {'psf/black', ft = 'python'},               -- python auto-formatter
+    {'lervag/vimtex', ft = 'tex'},              -- tex
+    {'pedrohdz/vim-yaml-folds', ft = 'yaml'},   -- yaml folding
+    'gpanders/nvim-parinfer',                   -- parentheses balancing for Lisp-like languages
     -- }}}
 
 
@@ -169,12 +172,6 @@ local plugins = {
                 }
             })
         end
-    },
-    -- }}}
-    -- Black is an autoformatter for Python {{{
-    {
-        'psf/black',
-        ft = 'python'
     },
     -- }}}
     -- Colorizer automatically highlights color codes {{{
@@ -303,7 +300,8 @@ local plugins = {
                 local function opts(desc)
                     return { desc = desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
                 end
-                vim.keymap.set('n', 'h', api.tree.toggle_help, opts('Help'))
+                vim.keymap.set('n', 'h', api.node.navigate.parent_close, opts('Close Directory'))
+                vim.keymap.set('n', 'l', api.node.open.edit, opts('Open'))
                 vim.keymap.set('n', '?', api.tree.toggle_help, opts('Help'))
                 vim.keymap.set('n', 'p', M.print_node_path, opts('Print'))
             end
@@ -421,18 +419,6 @@ local plugins = {
     -- }}}
     -- Vim-OSCyank has vim use OSC52 to copy to the system clipboard {{{
     'ojroques/nvim-osc52',
-    -- }}}
-    -- Vim-yaml-folds for yaml folding {{{
-    {
-        'pedrohdz/vim-yaml-folds',
-        ft = 'yaml'
-    },
-    -- }}}
-    -- VimTex for Tex {{{
-    {
-        'lervag/vimtex',
-        ft = 'tex'
-    },
     -- }}}
     -- Which-Key for displaying a key-binding cheatsheet {{{
     'folke/which-key.nvim',

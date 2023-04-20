@@ -65,11 +65,11 @@
     exec sh -c "ssh-agent -s -a $SSH_AUTH_SOCK"
 
     # Export display settings to D-Bus
-    exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+    exec dbus-update-activation-environment --systemd DISPLAY I3SOCK SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
 
     # Overlay bar (for e.g. volume control)
     set $WOBSOCK $XDG_RUNTIME_DIR/wob.sock
-    exec rm -f $WOBSOCK && mkfifo $WOBSOCK && tail -f $WOBSOCK | wob
+    exec_always rm -f $WOBSOCK && mkfifo $WOBSOCK && tail -f $WOBSOCK | wob
 
     # Startup scripts
     exec_always ~/.config/sway/daemons.sh
@@ -240,16 +240,8 @@
     # Layout stuff
     #
 
-    # You can "split" the current object of your focus with
-    # $mod+b or $mod+v, for horizontal and vertical splits
-    # respectively.
-    bindsym $mod+b splith
-    bindsym $mod+v splitv
-
-    # Switch the current container between different layout styles
-    bindsym $mod+s layout toggle stacking split
-    bindsym $mod+w layout toggle tabbed split
-    bindsym $mod+e layout toggle split
+    # Cycle through window border modes
+    bindsym $mod+b border toggle
 
     # Make the current focus fullscreen
     bindsym $mod+f fullscreen
@@ -257,14 +249,8 @@
     # Make the current focus follow on workspace change
     bindsym $mod+Shift+f sticky toggle
 
-    # Toggle the current focus between tiling and floating mode
+    # Toggle the current window between tiling and floating mode
     bindsym $mod+Shift+space floating toggle
-
-    # Swap focus between the tiling area and the floating area
-    bindsym $mod+space focus mode_toggle
-
-    # Move focus to the parent container
-    bindsym $mod+a focus parent
 
     #
     # Screenshots
@@ -311,11 +297,12 @@
     bindsym Shift+XF86AudioLowerVolume exec pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ -1% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
     # Toggle mute, then pipe either 0 or original volume to wob
     bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle && ([[ $(pactl get-sink-mute @DEFAULT_SINK@ | cut -d' ' -f2) = 'yes' ]] && echo '0' || pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}') > $WOBSOCK
-    # Pipe brightness to wob
-    bindsym XF86MonBrightnessUp exec brightnessctl set +5% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-    bindsym XF86MonBrightnessDown exec brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-    bindsym Shift+XF86MonBrightnessUp exec brightnessctl set +1% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-    bindsym Shift+XF86MonBrightnessDown exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+    # Pipe brightness to wob; enable displays
+    bindsym XF86MonBrightnessUp output * enable; exec brightnessctl set +5% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+    bindsym XF86MonBrightnessDown output * enable; exec brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+    bindsym Shift+XF86MonBrightnessUp output * enable; exec brightnessctl set +1% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+    bindsym Shift+XF86MonBrightnessDown output * enable; exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+    # Media buttons
     bindsym XF86AudioPlay exec playerctl play-pause
     bindsym XF86AudioNext exec playerctl next
     bindsym XF86AudioPrev exec playerctl previous
@@ -388,6 +375,8 @@
     bindsym $mod+q exec "makoctl dismiss -a"
     # Restore most-recent dismissed notification
     bindsym $mod+grave exec "makoctl restore"
+    # Focus recent urgent window
+    bindsym $mod+space exec 'swaymsg [urgent="latest"] focus'
     # Clipboard manager
     bindsym $mod+p exec clipman pick -t wofi
     # Show hotkeys
@@ -433,6 +422,7 @@
         move scratchpad
     }
     # Switch to urgent windows automatically
+    # Options: "first", "last", "latest", "newest", "oldest", "recent"
     for_window [urgent="latest"] focus
 
 #
