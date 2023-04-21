@@ -399,7 +399,7 @@
     # Restore most-recent dismissed notification
     bindsym $mod+grave exec "makoctl restore"
     # Focus recent urgent window
-    bindsym $mod+space exec 'swaymsg [urgent="latest"] focus'
+    bindsym $alt+space exec 'swaymsg [urgent="latest"] focus'
     # Clipboard manager
     bindsym $mod+p exec clipman pick -t wofi
     # Show hotkeys
