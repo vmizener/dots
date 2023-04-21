@@ -1,0 +1,232 @@
+;;
+;; Icons: https://fontawesome.com/icons
+;;
+
+;;;;;;;;;;;;;
+;; Windows ;;
+;;;;;;;;;;;;;
+
+(defwindow topbar
+  :monitor 0
+  :windowtype "dock"
+  :geometry (geometry
+              :x "0%"
+              :y "0%"
+              :width "100%"
+              :height "0.5%"
+              :anchor "top center")
+  :exclusive true
+  (topbar))
+
+(defwindow audio-window
+  :monitor 0
+  :geometry (geometry
+              :anchor "top right")
+  :stacking "fg"
+  (audio-control-pane))
+
+;;;;;;;;;;;;;
+;; Widgets ;;
+;;;;;;;;;;;;;
+
+;;;;;;;;;;
+;; Top Bar
+(defwidget topbar []
+  (eventbox
+    :onhover "./scripts/grace_hover.sh bool_topbar-hover"
+    :onhoverlost "./scripts/grace_hoverlost.sh bool_topbar-hover 0.3"
+    (centerbox
+      :class "top-bar"
+      :orientation "h"
+      (topbar-left)
+      (topbar-middle)
+      (topbar-right))))
+
+(defwidget topbar-left []
+  (box
+    :orientation "h"
+    :halign "start"
+    (workspaces)))
+
+(defwidget topbar-middle []
+  (box
+    :orientation "h"
+    :halign "fill"
+    :hexpand true
+    (clock)))
+
+(defwidget topbar-right []
+  (box
+    :orientation "h"
+    :halign "end"
+    (eventbox
+      :onhover "./scripts/grace_hover.sh bool_topbar-right-hover"
+      :onhoverlost "./scripts/grace_hoverlost.sh bool_topbar-right-hover 0.3"
+      (box
+        :space-evenly false
+        :spacing 7
+        (statusbar)
+        (volume-control)))))
+
+(defvar bool_topbar-hover false)
+(defvar bool_topbar-middle-hover false)
+(defvar bool_topbar-right-hover false)
+
+;;;;;;;;
+;; Clock
+(defwidget clock []
+  (eventbox
+    :onclick `echo 'hi'`
+    (box
+      :orientation "h"
+      :class "clock"
+      :space-evenly false
+      :hexpand false
+      (revealer
+        :transition "slideright"
+        :reveal bool_topbar-hover
+        :duration "200ms"
+        (label
+          :text "${str_date}, "))
+      (label
+        :text "${str_time}")
+      (revealer
+        :transition "slideleft"
+        :reveal bool_topbar-hover
+        :duration "200ms"
+        (label
+          :text ":${str_time_sec}")))))
+(defpoll str_date :interval "5s" `date +"%B %d"`)
+(defpoll str_time :interval "5s" `date +"%H:%M"`)
+(defpoll str_time_sec :interval "1s" `date +"%S"`)
+
+;;;;;;;;;;;;;
+;; Status Bar
+(defwidget statusbar []
+  (box
+    :orientation "h"
+    :class "statusbar"
+    :halign "end"
+    (statusbar-ram)
+    (statusbar-cpu)))
+;; RAM
+(defwidget statusbar-ram []
+  (box
+    :orientation "h"
+    :class "statusbar-ram"
+    :halign "end"
+    (label
+      :class "statusbar-ram-icon"
+      :text "")
+    (label
+      :class "statusbar-ram-value"
+      :text "${round(EWW_RAM.used_mem_perc, 0)}%")))
+;; CPU
+(defwidget statusbar-cpu []
+  (box
+    :orientation "h"
+    :class "statusbar-cpu"
+    :halign "end"
+    :spacing 2
+    (label
+      :class "statusbar-cpu-icon"
+      :text "")
+    (label
+      :class "statusbar-cpu-value"
+      :text "${round(EWW_CPU.avg, 0)}%")))
+
+;;;;;;;;
+;; Audio
+
+; Volume Control
+(defwidget volume-control []
+  (eventbox
+    :onclick "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+    :onrightclick "./scripts/eww_popup.sh open audio-window && eww update bool_audio-control-pane-visible=true"
+    :onscroll `pactl set-sink-mute @DEFAULT_SINK@ no && [[ {} == 'up' ]] && pactl set-sink-volume @DEFAULT_SINK@ +5% || pactl set-sink-volume @DEFAULT_SINK@ -5%`
+    (box
+      :orientation "h"
+      :class "audio-vol"
+      :halign "end"
+      :spacing 2
+      (label
+        :class "audio-vol-icon"
+        :text "")
+      (label
+        :class "audio-vol-value"
+        :text "${str_volume}"))))
+(deflisten str_volume `./scripts/volume_subscriber.sh`)
+
+; Audio Control Pane
+(defwidget audio-control-pane []
+  (eventbox
+    :onhoverlost "./scripts/eww_popup.sh close audio-window && eww update bool_audio-control-pane-visible=false"
+    :onscroll "./scripts/scroll_audio_sinks.sh {}"
+    (box
+      :orientation "h"
+      :class "audio-control-pane"
+      :space-evenly false
+      (box
+        :orientation "v"
+        :class "audio-control-pane-box"
+        (for sink in json_audio-sinks
+          (button
+            :onclick `./scripts/set_audio_default_sink.sh ${sink.id} && eww update json_audio-sinks="$(./scripts/get_audio_sinks.sh)"`
+            :class "audio-control-pane-sink-is-default-${sink.is_default}"
+            "${sink.name}")))
+      (box
+        :class "audio-control-pane-box"
+        (button
+          :class "audio-control-pane-config-button"
+          :onclick `pavucontrol &`
+          "")))))
+(defvar bool_audio-control-pane-visible false)
+(defpoll json_audio-sinks
+  :interval "1s"
+  :initial "[]"
+  :run-while bool_audio-control-pane-visible
+  "./scripts/get_audio_sinks.sh")
+
+(defwidget workspaces []
+  (box :class "workspaces"
+       :orientation "h"
+       :space-evenly true
+       :halign "start"
+    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 1" 1)
+    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 2" 2)
+    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 3" 3)
+    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 4" 4)
+    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 5" 5)
+    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 6" 6)
+    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 7" 7)
+    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 8" 8)
+    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 8" 9)))
+
+(defwidget sidestuff []
+  (box :class "sidestuff"
+       :orientation "h"
+       :space-evenly false
+       :halign "end"
+       :spacing 20
+    (powerbuttons)))
+
+(defvar powerbuttons-reveal false)
+(defwidget powerbuttons []
+  (box :class "powerbuttons-revealer"
+       :orientation "v"
+       :space-evenly false
+    (eventbox
+      :onhover "eww update powerbuttons-reveal=true"
+      :onhoverlost "eww update powerbuttons-reveal=false"
+      (box
+        :space-evenly false
+        (revealer
+          :reveal powerbuttons-reveal
+          :transition "slideleft"
+          :duration "200ms"
+          (box
+           (button :class "btn-controlpanel" "⏻")
+           (button :class "btn-controlpanel" "")
+           (button :class "btn-controlpanel" "󰍃")))
+        
+        (label :text "⏻")))))

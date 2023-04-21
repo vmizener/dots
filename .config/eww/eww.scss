@@ -1,0 +1,39 @@
+// Global
+*{
+  all: unset;
+}
+
+// Colors
+$background-layer-1: #0B0C17;
+$background-layer-2: #1B1C27;
+$foreground: #A9B1D6;
+
+$black: #24283B;
+$gray: #565F89;
+$red: #F7768E;
+$green: #73DACA;
+$yellow: #E0AF68;
+$blue: #7AA2F7;
+$magenta: #BB9AF7;
+$cyan: #7DCFFF;
+$white: #FFFFFF;
+
+// Settings
+$font-icons: "Font Awesome 6 Free";
+$font-text: "Noto Mono";
+$font-mono: "Inconsolata";
+
+$bar-alpha: 0.7;
+
+$bar-vpad: 0.1rem;
+$bar-hpad: 0.4rem;
+$bar-vmargin: 0.1rem;
+$bar-hmargin: 0.4rem;
+
+$window-item-pad: 1rem;
+$window-item-margin: 0.5rem;
+
+// Imports
+@import "./topbar/eww.scss";
+@import "./sidebar/eww.scss";
+@import "./radialmenu/eww.scss";
