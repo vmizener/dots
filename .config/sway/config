@@ -140,16 +140,14 @@
     # Basics
     #
 
-    # Start a terminal
+    #? Super+Return              | Start a terminal
     bindsym $mod+Return exec $term
-
-    # Start your launcher
+    #? Super+d                   | Start application launcher
     bindsym $mod+d exec $menu
-
-    # Window switcher
+    #? Super+i                   | Open window switcher selection
     bindsym $mod+i exec "~/.config/sway/window_picker.sh"
-
-    # Kill focused window
+    #? Super+Shift+q             | Kill focused window
+    #? Control+Super+MouseRight  | Kill focused window
     bindsym $mod+Shift+q kill
     bindsym --whole-window --border $mod+Control+$mouse_right kill
 
@@ -160,41 +158,66 @@
     # mouse button for dragging.
     floating_modifier $mod normal
 
-    # Reload the configuration file
+    #? Super+Shift+c             | Reload the configuration file
     bindsym $mod+Shift+c reload
 
     #
     # Moving around
     #
 
-    # Move your focus around
+    # Use Vim keys to move focus
+    #? Super+h     | Move focus left
+    #? Super+j     | Move focus down
+    #? Super+k     | Move focus up
+    #? Super+l     | Move focus right
     bindsym $mod+$left focus left
     bindsym $mod+$down focus down
     bindsym $mod+$up focus up
     bindsym $mod+$right focus right
-    # Or use $mod+[up|down|left|right]
+
+    # Or use arrow keys
+    #? Super+Left  | Move focus left
+    #? Super+Down  | Move focus down
+    #? Super+Up    | Move focus up
+    #? Super+Right | Move focus right
     bindsym $mod+Left focus left
     bindsym $mod+Down focus down
     bindsym $mod+Up focus up
     bindsym $mod+Right focus right
 
     # Move the focused window around by adding Shift
+    #? Super+Shift+h      | Move focused window left
+    #? Super+Shift+j      | Move focused window down
+    #? Super+Shift+k      | Move focused window up
+    #? Super+Shift+l      | Move focused window right
     bindsym $mod+Shift+$left move left
     bindsym $mod+Shift+$down move down
     bindsym $mod+Shift+$up move up
     bindsym $mod+Shift+$right move right
     # Ditto, with arrow keys
+    #? Super+Shift+Left   | Move focused window left
+    #? Super+Shift+Down   | Move focused window down
+    #? Super+Shift+Up     | Move focused window up
+    #? Super+Shift+Right  | Move focused window right
     bindsym $mod+Shift+Left move left
     bindsym $mod+Shift+Down move down
     bindsym $mod+Shift+Up move up
     bindsym $mod+Shift+Right move right
 
     # Move the focused workspace around by adding Control+Shift
+    #? Control+Super+Shift+h     | Move focused workspace left
+    #? Control+Super+Shift+j     | Move focused workspace down
+    #? Control+Super+Shift+k     | Move focused workspace up
+    #? Control+Super+Shift+l     | Move focused workspace right
     bindsym $mod+Control+Shift+$left move workspace to left
     bindsym $mod+Control+Shift+$down move workspace to down
     bindsym $mod+Control+Shift+$up move workspace to up
     bindsym $mod+Control+Shift+$right move workspace to right
     # them arrow keys
+    #? Control+Super+Shift+Left  | Move focused workspace left
+    #? Control+Super+Shift+Down  | Move focused workspace down
+    #? Control+Super+Shift+Up    | Move focused workspace up
+    #? Control+Super+Shift+Right | Move focused workspace right
     bindsym $mod+Control+Shift+Left move workspace to left
     bindsym $mod+Control+Shift+Down move workspace to down
     bindsym $mod+Control+Shift+Up move workspace to up
@@ -208,6 +231,22 @@
     # We just use 1-10 as the default.
 
     # Switch to workspace
+    #? Super+1                   | Switch to workspace 1
+    #? Super+2                   | Switch to workspace 2
+    #? Super+3                   | Switch to workspace 3
+    #? Super+4                   | Switch to workspace 4
+    #? Super+5                   | Switch to workspace 5
+    #? Super+6                   | Switch to workspace 6
+    #? Super+7                   | Switch to workspace 7
+    #? Super+8                   | Switch to workspace 8
+    #? Super+9                   | Switch to workspace 9
+    #? Super+0                   | Switch to workspace 10
+    #? Super+[                   | Switch to previous workspace on display
+    #? Super+]                   | Switch to next workspace on display
+    #? Super+Shift+Tab           | Switch to previouw workspace on display
+    #? Super+Tab                 | Switch to next workspace on display
+    #? Super+MouseScrollUp       | Switch to previous workspace on display
+    #? Super+MouseScrollDown     | Switch to next workspace on display
     bindsym $mod+1 workspace number 1
     bindsym $mod+2 workspace number 2
     bindsym $mod+3 workspace number 3
@@ -225,6 +264,20 @@
     bindsym --whole-window --border $mod+$mouse_scroll_up workspace prev_on_output
     bindsym --whole-window --border $mod+$mouse_scroll_down workspace next_on_output
     # Send focused container to workspace and switch to it
+    #? Super+Shift+1                | Move focused window to workspace 1 and switch to it
+    #? Super+Shift+2                | Move focused window to workspace 2 and switch to it
+    #? Super+Shift+3                | Move focused window to workspace 3 and switch to it
+    #? Super+Shift+4                | Move focused window to workspace 4 and switch to it
+    #? Super+Shift+5                | Move focused window to workspace 5 and switch to it
+    #? Super+Shift+6                | Move focused window to workspace 6 and switch to it
+    #? Super+Shift+7                | Move focused window to workspace 7 and switch to it
+    #? Super+Shift+8                | Move focused window to workspace 8 and switch to it
+    #? Super+Shift+9                | Move focused window to workspace 9 and switch to it
+    #? Super+Shift+0                | Move focused window to workspace 10 and switch to it
+    #? Super+Shift+[                | Move focused window to previous workspace on display and switch to it
+    #? Super+Shift+]                | Move focused window to next workspace on display and switch to it
+    #? Super+Shift+MouseScrollUp    | Move focused window to previous workspace on display and switch to it
+    #? Super+Shift+MouseScrollDown  | Move focused window to next workspace on display and switch to it
     bindsym $mod+Shift+1 move container to workspace number 1; workspace number 1
     bindsym $mod+Shift+2 move container to workspace number 2; workspace number 2
     bindsym $mod+Shift+3 move container to workspace number 3; workspace number 3
@@ -240,6 +293,18 @@
     bindsym --whole-window --border $mod+Shift+$mouse_scroll_up move container to workspace prev_on_output; workspace prev_on_output
     bindsym --whole-window --border $mod+Shift+$mouse_scroll_down move container to workspace next_on_output; workspace next_on_output
     # Send focused container to workspace
+    #? Control+Super+Shift+1                | Move focused window to workspace 1
+    #? Control+Super+Shift+2                | Move focused window to workspace 2
+    #? Control+Super+Shift+3                | Move focused window to workspace 3
+    #? Control+Super+Shift+4                | Move focused window to workspace 4
+    #? Control+Super+Shift+5                | Move focused window to workspace 5
+    #? Control+Super+Shift+6                | Move focused window to workspace 6
+    #? Control+Super+Shift+7                | Move focused window to workspace 7
+    #? Control+Super+Shift+8                | Move focused window to workspace 8
+    #? Control+Super+Shift+9                | Move focused window to workspace 9
+    #? Control+Super+Shift+0                | Move focused window to workspace 10
+    #? Control+Super+Shift+[                | Move focused window to previous workspace on display
+    #? Control+Super+Shift+]                | Move focused window to next workspace on display
     bindsym $mod+Control+Shift+1 move container to workspace number 1
     bindsym $mod+Control+Shift+2 move container to workspace number 2
     bindsym $mod+Control+Shift+3 move container to workspace number 3
@@ -257,22 +322,17 @@
     # Layout stuff
     #
 
-    # Cycle through window border modes
+    #? Super+b          | Cycle through window border modes
     bindsym $mod+b border toggle
-
-    # Make the current focus fullscreen
+    #? Super+f          | Toggle fullscreen on focused window
     bindsym $mod+f fullscreen
-
-    # Make the current focus follow on workspace change
+    #? Super+Shift+f    | Toggle sticky on focused window
     bindsym $mod+Shift+f sticky toggle
-
-    # Toggle the current focus between tiling and floating mode
+    #? Super+Space      | Toggle floating on focused window
     bindsym $mod+Space floating toggle
-
-    # Swap focus between the tiling area and the floating area
+    #? Super+Space      | Swap focus between the tiling area and the floating area
     bindsym $mod+Shift+Space focus mode_toggle
-
-    # Move focus to the parent container
+    #? Super+a          | Move focus to the parent container
     bindsym $mod+a focus parent
 
     #
@@ -282,15 +342,18 @@
     # Screenshots will copy to the clipboard by default
     # When holding Control, write to the ~/Pictures directory instead
 
-    # Screenshot current focused window
+    #? PrintScreen               | Screenshot focused window to clipboard
+    #? Control+PrintScreen       | Screenshot focused window to ~/Pictures
     bindsym Print exec grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" - | wl-copy
     bindsym Control+Print exec grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')"
 
-    # Screenshot entire desktop
+    #? Alt+PrintScreen           | Screenshot entire desktop to clipboard
+    #? Control+Alt+PrintScreen   | Screenshot entire desktop to ~/Pictures
     bindsym $alt+Print exec grim - | wl-copy
     bindsym $alt+Control+Print exec grim
 
-    # Screenshot mouse selection
+    #? Super+PrintScreen         | Screenshot mouse selection to clipboard
+    #? Control+Super+PrintScreen | Screenshot mouse selection to ~/Pictures
     bindsym $mod+Print exec grim -g "$(slurp)" - | wl-copy
     bindsym $mod+Control+Print exec grim -g "$(slurp)"
 
@@ -302,30 +365,42 @@
     # Sway has a "scratchpad", which is a bag of holding for windows.
     # You can send windows there and get them back later.
 
-    # Move the currently focused window to the scratchpad
+    #? Super+Shift+Minus         | Move focused window to scratchpad; hide focused window
     bindsym $mod+Shift+minus move scratchpad
 
     # Show the next scratchpad window or hide the focused scratchpad window.
     # If there are multiple scratchpad windows, this command cycles through them.
+    #? Super+Minus               | Cycle focused window with scratchpad windows; cycle focused window with hidden windows
     bindsym $mod+minus scratchpad show
 
     #
     # Media/brightness buttons
     #
 
-    # Unmute, modify volume, then pipe result to wob
+    #? AudioMute                 | Toggle mute
+    bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle && ([[ $(pactl get-sink-mute @DEFAULT_SINK@ | cut -d' ' -f2) = 'yes' ]] && echo '0' || pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}') > $WOBSOCK
+
+    #? AudioVolumeUp             | Raise volume by 5%
+    #? AudioVolumeDown           | Lower volume by 5%
+    #? Shift+AudioVolumeUp       | Raise volume by 1%
+    #? Shift+AudioVolumeDown     | Lower volume by 1%
     bindsym XF86AudioRaiseVolume exec pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ +5% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
     bindsym XF86AudioLowerVolume exec pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ -5% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
     bindsym Shift+XF86AudioRaiseVolume exec pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ +1% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
     bindsym Shift+XF86AudioLowerVolume exec pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ -1% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
-    # Toggle mute, then pipe either 0 or original volume to wob
-    bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle && ([[ $(pactl get-sink-mute @DEFAULT_SINK@ | cut -d' ' -f2) = 'yes' ]] && echo '0' || pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}') > $WOBSOCK
-    # Pipe brightness to wob; enable displays
+
+    #? BrightnessUp              | Raise brightness by 5%
+    #? BrightnessDown            | Lower brightness by 5%
+    #? Shift+BrightnessUp        | Raise brightness by 1%
+    #? Shift+BrightnessDown      | Lower brightness by 1%
     bindsym XF86MonBrightnessUp output * enable; exec brightnessctl set +5% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
     bindsym XF86MonBrightnessDown output * enable; exec brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
     bindsym Shift+XF86MonBrightnessUp output * enable; exec brightnessctl set +1% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
     bindsym Shift+XF86MonBrightnessDown output * enable; exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-    # Media buttons
+
+    #? AudioPlay                 | Toggle audio player play/pause
+    #? AudioNext                 | Play audio play next track
+    #? AudioPrev                 | Play audio play previous track
     bindsym XF86AudioPlay exec playerctl play-pause
     bindsym XF86AudioNext exec playerctl next
     bindsym XF86AudioPrev exec playerctl previous
@@ -333,9 +408,17 @@
     #
     # Resizing containers
     #
+
+    #? Super+r              | Enable "resize" mode (disable with Escape/Space/Enter)
+    bindsym $mod+r mode "resize"
+
     mode "resize" {
         # Minus/Equal will shrink/grow container width
         # Add Shift to shrink/grow height
+        #? [resize] Minus       | In "resize" mode, shrink container width 10px
+        #? [resize] Equal       | In "resize" mode, grow container width 10px
+        #? [resize] Shift+Minus | In "resize" mode, shrink container height 10px
+        #? [resize] Shift+Equal | In "resize" mode, grow container height 10px
         bindsym minus resize shrink width 10px
         bindsym equal resize grow width 10px
         bindsym Shift+minus resize shrink height 10px
@@ -346,26 +429,52 @@
         bindsym Escape mode "default"
         bindsym Space mode "default"
     }
-    bindsym $mod+r mode "resize"
 
     #
     # Modify container opacity
     #
+
+    #? Super+o          | Enable "opacity" mode (disable with Escape/Space/Enter)
+    bindsym $mod+o mode "opacity"
+    #? Super+<          | Reduce current focused window opacity by 10%
+    #? Super+>          | Increase current focused window opacity by 10%
+    bindsym $mod+less opacity minus 0.1
+    bindsym $mod+greater opacity plus 0.1
+
     mode "opacity" {
+        #? [opacity] h      | In "opacity" mode, decrease focused container opacity by 10%
+        #? [opacity] j      | In "opacity" mode, decrease focused container opacity by 5
+        #? [opacity] k      | In "opacity" mode, increase focused container opacity by 5%
+        #? [opacity] l      | In "opacity" mode, increase focused container opacity by 10%
         bindsym $left opacity minus 0.1
         bindsym $down opacity minus 0.05
         bindsym $up opacity plus 0.05
         bindsym $right opacity plus 0.1
 
-        # Ditto, with arrow keys
+        #? [opacity] Left   | In "opacity" mode, decrease focused container opacity by 10%
+        #? [opacity] Down   | In "opacity" mode, decrease focused container opacity by 5
+        #? [opacity] Up     | In "opacity" mode, increase focused container opacity by 5%
+        #? [opacity] Right  | In "opacity" mode, increase focused container opacity by 10%
         bindsym Left opacity minus 0.1
         bindsym Down opacity minus 0.05
         bindsym Up opacity plus 0.05
         bindsym Right opacity plus 0.1
 
+        #? [opacity] Minus  | In "opacity" mode, decrease focused container opacity by 10%
+        #? [opacity] Equal  | In "opacity" mode, increase focused container opacity by 10%
         bindsym minus opacity minus 0.1
         bindsym equal opacity plus 0.1
 
+        #? [opacity] 1      | In "opacity" mode, set focused container opacity to 10%
+        #? [opacity] 2      | In "opacity" mode, set focused container opacity to 20%
+        #? [opacity] 3      | In "opacity" mode, set focused container opacity to 30%
+        #? [opacity] 4      | In "opacity" mode, set focused container opacity to 40%
+        #? [opacity] 5      | In "opacity" mode, set focused container opacity to 50%
+        #? [opacity] 6      | In "opacity" mode, set focused container opacity to 60%
+        #? [opacity] 7      | In "opacity" mode, set focused container opacity to 70%
+        #? [opacity] 8      | In "opacity" mode, set focused container opacity to 80%
+        #? [opacity] 9      | In "opacity" mode, set focused container opacity to 90%
+        #? [opacity] 0      | In "opacity" mode, set focused container opacity to 100%
         bindsym 1 opacity 0.1
         bindsym 2 opacity 0.2
         bindsym 3 opacity 0.3
@@ -382,27 +491,24 @@
         bindsym Escape mode "default"
         bindsym Space mode "default"
     }
-    bindsym $mod+o mode "opacity"
-    bindsym $mod+less opacity minus 0.1
-    bindsym $mod+greater opacity plus 0.1
 
     #
     # System controls:
     #
 
-    # Manual lock
+    #? Super+Escape              | Lock the screen
     bindsym $mod+Escape exec $lock
-    # Power menu
+    #? Super+Shift+Escape        | Open the power menu
     bindsym $mod+Shift+Escape exec "~/.config/sway/powermenu.sh"
-    # Dismiss notifications
+    #? Super+q                   | Dismiss all notifications
     bindsym $mod+q exec "makoctl dismiss -a"
-    # Restore most-recent dismissed notification
+    #? Super+`                   | Restore most recently dismissed notification
     bindsym $mod+grave exec "makoctl restore"
-    # Focus recent urgent window
+    #? Alt+p                     | Focus most recent urgent window
     bindsym $alt+space exec 'swaymsg [urgent="latest"] focus'
-    # Clipboard manager
+    #? Super+p                   | Open clipboard manager
     bindsym $mod+p exec clipman pick -t wofi
-    # Show hotkeys
+    #? Super+?                   | Show hotkeys; help cheatsheet
     bindsym $mod+Shift+slash exec "~/.config/sway/hotkeys.sh"
 
 #

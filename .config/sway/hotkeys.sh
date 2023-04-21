@@ -2,19 +2,23 @@
 SCRIPTNAME=$(basename $0)
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 TITLE="Sway: Cheat Sheet"
-HOTKEYS_TXT="${SCRIPTPATH}/hotkeys.txt"
+SWAY_CONFIG="${SCRIPTPATH}/config"
+
 if [[ -n $SR ]]; then
     # Run FZF and exit if `SR` is set
-    cat "${HOTKEYS_TXT}" | grep '^[^\n#]' | fzf --no-info
+    cat "${SWAY_CONFIG}" |
+        grep -E '#\?' |
+        sed -n 's/^\s\+#? \(\[\w\+\] \)\?\([][0-9A-Za-z+`?<>;]\+\).\+| \(.*\)$/\1\2🗲\3/p' |
+        column -t -s '🗲' |
+        fzf --no-info
     exit
 else
     # Otherwise relaunch script in foot with `SR` exported
-    WIDTH="$(( $(wc -L ${HOTKEYS_TXT} | cut -f1 -d' ')+5 ))"
     SR=true foot \
         --app-id prompt \
         --title "${TITLE}" \
-        -W "${WIDTH}x10" \
-        -f 'monospace:size=12' \
+        -W "200x20" \
+        -f 'monospace:size=10' \
         "${SCRIPTPATH}/${SCRIPTNAME}" &
     # Kill when focus is lost
     pid=$!
