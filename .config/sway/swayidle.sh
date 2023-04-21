@@ -15,15 +15,18 @@ if [ ! -f "$TMP_SCREENBRIGHTNESS" ]; then
     touch "$TMP_SCREENBRIGHTNESS"
 fi
 
-AC_STATUS=/sys/class/power_supply/AC/online
+function on_battery() {
+    AC_STATUS=/sys/class/power_supply/AC/online
+    [ -f "$AC_STATUS" ] && [ $(cat "$AC_STATUS") -eq 0 ]
+}
 
 killall -q swayidle
 swayidle -w \
     timeout $TIMEOUT_DIM \
-        "echo \$(brightnessctl g) > $TMP_SCREENBRIGHTNESS; if [ \$(cat $AC_STATUS) -eq 0 ]; then brightnessctl s $DIM_BRIGHTNESS; fi" \
+        "echo \$(brightnessctl -c backlight g) > $TMP_SCREENBRIGHTNESS; if on_battery; then brightnessctl -c backlight s $DIM_BRIGHTNESS; fi" \
         resume "brightnessctl s \$(cat $TMP_SCREENBRIGHTNESS)" \
     timeout $TIMEOUT_LOCK \
-        "if [ \$(cat $AC_STATUS) -eq 0 ]; then swaylock; fi" \
+        "if on_battery; then swaylock; fi" \
     timeout $TIMEOUT_BLACK \
         'swaymsg "output * dpms off"' \
         resume 'swaymsg "output * dpms on"' \

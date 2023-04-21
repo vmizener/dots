@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 
+lib::exists() {
+    # Usage:
+    #     lib::exists [cmd ...]
+    #
+    # Returns whether all the given commands are in PATH.
+    # E.g.
+    #   `lib::exists bash zsh` -> RC 0
+    #   `lib::exists not-bash` -> RC 1
+
+    for arg in "$@"; do
+        if ! command -v "$arg" >/dev/null 2>&1; then
+            return 1
+        fi
+    done
+}
+
 lib::get_windows() {
     # Usage:
     #     lib::get_windows [property|property=val ...]
@@ -37,5 +53,3 @@ lib::get_windows() {
         $(echo "${args[@]}" | sed -E 's/([a-zA-Z_]+)/\.\1/g' | tr ' ' ',')
     "
 }
-
-lib::get_windows "$@"

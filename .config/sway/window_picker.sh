@@ -10,8 +10,13 @@ header="Select window"
 if [[ -n $fifo ]]; then
     str=$(cat $fifo)
     rm -rf $fifo
+    window_id=$(echo -e "$str" | cut -f1 -d:)
 
-    selection=$(echo -e "$str" | fzf --header=$header --no-info)
+    selection=$(
+        echo -e "$str" |
+        #fzf --header="$header" --no-info --delimiter=: --preview="kitty +kitten icat --clear --place 200x40@0x0 --transfer-mode file /tmp/sway-snapshot/{1}*"
+        fzf --header="$header" --no-info --delimiter=: --preview="feh /tmp/sway-snapshot/{1}*"
+    )
 
     id=$(echo $selection | cut -d ":" -f1)
     if [[ -z $id ]]; then
@@ -56,12 +61,14 @@ else
     echo "$str"
 
     lines=$((lines+3))
-    columns=$((columns+3))
+    #columns=$((columns+3))
+    columns=$((columns+50))
     if [[ columns -gt 100 ]]; then
         columns=100
     fi
 
-    fifo=/tmp/sts-$(date +%s)
+    rm -Rf /tmp/sway-window-picker-*
+    fifo=/tmp/sway-window-picker-$(date +%s)
     mkfifo $fifo
     fifo=$fifo foot \
         --app-id prompt \
