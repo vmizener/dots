@@ -8,7 +8,13 @@ rm "$LOGPATH"
 ###
 
 # Clipboard manager
-if lib::exists wl-paste clipman; then
+if lib::exists wl-paste cliphist; then
+    # Prefer cliphist (supports image clipboard)
+    killall -q wl-paste
+    wl-paste --type text --watch cliphist store &   # Stores only text data
+    wl-paste --type image --watch cliphist store &  # Stores only image data
+elif lib::exists wl-paste clipman; then
+    # Fallback on clipman
     killall -q wl-paste
     wl-paste -t text --watch clipman store &
 fi

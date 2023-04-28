@@ -103,7 +103,7 @@ zle -N fg-bg  # Create a bind to this function
 bindkey "^Z" fg-bg
 
 function dict-less () {
-    command dict $@ | less
+    command dict $@ | cat
 }
 alias dict='dict-less'
 

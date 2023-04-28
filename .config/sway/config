@@ -39,7 +39,7 @@
 #
 
     # Your preferred terminal emulator
-    set $term kitty
+    set $term kitty --class "popterm"
 
     # Your preferred application launcher
     # Note: pass the final command to swaymsg so that the resulting window can be opened
@@ -51,15 +51,18 @@
     set $lock swaylock --grace 0
 
 #
-# System variables
+# System configs
 #
+    # Sway defaults
     include /etc/sway/config-vars.d/*
+    include /etc/sway/config.d/*
+
+    # Local settings
+    include ~/.config/sway/google.config
 
 #
 # System settings
 #
-
-    include ~/.config/sway/google.config
 
     # Use auto-orientation (as opposed to horizontal)
     default_orientation auto
@@ -128,6 +131,8 @@
     }
     input type:keyboard {
         xkb_numlock enabled
+        # Remap menu to super
+        xkb_options altwin:menu_win
     }
 
 #
@@ -504,12 +509,12 @@
     bindsym $mod+q exec "makoctl dismiss -a"
     #? Super+`                   | Restore most recently dismissed notification
     bindsym $mod+grave exec "makoctl restore"
-    #? Alt+p                     | Focus most recent urgent window
-    bindsym $alt+space exec 'swaymsg [urgent="latest"] focus'
     #? Super+p                   | Open clipboard manager
-    bindsym $mod+p exec clipman pick -t wofi
+    bindsym $mod+p exec 'if command -v "cliphist"; then cliphist list | wofi -d | cliphist decode | wl-copy; else clipman pick -t wofi; fi'
     #? Super+?                   | Show hotkeys; help cheatsheet
     bindsym $mod+Shift+slash exec "~/.config/sway/hotkeys.sh"
+    #? Alt+p                     | Focus most recent urgent window
+    bindsym $alt+space exec 'swaymsg [urgent="latest"] focus'
 
 #
 # Specific app settings
@@ -538,6 +543,9 @@
         floating enable
         resize set height 75 ppt
         resize set width 50 ppt
+    }
+    for_window [app_id="popterm"] {
+        floating enable
     }
     for_window [app_id="prompt"] {
         floating enable
@@ -570,9 +578,4 @@
     }
     # Switch to urgent windows automatically
     # Options: "first", "last", "latest", "newest", "oldest", "recent"
-    for_window [urgent="latest"] focus
-
-#
-# System config
-#
-    include /etc/sway/config.d/*
+    #for_window [urgent="latest"] focus
