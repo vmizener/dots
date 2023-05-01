@@ -89,7 +89,7 @@ end
 
 -- File Management {{{
     -- Write as root
-    vim.cmd([[cnoreabbrev w!! lua utils.sudo_write()]])
+    vim.cmd([[cnoreabbrev w!! lua require('utils').sudo_write()]])
     -- Open config
     map('n', '<Leader>ec', ':e $MYVIMRC<CR>', opts({desc='Open config'}))
     -- Source config
