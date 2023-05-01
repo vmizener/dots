@@ -29,6 +29,7 @@ window {
 
 #text {
     background-color: transparent;
+    color: white;
 }
 
 #img {
@@ -37,11 +38,16 @@ window {
 }
 
 #entry {
+    background-color: rgba (0,0,0,0.7);
     border-radius: 0px;
     padding: 5px 2px 5px 2px;
     margin: 0px 4px 0px 4px;
 }
 #entry:selected {
-    background-color: rgba (0,0,0,0.7);
+    background-color: rgba (80,80,80,0.7);
     padding: 7px;
+}
+
+#entry:nth-child(even){
+    background-color: rgba(40,40,40,0.7);
 }
