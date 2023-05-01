@@ -47,6 +47,7 @@ lib::get_windows() {
 
     swaymsg -t get_tree | jq -r "
         recurse(.nodes[]?) |
+        recurse(.floating_nodes[]?) |
         select(.type==\"con\"), select(.type==\"floating_con\") |
         select(.app_id != null or .name != null) |
         {$(echo "${args[@]}" | tr ' ' ',')} |

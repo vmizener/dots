@@ -79,6 +79,9 @@
     # Initialize ssh-agent keyring
     exec sh -c "ssh-agent -s -a $SSH_AUTH_SOCK"
 
+    # Allow local users to connect to the display
+    exec xhost +local:
+
     # Export display settings to D-Bus
     exec dbus-update-activation-environment --systemd DISPLAY I3SOCK SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
 
@@ -553,10 +556,6 @@
     }
     for_window [window_role="pop-up"] {
         floating enable
-        resize set height 50 ppt
-        resize set width 50 ppt
-        move position 50 ppt 1 ppt
-        inhibit_idle
     }
     for_window [title="Picture in picture"] {
         floating enable
