@@ -16,7 +16,7 @@
               :anchor "left center")
   :stacking "fg"
   (eventbox
-    :onhover "./scripts/eww_popup.sh open sidebar-visible && ./scripts/grace_hover.sh bool_sidebar-visible"))
+    :onhover "./run eww::popup open sidebar-visible && ./run eww::grace_hover bool_sidebar-visible"))
 
 (defwindow sidebar-visible
   :monitor 0
@@ -38,8 +38,8 @@
 (defvar bool_sidebar-visible false)
 (defwidget sidebar []
   (eventbox
-    :onhover `./scripts/grace_hover.sh bool_sidebar-visible`
-    :onhoverlost `./scripts/grace_hoverlost.sh bool_sidebar-visible 0.3 './scripts/eww_popup.sh close sidebar-visible'`
+    :onhover `./run eww::grace_hover bool_sidebar-visible`
+    :onhoverlost `./run eww::grace_hover_lost bool_sidebar-visible 0.3 './run eww::popup close sidebar-visible'`
     (centerbox
       :class "sidebar"
       :orientation "v"

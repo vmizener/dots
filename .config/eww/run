@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+# shellcheck source=./lib/core.sh
+source "$SCRIPTPATH/lib/core.sh"
+
+# Source based on WM
+if [ -z "$XDG_CURRENT_DESKTOP" ]; then
+    # Check for Sway
+    if ! [ -z "$SWAYSOCK" ]; then
+        XDG_CURRENT_DESKTOP=SWAY
+    fi
+fi
+
+case "$XDG_CURRENT_DESKTOP" in
+    SWAY)
+        WMLIB="${SCRIPTPATH}/lib/sway.sh"
+        ;;
+    *)
+        WMLIB="/dev/null"
+        ;;
+esac
+
+# shellcheck source=/dev/null
+source "$WMLIB"
+export ALL=(
+    $(cat $SCRIPTPATH/lib/core.sh | grep function | cut -f2 -d' ' | tr -d '()')
+    $(cat $WMLIB | grep function | cut -f2 -d' ' | tr -d '()')
+)
+
+# Exec function directly if provided arguments
+if [[ "$#" -gt 0 ]] && [[ " ${ALL[*]} " =~ " $1 " ]]; then
+    eval "$@"
+else
+    >&2 echo "Valid functions:"
+    for func in "${ALL[@]}"; do
+        >&2 echo " - $func"
+    done
+fi

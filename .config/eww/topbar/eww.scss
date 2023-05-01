@@ -67,9 +67,22 @@
     color: $gray;
 }
 
+// Workspaces
+.workspace-group {
+    font-family: $font-text;
+    font-weight: bold;
+    background-color: $black;
+    border-radius: 7px;
+    padding: $bar-vpad $bar-hpad;
+    margin: $bar-vmargin $bar-hmargin;
+}
+.workspace-btn-focus,
 .workspace-btn {
     &:hover {
         color: $red;
     };
     min-width: 20px;
+}
+.workspace-btn-focus {
+    color: $blue;
 }

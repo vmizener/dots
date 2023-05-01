@@ -33,8 +33,8 @@
 ;; Top Bar
 (defwidget topbar []
   (eventbox
-    :onhover "./scripts/grace_hover.sh bool_topbar-hover"
-    :onhoverlost "./scripts/grace_hoverlost.sh bool_topbar-hover 0.3"
+    :onhover "./run eww::grace_hover bool_topbar-hover"
+    :onhoverlost "./run eww::grace_hover_lost bool_topbar-hover 0.3"
     (centerbox
       :class "top-bar"
       :orientation "h"
@@ -60,8 +60,8 @@
     :orientation "h"
     :halign "end"
     (eventbox
-      :onhover "./scripts/grace_hover.sh bool_topbar-right-hover"
-      :onhoverlost "./scripts/grace_hoverlost.sh bool_topbar-right-hover 0.3"
+      :onhover "./run eww::grace_hover bool_topbar-right-hover"
+      :onhoverlost "./run eww::grace_hover_lost bool_topbar-right-hover 0.3"
       (box
         :space-evenly false
         :spacing 7
@@ -142,7 +142,7 @@
 (defwidget volume-control []
   (eventbox
     :onclick "pactl set-sink-mute @DEFAULT_SINK@ toggle"
-    :onrightclick "./scripts/eww_popup.sh open audio-window && eww update bool_audio-control-pane-visible=true"
+    :onrightclick "./run eww::popup open audio-window && eww update bool_audio-control-pane-visible=true"
     :onscroll `pactl set-sink-mute @DEFAULT_SINK@ no && [[ {} == 'up' ]] && pactl set-sink-volume @DEFAULT_SINK@ +5% || pactl set-sink-volume @DEFAULT_SINK@ -5%`
     (box
       :orientation "h"
@@ -155,13 +155,13 @@
       (label
         :class "audio-vol-value"
         :text "${str_volume}"))))
-(deflisten str_volume `./scripts/volume_subscriber.sh`)
+(deflisten str_volume `./run audio::subscribe`)
 
 ; Audio Control Pane
 (defwidget audio-control-pane []
   (eventbox
-    :onhoverlost "./scripts/eww_popup.sh close audio-window && eww update bool_audio-control-pane-visible=false"
-    :onscroll "./scripts/scroll_audio_sinks.sh {}"
+    :onhoverlost "./run eww::popup close audio-window && eww update bool_audio-control-pane-visible=false"
+    :onscroll `./run audio::scroll_sinks {} && eww update json_audio-sinks="$(./run audio::get_sinks)"`
     (box
       :orientation "h"
       :class "audio-control-pane"
@@ -171,7 +171,7 @@
         :class "audio-control-pane-box"
         (for sink in json_audio-sinks
           (button
-            :onclick `./scripts/set_audio_default_sink.sh ${sink.id} && eww update json_audio-sinks="$(./scripts/get_audio_sinks.sh)"`
+            :onclick `./run audio::set_default_sink ${sink.id} && eww update json_audio-sinks="$(./run audio::get_sinks)"`
             :class "audio-control-pane-sink-is-default-${sink.is_default}"
             "${sink.name}")))
       (box
@@ -185,48 +185,26 @@
   :interval "1s"
   :initial "[]"
   :run-while bool_audio-control-pane-visible
-  "./scripts/get_audio_sinks.sh")
+  `./run audio::get_sinks`)
+
+;;;;;;;;
+;; Workspaces
 
 (defwidget workspaces []
-  (box :class "workspaces"
-       :orientation "h"
-       :space-evenly true
-       :halign "start"
-    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 1" 1)
-    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 2" 2)
-    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 3" 3)
-    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 4" 4)
-    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 5" 5)
-    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 6" 6)
-    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 7" 7)
-    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 8" 8)
-    (button :class "workspace-btn" :onclick "hyprctl dispatch workspace 8" 9)))
-
-(defwidget sidestuff []
-  (box :class "sidestuff"
-       :orientation "h"
-       :space-evenly false
-       :halign "end"
-       :spacing 20
-    (powerbuttons)))
-
-(defvar powerbuttons-reveal false)
-(defwidget powerbuttons []
-  (box :class "powerbuttons-revealer"
-       :orientation "v"
-       :space-evenly false
-    (eventbox
-      :onhover "eww update powerbuttons-reveal=true"
-      :onhoverlost "eww update powerbuttons-reveal=false"
-      (box
-        :space-evenly false
-        (revealer
-          :reveal powerbuttons-reveal
-          :transition "slideleft"
-          :duration "200ms"
-          (box
-           (button :class "btn-controlpanel" "⏻")
-           (button :class "btn-controlpanel" "")
-           (button :class "btn-controlpanel" "󰍃")))
-        
-        (label :text "⏻")))))
+  (box
+    :class "workspaces"
+    :orientation "h"
+    :space-evenly false
+    :halign "start"
+    (for monitor in json_workspaces
+       (box
+         :class "workspace-group"
+         :orientation "h"
+         :space-evenly true
+         :spacing 2
+         (for workspace in monitor
+           (button
+             :class {workspace.focused ? "workspace-btn-focus" : "workspace-btn"}
+             :onclick "./run workspace::focus ${workspace.name}"
+             "${workspace.name}"))))))
+(deflisten json_workspaces `./run workspace::subscribe`)
