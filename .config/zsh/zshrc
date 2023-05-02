@@ -28,6 +28,7 @@ if [ ! -z $VIRTUAL_ENV ]; then
 fi
 declare -a EXTRA_PATHS
 EXTRA_PATHS=(
+    ${HOME}/.cargo/bin
     /opt/X11/bin
     /usr/local/go/bin
     /Library/TeX/texbin

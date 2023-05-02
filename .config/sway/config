@@ -48,7 +48,7 @@
     set $menu wofi -Ii --show=drun
 
     # Screen lock
-    set $lock swaylock --grace 0
+    set $lock swaylock
 
 #
 # System configs
@@ -166,8 +166,44 @@
     # mouse button for dragging.
     floating_modifier $mod normal
 
-    #? Super+Shift+c             | Reload the configuration file
+    #? Super+Shift+c             | Reload/re-source the configuration file
     bindsym $mod+Shift+c reload
+
+    #
+    # System controls:
+    #
+
+    #? Super+Escape              | Lock the screen
+    bindsym $mod+Escape exec $lock
+    #? Super+Shift+Escape        | Open the power menu
+    bindsym $mod+Shift+Escape exec "~/.config/sway/powermenu.sh"
+    #? Super+q                   | Dismiss all notifications
+    bindsym $mod+q exec "makoctl dismiss -a"
+    #? Super+`                   | Restore most recently dismissed notification
+    bindsym $mod+grave exec "makoctl restore"
+    #? Super+p                   | Open clipboard manager
+    bindsym $mod+p exec 'if command -v "cliphist"; then cliphist list | wofi -d | cliphist decode | wl-copy; else clipman pick -t wofi; fi'
+    #? Super+?                   | Show hotkeys; help cheatsheet
+    bindsym $mod+Shift+slash exec "~/.config/sway/hotkeys.sh"
+    #? Alt+p                     | Focus most recent urgent window
+    bindsym $alt+space exec 'swaymsg [urgent="latest"] focus'
+
+    #
+    # Layout stuff
+    #
+
+    #? Super+b          | Cycle through window border modes
+    bindsym $mod+b border toggle
+    #? Super+f          | Toggle fullscreen on focused window
+    bindsym $mod+f fullscreen
+    #? Super+Shift+p    | Toggle sticky/pin on focused window
+    bindsym $mod+Shift+p sticky toggle
+    #? Super+Space      | Toggle floating on focused window
+    bindsym $mod+Space floating toggle
+    #? Super+Space      | Swap focus between the tiling area and the floating area
+    bindsym $mod+Shift+Space focus mode_toggle
+    #? Super+a          | Move focus to the parent container
+    bindsym $mod+a focus parent
 
     #
     # Moving around
@@ -249,6 +285,7 @@
     #? Super+8                   | Switch to workspace 8
     #? Super+9                   | Switch to workspace 9
     #? Super+0                   | Switch to workspace 10
+    #? Super+Backslash           | Switch to last focused workspace
     #? Super+[                   | Switch to previous workspace on display
     #? Super+]                   | Switch to next workspace on display
     #? Super+Shift+Tab           | Switch to previouw workspace on display
@@ -265,6 +302,7 @@
     bindsym $mod+8 workspace number 8
     bindsym $mod+9 workspace number 9
     bindsym $mod+0 workspace number 10
+    bindsym $mod+backslash workspace back_and_forth
     bindsym $mod+bracketleft workspace prev_on_output
     bindsym $mod+bracketright workspace next_on_output
     bindsym $mod+Shift+Tab workspace prev_on_output
@@ -282,6 +320,7 @@
     #? Super+Shift+8                | Move focused window to workspace 8 and switch to it
     #? Super+Shift+9                | Move focused window to workspace 9 and switch to it
     #? Super+Shift+0                | Move focused window to workspace 10 and switch to it
+    #? Super+Shift+Backslash        | Move focused window to last focused workspace and switch to it
     #? Super+Shift+[                | Move focused window to previous workspace on display and switch to it
     #? Super+Shift+]                | Move focused window to next workspace on display and switch to it
     #? Super+Shift+MouseScrollUp    | Move focused window to previous workspace on display and switch to it
@@ -296,6 +335,7 @@
     bindsym $mod+Shift+8 move container to workspace number 8; workspace number 8
     bindsym $mod+Shift+9 move container to workspace number 9; workspace number 9
     bindsym $mod+Shift+0 move container to workspace number 10; workspace number 10
+    bindsym $mod+Shift+backslash move container to workspace back_and_forth; workspace back_and_forth
     bindsym $mod+Shift+bracketleft move container to workspace prev_on_output; workspace prev_on_output
     bindsym $mod+Shift+bracketright move container to workspace next_on_output; workspace next_on_output
     bindsym --whole-window --border $mod+Shift+$mouse_scroll_up move container to workspace prev_on_output; workspace prev_on_output
@@ -311,6 +351,7 @@
     #? Control+Super+Shift+8                | Move focused window to workspace 8
     #? Control+Super+Shift+9                | Move focused window to workspace 9
     #? Control+Super+Shift+0                | Move focused window to workspace 10
+    #? Control+Super+Shift+Backslash        | Move focused window to last focused workspace
     #? Control+Super+Shift+[                | Move focused window to previous workspace on display
     #? Control+Super+Shift+]                | Move focused window to next workspace on display
     bindsym $mod+Control+Shift+1 move container to workspace number 1
@@ -323,25 +364,9 @@
     bindsym $mod+Control+Shift+8 move container to workspace number 8
     bindsym $mod+Control+Shift+9 move container to workspace number 9
     bindsym $mod+Control+Shift+0 move container to workspace number 10
+    bindsym $mod+Control+Shift+backslash move container to workspace back_and_forth
     bindsym $mod+Control+Shift+bracketleft move container to workspace prev_on_output
     bindsym $mod+Control+Shift+bracketright move container to workspace next_on_output
-
-    #
-    # Layout stuff
-    #
-
-    #? Super+b          | Cycle through window border modes
-    bindsym $mod+b border toggle
-    #? Super+f          | Toggle fullscreen on focused window
-    bindsym $mod+f fullscreen
-    #? Super+Shift+f    | Toggle sticky on focused window
-    bindsym $mod+Shift+f sticky toggle
-    #? Super+Space      | Toggle floating on focused window
-    bindsym $mod+Space floating toggle
-    #? Super+Space      | Swap focus between the tiling area and the floating area
-    bindsym $mod+Shift+Space focus mode_toggle
-    #? Super+a          | Move focus to the parent container
-    bindsym $mod+a focus parent
 
     #
     # Screenshots
@@ -500,25 +525,6 @@
         bindsym Space mode "default"
     }
 
-    #
-    # System controls:
-    #
-
-    #? Super+Escape              | Lock the screen
-    bindsym $mod+Escape exec $lock
-    #? Super+Shift+Escape        | Open the power menu
-    bindsym $mod+Shift+Escape exec "~/.config/sway/powermenu.sh"
-    #? Super+q                   | Dismiss all notifications
-    bindsym $mod+q exec "makoctl dismiss -a"
-    #? Super+`                   | Restore most recently dismissed notification
-    bindsym $mod+grave exec "makoctl restore"
-    #? Super+p                   | Open clipboard manager
-    bindsym $mod+p exec 'if command -v "cliphist"; then cliphist list | wofi -d | cliphist decode | wl-copy; else clipman pick -t wofi; fi'
-    #? Super+?                   | Show hotkeys; help cheatsheet
-    bindsym $mod+Shift+slash exec "~/.config/sway/hotkeys.sh"
-    #? Alt+p                     | Focus most recent urgent window
-    bindsym $alt+space exec 'swaymsg [urgent="latest"] focus'
-
 #
 # Specific app settings
 #
@@ -547,17 +553,17 @@
         resize set height 75 ppt
         resize set width 50 ppt
     }
-    for_window [app_id="popterm"] {
+    for_window [app_id="^popterm$"] {
         floating enable
     }
-    for_window [app_id="prompt"] {
+    for_window [app_id="^prompt$"] {
         floating enable
         sticky enable
     }
     for_window [window_role="pop-up"] {
         floating enable
     }
-    for_window [title="Picture in picture"] {
+    for_window [title="^Picture in picture$"] {
         floating enable
         resize set height 50 ppt
         resize set width 50 ppt

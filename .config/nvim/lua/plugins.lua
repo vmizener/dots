@@ -46,6 +46,7 @@ local plugins = {
     -- LSP Symbols {{{
     {
         'simrat39/symbols-outline.nvim',
+        priority = 0,
         config = function ()
             require("symbols-outline").setup()
         end
@@ -334,6 +335,7 @@ local plugins = {
     -- Pounce is a motion plugin akin to Hop/Sneak/Lightspeed with fuzzy matching {{{
     {
         'rlane/pounce.nvim',
+        priority = 0,
         config = function ()
             vim.keymap.set('n', 's', ':Pounce<CR>')
             vim.keymap.set('n', 'S', ':PounceRepeat<CR>')
