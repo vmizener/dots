@@ -129,6 +129,7 @@
     :halign "end"
     :spacing 5
     :space-evenly false
+    :visible bool_statusbar-bat-available
     (overlay
       (circular-progress
         :class "statusbar-bat-circle-${str_statusbar-bat-capacity-level}"
@@ -150,6 +151,7 @@
         :class "statusbar-bat-value"
         :style "font-size: 0.8rem"
         :text "${int_statusbar-bat-capacity}%"))))
+(defpoll bool_statusbar-bat-available :interval "1m" :initial false `./run power::on_bat -p`)
 (defpoll int_statusbar-bat-capacity :interval "1m" :initial 0 `./run power::get_capacity`)
 (defpoll str_statusbar-bat-capacity-level :interval "1m" `./run power::get_capacity_level`)
 (defpoll str_statusbar-bat-status :interval "1s" `./run power::get_status`)
