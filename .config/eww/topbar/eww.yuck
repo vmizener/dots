@@ -10,13 +10,15 @@
 
 (defwindow topbar
   :monitor 0
-  :windowtype "dock"
   :geometry (geometry
               :x "0%"
               :y "0%"
               :width "100%"
               :height "2%"
               :anchor "top center")
+  ; X11 props
+  :windowtype "dock"
+  ; Wayland props
   :exclusive true
   (topbar))
 
@@ -24,6 +26,7 @@
   :monitor 0
   :geometry (geometry
               :anchor "top right")
+  ; Wayland props
   :stacking "fg"
   (audio-control-pane))
 
@@ -273,4 +276,4 @@
              :class {workspace.focused ? "workspace-btn-focus" : "workspace-btn"}
              :onclick "./run workspace::focus ${workspace.name}"
              "${workspace.name}"))))))
-(deflisten json_workspaces :initial "[]" `./run workspace::subscribe`)
+(deflisten json_workspaces :initial "[]" `./run workspace::focus_subscriber`)

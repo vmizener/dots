@@ -187,6 +187,11 @@
     bindsym $mod+Shift+slash exec "~/.config/sway/hotkeys.sh"
     #? Alt+p                     | Focus most recent urgent window
     bindsym $alt+space exec 'swaymsg [urgent="latest"] focus'
+    #? Alt+Tab                   | Window switcher
+    #bindsym $alt+Tab exec 'eww open --screen 0 windowswitcher'
+    #bindsym --no-repeat Alt_L exec 'notify-send "ok"'
+    #bindsym --no-repeat --release Alt_L exec 'notify-send "bye"'
+    #bindsym --no-repeat Alt_L+Tab exec 'notify-send "whew"'
 
     #
     # Layout stuff
