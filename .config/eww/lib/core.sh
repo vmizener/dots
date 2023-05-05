@@ -1,6 +1,29 @@
 #!/usr/bin/env bash
 
 #
+#   Power
+#
+
+function power::on_bat() {
+    [ -d /sys/class/power_supply/BAT0 ]
+}
+
+function power::get_status() {
+    # Values:  "unknown", "charging", "discharging", "not charging", "full"
+    power::on_bat && echo $(cat /sys/class/power_supply/BAT0/status | tr '[:upper:]' '[:lower:]')
+}
+
+function power::get_capacity() {
+    # Values: 0 - 100 (percent)
+    power::on_bat && echo $(cat /sys/class/power_supply/BAT0/capacity)
+}
+
+function power::get_capacity_level() {
+    # Values: "unknown", "critical", "low", "normal", "high", "full"
+    power::on_bat && echo $(cat /sys/class/power_supply/BAT0/capacity_level | tr '[:upper:]' '[:lower:]')
+}
+
+#
 #   Audio
 #
 
@@ -9,9 +32,9 @@ function audio::get_vol() {
     [[ $(pactl get-sink-mute @DEFAULT_SINK@ | cut -f2 -d' ') == 'yes' ]]
     MUTED=$?
     if (( $MUTED == 0 )); then
-        echo "0%"
+        echo "0"
     else
-        echo $(pactl get-sink-volume @DEFAULT_SINK@ | awk '{print $5}')
+        echo $(pactl get-sink-volume @DEFAULT_SINK@ | awk '{print $5}' | tr -d '%')
     fi
 }
 
@@ -75,6 +98,7 @@ function audio::set_default_sink() {
 function audio::scroll_sinks() {
     SINK_IDS=( $(audio::get_sinks | jq '.[] | .id') )
     SINK_COUNT=$(audio::get_sinks | jq 'length')
+    [[ "$SINK_COUNT" -le 0 ]] && return 0
     CURRENT_SINK_ID=$(audio::get_sinks | jq '.[] | select(.is_default == "true").id')
     CURRENT_SINK_IDX=$(( $(printf "%s\n" "${SINK_IDS[@]}" | grep -n "^${CURRENT_SINK_ID}$" | cut -f1 -d:)-1 ))
     if [[ "$1" == "up" ]]; then

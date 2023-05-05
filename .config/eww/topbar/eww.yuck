@@ -2,6 +2,8 @@
 ;; Icons: https://fontawesome.com/icons
 ;;
 
+(defvar str_reveal-slide-duration "200ms")
+
 ;;;;;;;;;;;;;
 ;; Windows ;;
 ;;;;;;;;;;;;;
@@ -13,7 +15,7 @@
               :x "0%"
               :y "0%"
               :width "100%"
-              :height "0.5%"
+              :height "2%"
               :anchor "top center")
   :exclusive true
   (topbar))
@@ -85,7 +87,7 @@
       (revealer
         :transition "slideright"
         :reveal bool_topbar-hover
-        :duration "200ms"
+        :duration str_reveal-slide-duration
         (label
           :text "${str_date}, "))
       (label
@@ -93,7 +95,7 @@
       (revealer
         :transition "slideleft"
         :reveal bool_topbar-hover
-        :duration "200ms"
+        :duration str_reveal-slide-duration
         (label
           :text ":${str_time_sec}")))))
 (defpoll str_date :interval "5s" `date +"%B %d"`)
@@ -103,37 +105,101 @@
 ;;;;;;;;;;;;;
 ;; Status Bar
 (defwidget statusbar []
+  (eventbox
+    :onhover "./run eww::grace_hover bool_statusbar-hover"
+    :onhoverlost "./run eww::grace_hover_lost bool_statusbar-hover 0.3"
+    (box
+      :orientation "h"
+      :class "statusbar"
+      :halign "end"
+      :spacing 7
+      :space-evenly false
+      (statusbar-bat)
+      (statusbar-ram)
+      (statusbar-cpu))))
+(defvar bool_statusbar-hover false)
+;; Battery
+(defwidget statusbar-bat []
   (box
     :orientation "h"
-    :class "statusbar"
+    :class "statusbar-bat"
     :halign "end"
-    (statusbar-ram)
-    (statusbar-cpu)))
+    :spacing 5
+    :space-evenly false
+    (overlay
+      (circular-progress
+        :class "statusbar-bat-circle-${str_statusbar-bat-capacity-level}"
+        :value int_statusbar-bat-capacity
+        :thickness 12)
+      (label
+        :class "statusbar-bat-icon"
+        :style "font-size: 0.8rem"
+        :text {! (str_statusbar-bat-status =~ '^discharging$') ? '':
+               int_statusbar-bat-capacity > 80 ? "" :
+               int_statusbar-bat-capacity > 60 ? "" :
+               int_statusbar-bat-capacity > 40 ? "" :
+               int_statusbar-bat-capacity > 20 ? "" : ""}))
+    (revealer
+      :transition "slideleft"
+      :reveal bool_statusbar-hover
+      :duration str_reveal-slide-duration
+      (label
+        :class "statusbar-bat-value"
+        :style "font-size: 0.8rem"
+        :text "${int_statusbar-bat-capacity}%"))))
+(defpoll int_statusbar-bat-capacity :interval "1m" :initial 0 `./run power::get_capacity`)
+(defpoll str_statusbar-bat-capacity-level :interval "1m" `./run power::get_capacity_level`)
+(defpoll str_statusbar-bat-status :interval "1s" `./run power::get_status`)
 ;; RAM
 (defwidget statusbar-ram []
   (box
     :orientation "h"
     :class "statusbar-ram"
     :halign "end"
-    (label
-      :class "statusbar-ram-icon"
-      :text "")
-    (label
-      :class "statusbar-ram-value"
-      :text "${round(EWW_RAM.used_mem_perc, 0)}%")))
+    :spacing 5
+    :space-evenly false
+    (overlay
+      (circular-progress
+        :class "statusbar-ram-circle"
+        :value {round(EWW_RAM.used_mem_perc, 0)}
+        :thickness 12)
+      (label
+        :class "statusbar-ram-icon"
+        :style "font-size: 0.8rem"
+        :text ""))
+    (revealer
+      :transition "slideleft"
+      :reveal bool_statusbar-hover
+      :duration str_reveal-slide-duration
+      (label
+        :class "statusbar-ram-value"
+        :style "font-size: 0.8rem"
+        :text "${round(EWW_RAM.used_mem_perc, 0)}%"))))
 ;; CPU
 (defwidget statusbar-cpu []
   (box
     :orientation "h"
     :class "statusbar-cpu"
     :halign "end"
-    :spacing 2
-    (label
-      :class "statusbar-cpu-icon"
-      :text "")
-    (label
-      :class "statusbar-cpu-value"
-      :text "${round(EWW_CPU.avg, 0)}%")))
+    :spacing 5
+    :space-evenly false
+    (overlay
+      (circular-progress
+        :class "statusbar-cpu-circle"
+        :value {round(EWW_CPU.avg, 0)}
+        :thickness 12)
+      (label
+        :class "statusbar-cpu-icon"
+        :style "font-size: 0.8rem"
+        :text ""))
+    (revealer
+      :transition "slideleft"
+      :reveal bool_statusbar-hover
+      :duration str_reveal-slide-duration
+      (label
+        :class "statusbar-cpu-value"
+        :style "font-size: 0.8rem"
+        :text "${round(EWW_CPU.avg, 0)}%"))))
 
 ;;;;;;;;
 ;; Audio
@@ -148,13 +214,14 @@
       :orientation "h"
       :class "audio-vol"
       :halign "end"
-      :spacing 2
+      :spacing 5
       (label
         :class "audio-vol-icon"
-        :text "")
+        :text {str_volume == '0' ? "" : ""})
       (label
         :class "audio-vol-value"
-        :text "${str_volume}"))))
+        ;:style "font-size: 0.8rem"
+        :text "${str_volume}%"))))
 (deflisten str_volume `./run audio::subscribe`)
 
 ; Audio Control Pane
@@ -183,7 +250,6 @@
 (defvar bool_audio-control-pane-visible false)
 (defpoll json_audio-sinks
   :interval "1s"
-  :initial "[]"
   :run-while bool_audio-control-pane-visible
   `./run audio::get_sinks`)
 
@@ -207,4 +273,4 @@
              :class {workspace.focused ? "workspace-btn-focus" : "workspace-btn"}
              :onclick "./run workspace::focus ${workspace.name}"
              "${workspace.name}"))))))
-(deflisten json_workspaces `./run workspace::subscribe`)
+(deflisten json_workspaces :initial "[]" `./run workspace::subscribe`)

@@ -10,9 +10,7 @@
 .clock {
     font-family: $font-text;
     font-weight: bold;
-    font-size: 1em;
-    background-color: $black;
-    border-radius: 7px;
+    font-size: 1rem;
     padding: $bar-vpad $bar-hpad;
     margin: $bar-vmargin $bar-hmargin;
 }
@@ -26,7 +24,8 @@
     padding: $bar-vpad $bar-hpad;
     margin: $bar-vmargin $bar-hmargin;
 }
-.statusbar-ram {
+.statusbar-bat-icon {
+    font-family: $font-icons;
 }
 .statusbar-ram-icon {
     font-family: $font-icons;
@@ -34,11 +33,26 @@
 .statusbar-cpu-icon {
     font-family: $font-icons;
 }
+.statusbar-bat-circle-full {
+    color: $dark-green;
+}
+.statusbar-bat-circle-normal,
+.statusbar-ram-circle,
+.statusbar-cpu-circle {
+    color: $dark-blue;
+}
+.statusbar-bat-circle-low {
+    color: $dark-yellow;
+}
+.statusbar-bat-circle-critical {
+    color: $dark-red;
+}
 
 // Audio
 .audio-vol {
     font-family: $font-text;
     font-weight: bold;
+    font-size: 1rem;
 }
 .audio-vol-icon {
     font-family: $font-icons;
@@ -71,6 +85,7 @@
 .workspace-group {
     font-family: $font-text;
     font-weight: bold;
+    font-size: 1rem;
     background-color: $black;
     border-radius: 7px;
     padding: $bar-vpad $bar-hpad;

@@ -4,11 +4,9 @@ SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 source "$SCRIPTPATH/lib/core.sh"
 
 # Source based on WM
-if [ -z "$XDG_CURRENT_DESKTOP" ]; then
-    # Check for Sway
-    if ! [ -z "$SWAYSOCK" ]; then
-        XDG_CURRENT_DESKTOP=SWAY
-    fi
+if ! [ -z "$SWAYSOCK" ]; then
+    # Detect Sway
+    XDG_CURRENT_DESKTOP=SWAY
 fi
 
 case "$XDG_CURRENT_DESKTOP" in
