@@ -3,6 +3,8 @@
 ;;
 
 (defvar str_reveal-slide-duration "200ms")
+(defvar str_hover-delay-long "0.3")
+(defvar str_hover-delay-short "0.1")
 
 ;;;;;;;;;;;;;
 ;; Windows ;;
@@ -39,7 +41,7 @@
 (defwidget topbar []
   (eventbox
     :onhover "./run eww::grace_hover bool_topbar-hover"
-    :onhoverlost "./run eww::grace_hover_lost bool_topbar-hover 0.3"
+    :onhoverlost "./run eww::grace_hover_lost bool_topbar-hover ${str_hover-delay-long}"
     (centerbox
       :class "top-bar"
       :orientation "h"
@@ -66,10 +68,11 @@
     :halign "end"
     (eventbox
       :onhover "./run eww::grace_hover bool_topbar-right-hover"
-      :onhoverlost "./run eww::grace_hover_lost bool_topbar-right-hover 0.3"
+      :onhoverlost "./run eww::grace_hover_lost bool_topbar-right-hover ${str_hover-delay-long}"
       (box
         :space-evenly false
         :spacing 7
+        (weather)
         (statusbar)
         (volume-control)))))
 
@@ -100,17 +103,29 @@
         :reveal bool_topbar-hover
         :duration str_reveal-slide-duration
         (label
-          :text ":${str_time_sec}")))))
+          :text ":${str_time-sec}")))))
 (defpoll str_date :interval "5s" `date +"%B %d"`)
 (defpoll str_time :interval "5s" `date +"%H:%M"`)
-(defpoll str_time_sec :interval "1s" `date +"%S"`)
+(defpoll str_time-sec :interval "1s" `date +"%S"`)
+
+;;;;;;;;;;
+;; Weather
+(defwidget weather []
+  (box
+    :orientation "h"
+    :class "statusbar"
+    :halign "end"
+    :spacing 7
+    :space-evenly false
+    (label :text str_weather)))
+(defpoll str_weather :interval "5m" `./run weather::status`)
 
 ;;;;;;;;;;;;;
 ;; Status Bar
 (defwidget statusbar []
   (eventbox
     :onhover "./run eww::grace_hover bool_statusbar-hover"
-    :onhoverlost "./run eww::grace_hover_lost bool_statusbar-hover 0.3"
+    :onhoverlost "./run eww::grace_hover_lost bool_statusbar-hover ${str_hover-delay-short}"
     (box
       :orientation "h"
       :class "statusbar"
@@ -134,10 +149,9 @@
       (circular-progress
         :class "statusbar-bat-circle-${str_statusbar-bat-capacity-level}"
         :value int_statusbar-bat-capacity
-        :thickness 12)
+        :thickness 14)
       (label
         :class "statusbar-bat-icon"
-        :style "font-size: 0.8rem"
         :text {! (str_statusbar-bat-status =~ '^discharging$') ? '':
                int_statusbar-bat-capacity > 80 ? "" :
                int_statusbar-bat-capacity > 60 ? "" :
@@ -149,7 +163,6 @@
       :duration str_reveal-slide-duration
       (label
         :class "statusbar-bat-value"
-        :style "font-size: 0.8rem"
         :text "${int_statusbar-bat-capacity}%"))))
 (defpoll bool_statusbar-bat-available :interval "1m" :initial false `./run power::on_bat -p`)
 (defpoll int_statusbar-bat-capacity :interval "1m" :initial 0 `./run power::get_capacity`)
@@ -167,10 +180,9 @@
       (circular-progress
         :class "statusbar-ram-circle"
         :value {round(EWW_RAM.used_mem_perc, 0)}
-        :thickness 12)
+        :thickness 14)
       (label
         :class "statusbar-ram-icon"
-        :style "font-size: 0.8rem"
         :text ""))
     (revealer
       :transition "slideleft"
@@ -178,7 +190,6 @@
       :duration str_reveal-slide-duration
       (label
         :class "statusbar-ram-value"
-        :style "font-size: 0.8rem"
         :text "${round(EWW_RAM.used_mem_perc, 0)}%"))))
 ;; CPU
 (defwidget statusbar-cpu []
@@ -192,10 +203,9 @@
       (circular-progress
         :class "statusbar-cpu-circle"
         :value {round(EWW_CPU.avg, 0)}
-        :thickness 12)
+        :thickness 14)
       (label
         :class "statusbar-cpu-icon"
-        :style "font-size: 0.8rem"
         :text ""))
     (revealer
       :transition "slideleft"
@@ -203,7 +213,6 @@
       :duration str_reveal-slide-duration
       (label
         :class "statusbar-cpu-value"
-        :style "font-size: 0.8rem"
         :text "${round(EWW_CPU.avg, 0)}%"))))
 
 ;;;;;;;;
@@ -221,11 +230,10 @@
       :halign "end"
       :spacing 5
       (label
-        :class "audio-vol-icon"
+        :class "audio-vol-icon-${str_volume == '0' ? 'mute' : 'default'}"
         :text {str_volume == '0' ? "" : ""})
       (label
         :class "audio-vol-value"
-        ;:style "font-size: 0.8rem"
         :text "${str_volume}%"))))
 (deflisten str_volume `./run audio::subscribe`)
 

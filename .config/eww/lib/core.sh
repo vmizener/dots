@@ -132,6 +132,15 @@ function audio::scroll_sinks() {
 }
 
 #
+# Weather
+#
+
+function weather::status() {
+    local url="v2d.wttr.in/?format=1"
+    echo $(curl -m 10 ${url} 2>/dev/null)
+}
+
+#
 # EWW
 #
 
