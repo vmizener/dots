@@ -177,6 +177,7 @@
     :spacing 5
     :space-evenly false
     (overlay
+      :halign "center"
       (circular-progress
         :class "statusbar-ram-circle"
         :value {round(EWW_RAM.used_mem_perc, 0)}
@@ -222,26 +223,28 @@
 (defwidget volume-control []
   (eventbox
     :onclick "pactl set-sink-mute @DEFAULT_SINK@ toggle"
-    :onrightclick "./run eww::popup open audio-window && eww update bool_audio-control-pane-visible=true"
+    :onrightclick "./run eww::popup open audio-window && ${EWW_CMD} update bool_audio-control-pane-visible=true"
     :onscroll `pactl set-sink-mute @DEFAULT_SINK@ no && [[ {} == 'up' ]] && pactl set-sink-volume @DEFAULT_SINK@ +5% || pactl set-sink-volume @DEFAULT_SINK@ -5%`
     (box
       :orientation "h"
       :class "audio-vol"
       :halign "end"
+      :space-evenly false
       :spacing 5
       (label
         :class "audio-vol-icon-${str_volume == '0' ? 'mute' : 'default'}"
-        :text {str_volume == '0' ? "" : ""})
+        :text {str_volume == 0 ? "" :
+               str_volume < 80 ? "" : ""})
       (label
-        :class "audio-vol-value"
-        :text "${str_volume}%"))))
-(deflisten str_volume `./run audio::subscribe`)
+       :class "audio-vol-value"
+       :text "${str_volume}%"))))
+(deflisten str_volume :initial 0 `./run audio::subscribe`)
 
 ; Audio Control Pane
 (defwidget audio-control-pane []
   (eventbox
-    :onhoverlost "./run eww::popup close audio-window && eww update bool_audio-control-pane-visible=false"
-    :onscroll `./run audio::scroll_sinks {} && eww update json_audio-sinks="$(./run audio::get_sinks)"`
+    :onhoverlost "./run eww::popup close audio-window && ${EWW_CMD} update bool_audio-control-pane-visible=false"
+    :onscroll `./run audio::scroll_sinks {} && ${EWW_CMD} update json_audio-sinks="$(./run audio::get_sinks)"`
     (box
       :orientation "h"
       :class "audio-control-pane"
@@ -251,7 +254,7 @@
         :class "audio-control-pane-box"
         (for sink in json_audio-sinks
           (button
-            :onclick `./run audio::set_default_sink ${sink.id} && eww update json_audio-sinks="$(./run audio::get_sinks)"`
+            :onclick `./run audio::set_default_sink ${sink.id} && ${EWW_CMD} update json_audio-sinks="$(./run audio::get_sinks)"`
             :class "audio-control-pane-sink-is-default-${sink.is_default}"
             "${sink.name}")))
       (box
@@ -263,6 +266,7 @@
 (defvar bool_audio-control-pane-visible false)
 (defpoll json_audio-sinks
   :interval "1s"
+  :initial "[]"
   :run-while bool_audio-control-pane-visible
   `./run audio::get_sinks`)
 
