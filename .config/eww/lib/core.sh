@@ -137,7 +137,13 @@ function audio::scroll_sinks() {
 
 function weather::status() {
     local url="v2d.wttr.in/?format=1"
-    echo $(curl -m 10 ${url} 2>/dev/null)
+    output=$(curl -m 10 ${url} 2>/dev/null)
+    # Handle when the service is down
+    if [[ "$output" =~ "Unknown" ]]; then
+        echo "No data"
+    else
+        echo "$output"
+    fi
 }
 
 #
