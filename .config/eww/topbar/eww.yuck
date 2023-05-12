@@ -232,7 +232,8 @@
       :space-evenly false
       :spacing 5
       (label
-        :class "audio-vol-icon-${str_volume == '0' ? 'mute' : 'default'}"
+        :class "audio-vol-icon-${str_volume == 0 ? 'mute' :
+                                 str_volume > 100 ? 'amp' : 'default'}"
         :text {str_volume == 0 ? "" :
                str_volume < 80 ? "" : ""})
       (label

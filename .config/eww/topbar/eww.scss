@@ -55,10 +55,14 @@
 .audio-vol-value {
 }
 .audio-vol-icon-default,
+.audio-vol-icon-amp,
 .audio-vol-icon-mute {
     font-family: $font-icons;
 }
-.audio-vol-icon-mute{
+.audio-vol-icon-amp {
+    color: $yellow;
+}
+.audio-vol-icon-mute {
     color: $red;
 }
 .audio-control-pane {
