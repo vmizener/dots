@@ -1,4 +1,5 @@
 allow_images=true
+insensitive=true
 order=default
 key_forward=Control_L-j
 key_backward=Control_L-k
