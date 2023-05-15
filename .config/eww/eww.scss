@@ -29,6 +29,7 @@ $font-text: "Noto Mono";
 $font-mono: "Inconsolata";
 
 $bar-alpha: 0.7;
+$popup-alpha: 0.9;
 
 $bar-vpad: 0.1rem;
 $bar-hpad: 0.4rem;
@@ -37,6 +38,12 @@ $bar-hmargin: 0.4rem;
 
 $window-item-pad: 1rem;
 $window-item-margin: 0.5rem;
+
+// Animations
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
 
 // Imports
 @import "./topbar/eww.scss";

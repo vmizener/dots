@@ -3,6 +3,22 @@
     background-color: rgba($background-layer-1, $bar-alpha);
 }
 
+// Dock Containers
+.dockcontainer {
+    font-family: $font-text;
+    font-weight: bold;
+    background-color: $black;
+    border-radius: 7px;
+    padding: $bar-vpad $bar-hpad;
+    margin: $bar-vmargin $bar-hmargin;
+}
+.dockcontainer-icon {
+    font-family: $font-icons;
+}
+.dockcontainer-text {
+    font-size: 0.8rem;
+}
+
 // Clock
 .clock {
     font-family: $font-mono;
@@ -13,24 +29,6 @@
 }
 
 // Status Widgets
-.statusbar {
-    font-family: $font-text;
-    font-weight: bold;
-    background-color: $black;
-    border-radius: 7px;
-    padding: $bar-vpad $bar-hpad;
-    margin: $bar-vmargin $bar-hmargin;
-}
-.statusbar-bat-icon,
-.statusbar-ram-icon,
-.statusbar-cpu-icon {
-    font-family: $font-icons;
-}
-.statusbar-bat-value,
-.statusbar-ram-value,
-.statusbar-cpu-value {
-    font-size: 0.8rem;
-}
 .statusbar-bat-circle-full {
     color: $dark-green;
 }
@@ -66,14 +64,13 @@
     color: $red;
 }
 .audio-control-pane {
+    animation-name: fadeIn;
+    animation-duration: 0.2s;
     font-family: $font-text;
     font-weight: bold;
 }
 .audio-control-pane-box {
-    //background-color: #161616;
-    background-color: rgba($background-layer-1, 0.9);
-    //border: 1px solid #F5EEE6;
-    border: 1px solid $white;
+    background-color: rgba($background-layer-1, $popup-alpha);
     border-radius: 12px;
     padding: $window-item-pad;
     margin: $window-item-margin;
@@ -82,10 +79,12 @@
     font-family: $font-icons;
     font-size: 1em;
 }
-.audio-control-pane-sink-is-default-true {
+.audio-control-pane-sink-option-default {
     color: $white;
+    background-color: rgba($black, $popup-alpha);
+    border-radius: 12px;
 }
-.audio-control-pane-sink-is-default-false {
+.audio-control-pane-sink-option {
     color: $gray;
 }
 

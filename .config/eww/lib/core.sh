@@ -1,6 +1,81 @@
 #!/usr/bin/env bash
 
 #
+#   Network
+#
+
+function network::get_active_connections() {
+    declare -a ret
+    while IFS= read -r entry; do
+        IFS=':' read -a arr <<< "$entry"
+        c_type="${arr[0]}"
+        c_device="${arr[1]}"
+        c_state="${arr[2]}"
+        c_conn="${arr[3]}"
+        [[ ! "${c_state}" = "connected" ]] && continue
+        ret+=("{\"name\": \"${c_conn}\", \"device\": \"${c_device}\", \"type\": \"${c_type}\"}")
+    done < <(nmcli -t -f TYPE,DEVICE,STATE,CONNECTION device | grep -v '^loopback:')
+    echo "${ret[@]}" | jq -cs
+}
+
+function network::is_wifi_enabled() {
+    # Returns whether wifi is enabled
+    #
+    # If `-p` is provided as argument, echos "true" or "false"
+    # Otherwise, an exit code is emitted
+    [[ $(nmcli radio wifi) = 'enabled' ]]; rc=$?
+    if [[ $1 == '-p' ]]; then
+        [[ $rc == 0 ]] && echo "true" || echo "false"
+    else
+        return $rc
+    fi
+}
+
+function network::list_wifi() {
+    declare -a ret
+    while IFS= read -r entry; do
+        IFS=':' read -a arr <<< "$entry"
+        c_in_use=$([[ "${arr[0]}" = " " ]] && echo 'false' || echo 'true')
+        c_bssid="${arr[1]}"
+        c_ssid="${arr[2]}"
+        c_mode="${arr[3]}"
+        c_chan="${arr[4]}"
+        c_rate="${arr[5]}"
+        c_signal="${arr[6]}"
+        c_bars="${arr[7]}"
+        c_security=$([[ "${arr[8]}" = "" ]] && echo 'None' || echo "${arr[8]}")
+        ret+=( """{
+            \"in_use\": ${c_in_use},
+            \"bssid\": \"${c_bssid}\",
+            \"ssid\": \"${c_ssid}\",
+            \"mode\": \"${c_mode}\",
+            \"chan\": \"${c_chan}\",
+            \"rate\": \"${c_rate}\",
+            \"signal\": \"${c_signal}\",
+            \"bars\": \"${c_bars}\",
+            \"security\": \"${c_security}\"
+        }""")
+    done < <(nmcli -t device wifi list)
+    echo "${ret[@]}" | jq 'select(.ssid != "")' | jq -s """[
+        group_by(.ssid)[] | sort_by(.signal) | reverse | {
+            ssid: .[0].ssid,
+            in_use: ([.[] | .in_use] | any),
+            mode: .[0].mode,
+            security: .[0].security,
+            best_signal: ([.[] | .signal] | max),
+            best_bars: ([.[] | [.signal, .bars]] | max | .[1]),
+            details: [.[] | {
+                bssid: .bssid,
+                chan: .chan,
+                rate: .rate,
+                signal: .signal,
+                bars: .bars
+            }]
+        }
+    ]"""
+}
+
+#
 #   Power
 #
 
@@ -9,8 +84,7 @@ function power::on_bat() {
     #
     # If `-p` is provided as argument, echos "true" or "false"
     # Otherwise, an exit code is emitted
-    [ -d /sys/class/power_supply/BAT0 ]
-    rc=$?
+    [ -d /sys/class/power_supply/BAT0 ]; rc=$?
     if [[ $1 == '-p' ]]; then
         [[ $rc == 0 ]] && echo "true" || echo "false"
     else
@@ -82,7 +156,7 @@ function audio::get_sinks() {
     #     "is-default": "false"
     #   },
     #   {
-    #     "id": 0,
+    #     "id": 1,
     #     "name": "SteelSeries Arctis 7 Chat",
     #     "is-default": "false"
     #   },
@@ -104,7 +178,7 @@ function audio::get_sinks() {
             "id": .index,
             "name": .description,
             "is_default": (if .name == "'$DEFAULT_SINK'" then "true" else "false" end)
-        }' | jq -jcs .
+        }' | jq -jcs 'sort_by(.name)'
 }
 
 function audio::set_default_sink() {

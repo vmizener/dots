@@ -72,6 +72,7 @@
       (box
         :space-evenly false
         :spacing 7
+        (network)
         (weather)
         (statusbar)
         (volume-control)))))
@@ -109,11 +110,43 @@
 (defpoll str_time-sec :interval "1s" `date +"%S"`)
 
 ;;;;;;;;;;
+;; Network
+(defwidget network []
+  (eventbox
+    :onhover "./run eww::grace_hover bool_network-hover"
+    :onhoverlost "./run eww::grace_hover_lost bool_network-hover ${str_hover-delay-short}"
+    (box
+      :orientation "h"
+      :class "dockcontainer"
+      :halign "end"
+      :spacing 7
+      :space-evenly false
+      (for conn in json_net-connections
+        (box
+          :spacing 5
+          :space-evenly false
+          (label
+            :class "dockcontainer-icon"
+            :text {conn.type == "ethernet" ? "" : ""})
+          (revealer
+            :transition "slideleft"
+            :reveal bool_network-hover
+            :duration str_reveal-slide-duration
+            (label
+              :class "dockcontainer-text"
+              :text {conn.type == "ethernet" ? "${conn.device}" : "${conn.name}"})))))))
+(defvar bool_network-hover false)
+(defpoll json_net-connections
+  :interval "10s"
+  :initial "[]"
+  `./run network::get_active_connections`)
+
+;;;;;;;;;;
 ;; Weather
 (defwidget weather []
   (box
     :orientation "h"
-    :class "statusbar"
+    :class "dockcontainer"
     :halign "end"
     :spacing 7
     :space-evenly false
@@ -128,7 +161,7 @@
     :onhoverlost "./run eww::grace_hover_lost bool_statusbar-hover ${str_hover-delay-short}"
     (box
       :orientation "h"
-      :class "statusbar"
+      :class "dockcontainer"
       :halign "end"
       :spacing 7
       :space-evenly false
@@ -140,7 +173,6 @@
 (defwidget statusbar-bat []
   (box
     :orientation "h"
-    :class "statusbar-bat"
     :halign "end"
     :spacing 5
     :space-evenly false
@@ -151,7 +183,7 @@
         :value int_statusbar-bat-capacity
         :thickness 14)
       (label
-        :class "statusbar-bat-icon"
+        :class "dockcontainer-icon"
         :text {! (str_statusbar-bat-status =~ '^discharging$') ? '':
                int_statusbar-bat-capacity > 80 ? "" :
                int_statusbar-bat-capacity > 60 ? "" :
@@ -162,7 +194,7 @@
       :reveal bool_statusbar-hover
       :duration str_reveal-slide-duration
       (label
-        :class "statusbar-bat-value"
+        :class "dockcontainer-text"
         :text "${int_statusbar-bat-capacity}%"))))
 (defpoll bool_statusbar-bat-available :interval "1m" :initial false `./run power::on_bat -p`)
 (defpoll int_statusbar-bat-capacity :interval "1m" :initial 0 `./run power::get_capacity`)
@@ -172,7 +204,6 @@
 (defwidget statusbar-ram []
   (box
     :orientation "h"
-    :class "statusbar-ram"
     :halign "end"
     :spacing 5
     :space-evenly false
@@ -183,20 +214,19 @@
         :value {round(EWW_RAM.used_mem_perc, 0)}
         :thickness 14)
       (label
-        :class "statusbar-ram-icon"
+        :class "dockcontainer-icon"
         :text ""))
     (revealer
       :transition "slideleft"
       :reveal bool_statusbar-hover
       :duration str_reveal-slide-duration
       (label
-        :class "statusbar-ram-value"
+        :class "dockcontainer-text"
         :text "${round(EWW_RAM.used_mem_perc, 0)}%"))))
 ;; CPU
 (defwidget statusbar-cpu []
   (box
     :orientation "h"
-    :class "statusbar-cpu"
     :halign "end"
     :spacing 5
     :space-evenly false
@@ -206,14 +236,14 @@
         :value {round(EWW_CPU.avg, 0)}
         :thickness 14)
       (label
-        :class "statusbar-cpu-icon"
+        :class "dockcontainer-icon"
         :text ""))
     (revealer
       :transition "slideleft"
       :reveal bool_statusbar-hover
       :duration str_reveal-slide-duration
       (label
-        :class "statusbar-cpu-value"
+        :class "dockcontainer-text"
         :text "${round(EWW_CPU.avg, 0)}%"))))
 
 ;;;;;;;;
@@ -256,7 +286,7 @@
         (for sink in json_audio-sinks
           (button
             :onclick `./run audio::set_default_sink ${sink.id} && ${EWW_CMD} update json_audio-sinks="$(./run audio::get_sinks)"`
-            :class "audio-control-pane-sink-is-default-${sink.is_default}"
+            :class "audio-control-pane-sink-option${sink.is_default ? '-default' : ''}"
             "${sink.name}")))
       (box
         :class "audio-control-pane-box"
