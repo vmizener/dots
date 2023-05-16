@@ -1,2 +1,2 @@
 (include "./topbar/eww.yuck")
-(include "./sidebar/eww.yuck")
+;(include "./sidebar/eww.yuck")

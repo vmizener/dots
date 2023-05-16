@@ -5,6 +5,7 @@
 #
 
 function network::get_active_connections() {
+    default_interface=$(ip -o route get 8.8.8.8 | rg 'dev ([^ ]*)' -or '$1')
     declare -a ret
     while IFS= read -r entry; do
         IFS=':' read -a arr <<< "$entry"
@@ -12,8 +13,9 @@ function network::get_active_connections() {
         c_device="${arr[1]}"
         c_state="${arr[2]}"
         c_conn="${arr[3]}"
+        default=$([[ "$c_device" -eq "$default_interface" ]] && echo 'true' || echo 'false')
         [[ ! "${c_state}" = "connected" ]] && continue
-        ret+=("{\"name\": \"${c_conn}\", \"device\": \"${c_device}\", \"type\": \"${c_type}\"}")
+        ret+=("{\"name\": \"${c_conn}\", \"device\": \"${c_device}\", \"type\": \"${c_type}\", \"default\": \"${default}\"}")
     done < <(nmcli -t -f TYPE,DEVICE,STATE,CONNECTION device | grep -v '^loopback:')
     echo "${ret[@]}" | jq -cs
 }
@@ -216,7 +218,7 @@ function weather::status() {
     if [[ "$output" =~ "Unknown" ]]; then
         echo "No data"
     else
-        echo "$output"
+        echo "$output" | tr -s ' '
     fi
 }
 

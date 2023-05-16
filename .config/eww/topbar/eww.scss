@@ -7,6 +7,7 @@
 .dockcontainer {
     font-family: $font-text;
     font-weight: bold;
+    font-size: 1rem;
     background-color: $black;
     border-radius: 7px;
     padding: $bar-vpad $bar-hpad;
@@ -17,6 +18,12 @@
 }
 .dockcontainer-text {
     font-size: 0.8rem;
+}
+.dockcontainer-disabled {
+    color: $red;
+}
+.dockcontainer-warning {
+    color: $yellow;
 }
 
 // Clock
@@ -45,24 +52,6 @@
 }
 
 // Audio
-.audio-vol {
-    font-family: $font-text;
-    font-weight: bold;
-    font-size: 1rem;
-}
-.audio-vol-value {
-}
-.audio-vol-icon-default,
-.audio-vol-icon-amp,
-.audio-vol-icon-mute {
-    font-family: $font-icons;
-}
-.audio-vol-icon-amp {
-    color: $yellow;
-}
-.audio-vol-icon-mute {
-    color: $red;
-}
 .audio-control-pane {
     animation-name: fadeIn;
     animation-duration: 0.2s;
@@ -88,18 +77,18 @@
     color: $gray;
 }
 
-// Workspaces
-.workspace-group {
-    font-family: $font-text;
+// Powermenu
+.powermenu {
+    font-family: $font-icons;
     font-weight: bold;
-    font-size: 1rem;
-    background-color: $black;
-    border-radius: 7px;
+    font-size: 1.2rem;
     padding: $bar-vpad $bar-hpad;
     margin: $bar-vmargin $bar-hmargin;
 }
-.workspace-btn-focus,
-.workspace-btn {
+
+// Workspaces
+.workspace-btn,
+.workspace-btn-focus {
     &:hover {
         color: $red;
     };

@@ -16,7 +16,6 @@
               :x "0%"
               :y "0%"
               :width "100%"
-              :height "2%"
               :anchor "top center")
   ; X11 props
   :windowtype "dock"
@@ -48,20 +47,17 @@
       (topbar-left)
       (topbar-middle)
       (topbar-right))))
-
 (defwidget topbar-left []
   (box
     :orientation "h"
     :halign "start"
     (workspaces)))
-
 (defwidget topbar-middle []
   (box
     :orientation "h"
     :halign "fill"
     :hexpand true
     (clock)))
-
 (defwidget topbar-right []
   (box
     :orientation "h"
@@ -75,8 +71,8 @@
         (network)
         (weather)
         (statusbar)
-        (volume-control)))))
-
+        (volume-control)
+        (powermenu)))))
 (defvar bool_topbar-hover false)
 (defvar bool_topbar-middle-hover false)
 (defvar bool_topbar-right-hover false)
@@ -121,6 +117,12 @@
       :halign "end"
       :spacing 7
       :space-evenly false
+      (overlay
+        ; Display crossed wifi when no connections are actuve
+        :class "dockcontainer-icon dockcontainer-disabled"
+        :visible {arraylength(json_net-connections) == 0}
+        (label :text "")
+        (label :text ""))
       (for conn in json_net-connections
         (box
           :spacing 5
@@ -257,17 +259,16 @@
     :onscroll `pactl set-sink-mute @DEFAULT_SINK@ no && [[ {} == 'up' ]] && pactl set-sink-volume @DEFAULT_SINK@ +5% || pactl set-sink-volume @DEFAULT_SINK@ -5%`
     (box
       :orientation "h"
-      :class "audio-vol"
+      :class "dockcontainer"
       :halign "end"
       :space-evenly false
       :spacing 5
       (label
-        :class "audio-vol-icon-${str_volume == 0 ? 'mute' :
-                                 str_volume > 100 ? 'amp' : 'default'}"
+        :class "dockcontainer-icon ${str_volume == 0 ? 'dockcontainer-disabled' :
+                                     str_volume > 100 ? 'dockcontainer-warning' : ''}"
         :text {str_volume == 0 ? "" :
                str_volume < 80 ? "" : ""})
       (label
-       :class "audio-vol-value"
        :text "${str_volume}%"))))
 (deflisten str_volume :initial 0 `./run audio::subscribe`)
 
@@ -302,17 +303,25 @@
   `./run audio::get_sinks`)
 
 ;;;;;;;;
+;; Power Menu
+
+(defwidget powermenu []
+  (box
+    :orientation "h"
+    (label
+      :class "powermenu"
+      :text "⏻")))
+;;;;;;;;
 ;; Workspaces
 
 (defwidget workspaces []
   (box
-    :class "workspaces"
+    :class "dockcontainer"
     :orientation "h"
     :space-evenly false
     :halign "start"
     (for monitor in json_workspaces
        (box
-         :class "workspace-group"
          :orientation "h"
          :space-evenly true
          :spacing 2
