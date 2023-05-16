@@ -108,36 +108,30 @@
 ;;;;;;;;;;
 ;; Network
 (defwidget network []
-  (eventbox
-    :onhover "./run eww::grace_hover bool_network-hover"
-    :onhoverlost "./run eww::grace_hover_lost bool_network-hover ${str_hover-delay-short}"
-    (box
-      :orientation "h"
-      :class "dockcontainer"
-      :halign "end"
-      :spacing 7
-      :space-evenly false
-      (overlay
-        ; Display crossed wifi when no connections are actuve
-        :class "dockcontainer-icon dockcontainer-disabled"
-        :visible {arraylength(json_net-connections) == 0}
-        (label :text "")
-        (label :text ""))
-      (for conn in json_net-connections
-        (box
-          :spacing 5
-          :space-evenly false
-          (label
-            :class "dockcontainer-icon"
-            :text {conn.type == "ethernet" ? "" : ""})
-          (revealer
-            :transition "slideleft"
-            :reveal bool_network-hover
-            :duration str_reveal-slide-duration
-            (label
-              :class "dockcontainer-text"
-              :text {conn.type == "ethernet" ? "${conn.device}" : "${conn.name}"})))))))
-(defvar bool_network-hover false)
+  (box
+    :orientation "h"
+    :class "dockcontainer"
+    :halign "end"
+    :spacing 7
+    :space-evenly false
+    (overlay
+      ; Display crossed wifi when no connections are actuve
+      :class "dockcontainer-icon dockcontainer-disabled"
+      :visible {arraylength(json_net-connections) == 0}
+      (label :text "")
+      (label :text ""))
+    (for conn in json_net-connections
+      (box
+        :space-evenly false
+        :spacing 5
+        :tooltip "${conn.device}: [${conn.type}] ${conn.name}${conn.is_default ? ', Default Interface' : ''}"
+        (label
+          :class "dockcontainer-icon ${conn.is_default ? 'dockcontainer-active' : 'dockcontainer-inactive'}"
+          :text {conn.type == "ethernet" ? "" : ""})
+        (label
+          :class "dockcontainer-text"
+          :text {conn.type == "ethernet" ? "${conn.device}" : "${conn.name}"}
+          :visible {conn.is_default})))))  ; Only show the default connection
 (defpoll json_net-connections
   :interval "10s"
   :initial "[]"

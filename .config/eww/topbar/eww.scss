@@ -19,8 +19,14 @@
 .dockcontainer-text {
     font-size: 0.8rem;
 }
+.dockcontainer-active {
+    color: $green;
+}
 .dockcontainer-disabled {
     color: $red;
+}
+.dockcontainer-inactive{
+    color: $gray;
 }
 .dockcontainer-warning {
     color: $yellow;

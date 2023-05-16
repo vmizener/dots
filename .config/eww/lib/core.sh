@@ -13,9 +13,9 @@ function network::get_active_connections() {
         c_device="${arr[1]}"
         c_state="${arr[2]}"
         c_conn="${arr[3]}"
-        default=$([[ "$c_device" -eq "$default_interface" ]] && echo 'true' || echo 'false')
+        is_default=$([[ "${c_device}" == "${default_interface}" ]] && echo 'true' || echo 'false')
         [[ ! "${c_state}" = "connected" ]] && continue
-        ret+=("{\"name\": \"${c_conn}\", \"device\": \"${c_device}\", \"type\": \"${c_type}\", \"default\": \"${default}\"}")
+        ret+=("{\"name\": \"${c_conn}\", \"device\": \"${c_device}\", \"type\": \"${c_type}\", \"is_default\": \"${is_default}\"}")
     done < <(nmcli -t -f TYPE,DEVICE,STATE,CONNECTION device | grep -v '^loopback:')
     echo "${ret[@]}" | jq -cs
 }
