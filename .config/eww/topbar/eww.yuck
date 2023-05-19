@@ -3,6 +3,7 @@
 ;;
 
 (defvar str_reveal-slide-duration "200ms")
+(defvar str_reveal-fade-duration "400ms")
 (defvar str_hover-delay-long "0.3")
 (defvar str_hover-delay-short "0.1")
 
@@ -68,10 +69,9 @@
       (box
         :space-evenly false
         :spacing 7
-        (network)
         (weather)
+        (network)
         (statusbar)
-        (volume-control)
         (powermenu)))))
 (defvar bool_topbar-hover false)
 (defvar bool_topbar-middle-hover false)
@@ -163,35 +163,49 @@
       :space-evenly false
       (statusbar-bat)
       (statusbar-ram)
-      (statusbar-cpu))))
+      (statusbar-cpu)
+      (statusbar-vol))))
 (defvar bool_statusbar-hover false)
 ;; Battery
 (defwidget statusbar-bat []
   (box
     :orientation "h"
-    :halign "end"
     :spacing 5
     :space-evenly false
     :visible bool_statusbar-bat-available
+    :tooltip "${str_statusbar-bat-status}"
     (overlay
       (circular-progress
         :class "statusbar-bat-circle-${str_statusbar-bat-capacity-level}"
         :value int_statusbar-bat-capacity
-        :thickness 14)
-      (label
-        :class "dockcontainer-icon"
-        :text {! (str_statusbar-bat-status =~ '^discharging$') ? '':
-               int_statusbar-bat-capacity > 80 ? "" :
-               int_statusbar-bat-capacity > 60 ? "" :
-               int_statusbar-bat-capacity > 40 ? "" :
-               int_statusbar-bat-capacity > 20 ? "" : ""}))
-    (revealer
-      :transition "slideleft"
-      :reveal bool_statusbar-hover
-      :duration str_reveal-slide-duration
-      (label
-        :class "dockcontainer-text"
-        :text "${int_statusbar-bat-capacity}%"))))
+        :height 30
+        :width 30
+        :thickness 2)
+      (revealer
+        :halign "center"
+        :valign "center"
+        :transition "crossfade"
+        :reveal {! bool_statusbar-hover}
+        :duration str_reveal-fade-duration
+        ;(image
+        ;  :path "./images/battery/full.png"
+        ;  :image-width 20)
+        (label
+          :class "dockcontainer-icon"
+          :text {! (str_statusbar-bat-status =~ '^discharging$') ? '':
+                 int_statusbar-bat-capacity > 80 ? "" :
+                 int_statusbar-bat-capacity > 60 ? "" :
+                 int_statusbar-bat-capacity > 40 ? "" :
+                 int_statusbar-bat-capacity > 20 ? "" : ""}))
+      (revealer
+        :halign "center"
+        :valign "center"
+        :transition "crossfade"
+        :reveal bool_statusbar-hover
+        :duration str_reveal-fade-duration
+        (label
+          :class "dockcontainer-text"
+          :text "${int_statusbar-bat-capacity}%")))))
 (defpoll bool_statusbar-bat-available :interval "1m" :initial false `./run power::on_bat -p`)
 (defpoll int_statusbar-bat-capacity :interval "1m" :initial 0 `./run power::get_capacity`)
 (defpoll str_statusbar-bat-capacity-level :interval "1m" `./run power::get_capacity_level`)
@@ -200,73 +214,115 @@
 (defwidget statusbar-ram []
   (box
     :orientation "h"
-    :halign "end"
     :spacing 5
     :space-evenly false
     (overlay
-      :halign "center"
       (circular-progress
         :class "statusbar-ram-circle"
         :value {round(EWW_RAM.used_mem_perc, 0)}
-        :thickness 14)
-      (label
-        :class "dockcontainer-icon"
-        :text ""))
-    (revealer
-      :transition "slideleft"
-      :reveal bool_statusbar-hover
-      :duration str_reveal-slide-duration
-      (label
-        :class "dockcontainer-text"
-        :text "${round(EWW_RAM.used_mem_perc, 0)}%"))))
+        :height 30
+        :width 30
+        :thickness 2)
+      (revealer
+        :halign "center"
+        :valign "center"
+        :transition "crossfade"
+        :reveal {! bool_statusbar-hover}
+        :duration str_reveal-fade-duration
+        (label
+          :class "dockcontainer-icon"
+          :text ""))
+      (revealer
+        :halign "center"
+        :valign "center"
+        :transition "crossfade"
+        :reveal bool_statusbar-hover
+        :duration str_reveal-fade-duration
+        (label
+          :class "dockcontainer-text"
+          :text "${round(EWW_RAM.used_mem_perc, 0)}%")))))
 ;; CPU
 (defwidget statusbar-cpu []
   (box
     :orientation "h"
-    :halign "end"
+    :halign "center"
     :spacing 5
     :space-evenly false
     (overlay
       (circular-progress
         :class "statusbar-cpu-circle"
         :value {round(EWW_CPU.avg, 0)}
-        :thickness 14)
-      (label
-        :class "dockcontainer-icon"
-        :text ""))
-    (revealer
-      :transition "slideleft"
-      :reveal bool_statusbar-hover
-      :duration str_reveal-slide-duration
-      (label
-        :class "dockcontainer-text"
-        :text "${round(EWW_CPU.avg, 0)}%"))))
-
-;;;;;;;;
-;; Audio
-
+        :height 30
+        :width 30
+        :thickness 2)
+      (revealer
+        :halign "center"
+        :valign "center"
+        :transition "crossfade"
+        :reveal {! bool_statusbar-hover}
+        :duration str_reveal-fade-duration
+        (label
+          :class "dockcontainer-icon"
+          :text ""))
+      (revealer
+        :halign "center"
+        :valign "center"
+        :transition "crossfade"
+        :reveal bool_statusbar-hover
+        :duration str_reveal-fade-duration
+        (label
+          :class "dockcontainer-text"
+          :text "${round(EWW_CPU.avg, 0)}%")))))
 ; Volume Control
-(defwidget volume-control []
+(defwidget statusbar-vol []
   (eventbox
     :onclick "pactl set-sink-mute @DEFAULT_SINK@ toggle"
     :onrightclick "./run eww::popup open audio-window && ${EWW_CMD} update bool_audio-control-pane-visible=true"
     :onscroll `pactl set-sink-mute @DEFAULT_SINK@ no && [[ {} == 'up' ]] && pactl set-sink-volume @DEFAULT_SINK@ +5% || pactl set-sink-volume @DEFAULT_SINK@ -5%`
     (box
       :orientation "h"
-      :class "dockcontainer"
-      :halign "end"
-      :space-evenly false
+      :halign "center"
       :spacing 5
-      (label
-        :class "dockcontainer-icon ${str_volume == 0 ? 'dockcontainer-disabled' :
-                                     str_volume > 100 ? 'dockcontainer-warning' : ''}"
-        :text {str_volume == 0 ? "" :
-               str_volume < 80 ? "" : ""})
-      (label
-       :text "${str_volume}%"))))
+      :space-evenly false
+      (overlay
+        (circular-progress
+          :class "statusbar-vol-circle-normal"
+          :value {str_volume > 100 ? 100 : str_volume}
+          :height 30
+          :width 30
+          :thickness 2)
+        (circular-progress
+          :class "statusbar-vol-circle-amp"
+          :value {str_volume > 100 ? str_volume % 100 : 0}
+          :height 30
+          :width 30
+          :thickness 2)
+        (revealer
+          :halign "center"
+          :valign "center"
+          :transition "crossfade"
+          :reveal {! bool_statusbar-hover}
+          :duration str_reveal-fade-duration
+          (label
+            :class "dockcontainer-icon ${str_volume == 0 ? 'dockcontainer-disabled' :
+                                         str_volume > 100 ? 'dockcontainer-warning' : ''}"
+            :text {str_volume == 0 ? "" :
+                   str_volume < 30 ? "" :
+                   str_volume < 70 ? "" : ""}))
+        (revealer
+          :halign "center"
+          :valign "center"
+          :transition "crossfade"
+          :reveal {bool_statusbar-hover}
+          :duration str_reveal-fade-duration
+          (label
+            :class "dockcontainer-text"
+            :text "${str_volume}%"))))))
 (deflisten str_volume :initial 0 `./run audio::subscribe`)
 
-; Audio Control Pane
+;;;;;;;;
+;; Audio Panel
+
 (defwidget audio-control-pane []
   (eventbox
     :onhoverlost "./run eww::popup close audio-window && ${EWW_CMD} update bool_audio-control-pane-visible=false"

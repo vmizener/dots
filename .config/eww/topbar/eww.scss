@@ -46,9 +46,13 @@
     color: $dark-green;
 }
 .statusbar-bat-circle-normal,
+.statusbar-vol-circle-normal,
 .statusbar-ram-circle,
 .statusbar-cpu-circle {
     color: $dark-blue;
+}
+.statusbar-vol-circle-amp {
+    color: $dark-yellow;
 }
 .statusbar-bat-circle-low {
     color: $dark-yellow;
