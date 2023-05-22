@@ -327,6 +327,7 @@
   (eventbox
     :onhoverlost "./run eww::popup close audio-window && ${EWW_CMD} update bool_audio-control-pane-visible=false"
     :onscroll `./run audio::scroll_sinks {} && ${EWW_CMD} update json_audio-sinks="$(./run audio::get_sinks)"`
+    :timeout "500ms"
     (box
       :orientation "h"
       :class "audio-control-pane"
@@ -366,18 +367,18 @@
 
 (defwidget workspaces []
   (box
-    :class "dockcontainer"
     :orientation "h"
     :space-evenly false
     :halign "start"
     (for monitor in json_workspaces
-       (box
-         :orientation "h"
-         :space-evenly true
-         :spacing 2
-         (for workspace in monitor
-           (button
-             :class {workspace.focused ? "workspace-btn-focus" : "workspace-btn"}
-             :onclick "./run workspace::focus ${workspace.name}"
-             "${workspace.name}"))))))
+      (box
+        :class "dockcontainer"
+        :orientation "h"
+        :space-evenly true
+        :spacing 2
+        (for workspace in monitor
+          (button
+            :class {workspace.focused ? "workspace-btn-focus" : "workspace-btn"}
+            :onclick "./run workspace::focus ${workspace.name}"
+            "${workspace.name}"))))))
 (deflisten json_workspaces :initial "[]" `./run workspace::focus_subscriber`)

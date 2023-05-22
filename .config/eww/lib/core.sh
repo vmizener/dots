@@ -179,7 +179,8 @@ function audio::get_sinks() {
         .[] | {
             "id": .index,
             "name": .description,
-            "is_default": (if .name == "'$DEFAULT_SINK'" then "true" else "false" end)
+            "is_default": (if .name == "'$DEFAULT_SINK'" then "true" else "false" end),
+            "type": .properties."device.profile.name"
         }' | jq -jcs 'sort_by(.name)'
 }
 
