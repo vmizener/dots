@@ -42,22 +42,20 @@
 }
 
 // Status Widgets
-.statusbar-bat-circle-full {
-    color: $dark-green;
-}
-.statusbar-bat-circle-normal,
-.statusbar-vol-circle-normal,
-.statusbar-ram-circle,
-.statusbar-cpu-circle {
+.statusbar-circle-normal {
     color: $dark-blue;
 }
-.statusbar-vol-circle-amp {
+.statusbar-circle-amp {
+    background-color: $dark-blue;
     color: $dark-yellow;
 }
-.statusbar-bat-circle-low {
+.statusbar-circle-full {
+    color: $dark-green;
+}
+.statusbar-circle-warn {
     color: $dark-yellow;
 }
-.statusbar-bat-circle-critical {
+.statusbar-circle-critical {
     color: $dark-red;
 }
 
