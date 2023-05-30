@@ -171,6 +171,8 @@
                             ?text-label-class   ; Class of icon
                             text-hover          ; Icon to display when hovering
                             ?text-hover-class   ; Class of hover icon
+                            subtext-hover          ; Icon to display when hovering
+                            ?subtext-hover-class   ; Class of hover icon
                             progress-value      ; Value of progress circle
                             ?progress-class     ; Class of progress circle
                             ?tooltip
@@ -198,14 +200,20 @@
           :class {text-label-class ?: "dockcontainer-icon"}
           :text text-label))
       (revealer
-        :halign "center"
-        :valign "center"
         :transition "crossfade"
         :reveal bool_statusbar-hover
         :duration str_reveal-fade-duration
-        (label
-          :class "dockcontainer-text"
-          :text text-hover)))))
+        (box
+          :orientation "v"
+          :halign "center"
+          :valign "center"
+          :space-evenly false
+          (label
+            :class {text-hover-class ?: "dockcontainer-text"}
+            :text text-hover)
+          (label
+            :class {subtext-hover-class ?: "dockcontainer-subtext"}
+            :text subtext-hover))))))
 ;; Battery
 (defwidget statusbar-bat []
   (statusbar-entry
@@ -215,6 +223,7 @@
                  int_statusbar-bat-capacity > 40 ? "" :
                  int_statusbar-bat-capacity > 20 ? "" : ""}
     :text-hover "${int_statusbar-bat-capacity}%"
+    :subtext-hover "bat"
     :progress-value int_statusbar-bat-capacity
     :progress-class "statusbar-circle-${str_statusbar-bat-capacity-level}"
     :tooltip "${str_statusbar-bat-status}"
@@ -228,12 +237,14 @@
   (statusbar-entry
     :text-label ""
     :text-hover "${round(EWW_RAM.used_mem_perc, 0)}%"
+    :subtext-hover "ram"
     :progress-value "${round(EWW_RAM.used_mem_perc, 0)}"))
 ;; CPU
 (defwidget statusbar-cpu []
   (statusbar-entry
     :text-label ""
     :text-hover "${round(EWW_CPU.avg, 0)}%"
+    :subtext-hover "cpu"
     :progress-value "${round(EWW_CPU.avg, 0)}"))
 ;; Volume
 (defwidget statusbar-vol []
@@ -248,6 +259,7 @@
       :text-label-class "dockcontainer-icon ${str_volume == 0 ? 'dockcontainer-disabled' :
                                               str_volume > 100 ? 'dockcontainer-warning' : ''}"
       :text-hover "${str_volume}%"
+      :subtext-hover "vol"
       :progress-value {str_volume == 100 ? str_volume : str_volume % 100}
       :progress-class {str_volume > 100 ? "statusbar-circle-amp" : "statusbar-circle-normal"})))
 (deflisten str_volume :initial 0 `./run audio::subscribe`)
