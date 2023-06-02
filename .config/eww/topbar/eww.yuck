@@ -161,6 +161,7 @@
       :halign "end"
       :spacing 7
       :space-evenly false
+      (statusbar-net)
       (statusbar-bat)
       (statusbar-ram)
       (statusbar-cpu)
@@ -214,6 +215,18 @@
           (label
             :class {subtext-hover-class ?: "dockcontainer-subtext"}
             :text subtext-hover))))))
+;; Network
+(defwidget statusbar-net []
+  (box
+    (for conn in json_net-connections
+      (statusbar-entry
+        :visible {conn.is_default}
+        :text-label {conn.type == "ethernet" ? "" : ""}
+        :text-label-class "dockcontainer-icon ${conn.is_default ? 'dockcontainer-active' : 'dockcontainer-inactive'}"
+        :text-hover "100"
+        ;:subtext-hover {conn.type == "ethernet" ? "${conn.device}" : "${conn.name}"}
+        :subtext-hover "net"
+        :progress-value 100))))
 ;; Battery
 (defwidget statusbar-bat []
   (statusbar-entry
