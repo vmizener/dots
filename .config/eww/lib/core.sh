@@ -15,7 +15,11 @@ function network::get_active_connections() {
         c_conn="${arr[3]}"
         is_default=$([[ "${c_device}" == "${default_interface}" ]] && echo 'true' || echo 'false')
         [[ ! "${c_state}" = "connected" ]] && continue
-        ret+=("{\"name\": \"${c_conn}\", \"device\": \"${c_device}\", \"type\": \"${c_type}\", \"is_default\": \"${is_default}\"}")
+        strength=100
+        if [[ "${is_default}" == "true" ]] && [[ "${c_type}" == "wifi" ]]; then
+            strength=$(network::list_wifi | jq -r '.[] | select(.ssid == "'${c_conn}'") | .best_signal')
+        fi
+        ret+=("{\"name\": \"${c_conn}\", \"device\": \"${c_device}\", \"type\": \"${c_type}\", \"is_default\": \"${is_default}\", \"strength\": \"${strength}\"}")
     done < <(nmcli -t -f TYPE,DEVICE,STATE,CONNECTION device | grep -v '^loopback:')
     echo "${ret[@]}" | jq -cs
 }

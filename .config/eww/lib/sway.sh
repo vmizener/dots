@@ -68,13 +68,24 @@ function window::get_attributes() {
     filter_str=''
     [ ${#filters} -gt 0 ] && filter_str="$(echo "${filters[@]}" | tr ' ' ',') |"
 
-    swaymsg -t get_tree | jq -rc "[
+    out=$(swaymsg -t get_tree | jq -rc "[
         recurse(.nodes[]?) |
         recurse(.floating_nodes[]?) |
         select(.type==\"con\" or .type==\"floating_con\") |
         select(.app_id != null or .name != null) |
         ${filter_str}${arg_str}
-    ]"
+    ]")
+
+    # Repeat for scratch workspace
+    scratch=$(swaymsg -t get_tree | jq -rc "[
+        recurse(.nodes[]?) | select(.name==\"__i3_scratch\") |
+        recurse(.nodes[]?) | recurse(.floating_nodes[]?) |
+        select(.type==\"con\" or .type==\"floating_con\") |
+        select(.app_id != null or .name != null) |
+        ${filter_str}${arg_str}
+    ]")
+
+    echo "$out $scratch" | jq -rcs '{"display": .[0], "scratch": .[1]}'
 }
 
 EWW_SNAPSHOT_DIR="${HOME}/.cache/eww-snapshots"

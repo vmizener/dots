@@ -70,7 +70,6 @@
         :space-evenly false
         :spacing 7
         (weather)
-        (network)
         (statusbar)
         (powermenu)))))
 (defvar bool_topbar-hover false)
@@ -104,38 +103,6 @@
 (defpoll str_date :interval "5s" `date +"%B %d"`)
 (defpoll str_time :interval "5s" `date +"%H:%M"`)
 (defpoll str_time-sec :interval "1s" `date +"%S"`)
-
-;;;;;;;;;;
-;; Network
-(defwidget network []
-  (box
-    :orientation "h"
-    :class "dockcontainer"
-    :halign "end"
-    :spacing 7
-    :space-evenly false
-    (overlay
-      ; Display crossed wifi when no connections are actuve
-      :class "dockcontainer-icon dockcontainer-disabled"
-      :visible {arraylength(json_net-connections) == 0}
-      (label :text "")
-      (label :text ""))
-    (for conn in json_net-connections
-      (box
-        :space-evenly false
-        :spacing 5
-        :tooltip "${conn.device}: [${conn.type}] ${conn.name}${conn.is_default ? ', Default Interface' : ''}"
-        (label
-          :class "dockcontainer-icon ${conn.is_default ? 'dockcontainer-active' : 'dockcontainer-inactive'}"
-          :text {conn.type == "ethernet" ? "" : ""})
-        (label
-          :class "dockcontainer-text"
-          :text {conn.type == "ethernet" ? "${conn.device}" : "${conn.name}"}
-          :visible {conn.is_default})))))  ; Only show the default connection
-(defpoll json_net-connections
-  :interval "10s"
-  :initial "[]"
-  `./run network::get_active_connections`)
 
 ;;;;;;;;;;
 ;; Weather
@@ -218,15 +185,26 @@
 ;; Network
 (defwidget statusbar-net []
   (box
+    (overlay
+      ; Display crossed wifi when no connections are actuve
+      :class "dockcontainer-icon dockcontainer-disabled"
+      :visible {arraylength(json_net-connections) == 0}
+      :tooltip "No connection"
+      (label :halign "center" :valign "center" :text "")
+      (label :halign "center" :valign "center" :text ""))
     (for conn in json_net-connections
       (statusbar-entry
-        :visible {conn.is_default}
         :text-label {conn.type == "ethernet" ? "" : ""}
         :text-label-class "dockcontainer-icon ${conn.is_default ? 'dockcontainer-active' : 'dockcontainer-inactive'}"
-        :text-hover "100"
-        ;:subtext-hover {conn.type == "ethernet" ? "${conn.device}" : "${conn.name}"}
+        :text-hover "${conn.strength}%"
         :subtext-hover "net"
-        :progress-value 100))))
+        :progress-value {conn.strength}
+        :tooltip {conn.name}))))
+(defpoll json_net-connections
+  :interval "10s"
+  :initial "[]"
+  `./run network::get_active_connections`)
+
 ;; Battery
 (defwidget statusbar-bat []
   (statusbar-entry
@@ -318,7 +296,7 @@
     :orientation "h"
     (label
       :class "powermenu"
-      :text "⏻")))
+      :text "")))
 ;;;;;;;;
 ;; Workspaces
 
