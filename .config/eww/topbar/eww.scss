@@ -3,6 +3,44 @@
     background-color: rgba($background-layer-1, $bar-alpha);
 }
 
+// General Use Classes
+.color-green,
+.color-active {
+    color: $green;
+}
+.color-dark-green,
+.color-full {
+    color: $dark-green;
+}
+.color-red,
+.color-disabled {
+    color: $red;
+}
+.color-dark-red,
+.color-critical {
+    color: $dark-red;
+}
+.color-dark-blue,
+.color-normal {
+    color: $dark-blue;
+}
+.color-yellow,
+.color-amp {
+    color: $yellow;
+}
+.color-dark-yellow,
+.color-warning {
+    color: $dark-yellow;
+}
+.color-gray,
+.color-inactive {
+    color: $gray;
+}
+.bg-dark-blue,
+.bg-normal {
+    background-color: $dark-blue;
+}
+
 // Dock Containers
 .dockcontainer {
     font-family: $font-text;
@@ -22,18 +60,6 @@
 .dockcontainer-subtext {
     font-size: 0.6rem;
 }
-.dockcontainer-active {
-    color: $green;
-}
-.dockcontainer-disabled {
-    color: $red;
-}
-.dockcontainer-inactive{
-    color: $gray;
-}
-.dockcontainer-warning {
-    color: $yellow;
-}
 
 // Clock
 .clock {
@@ -42,24 +68,6 @@
     font-size: 1.2rem;
     padding: $bar-vpad $bar-hpad;
     margin: $bar-vmargin $bar-hmargin;
-}
-
-// Status Widgets
-.statusbar-circle-normal {
-    color: $dark-blue;
-}
-.statusbar-circle-amp {
-    background-color: $dark-blue;
-    color: $dark-yellow;
-}
-.statusbar-circle-full {
-    color: $dark-green;
-}
-.statusbar-circle-warn {
-    color: $dark-yellow;
-}
-.statusbar-circle-critical {
-    color: $dark-red;
 }
 
 // Audio

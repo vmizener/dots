@@ -113,8 +113,12 @@
     :halign "end"
     :spacing 7
     :space-evenly false
-    (label :text str_weather)))
-(defpoll str_weather :interval "5m" `./run weather::status`)
+    :tooltip "Weather is ${json_weather.Desc} today. Feels like ${json_weather.FeelsLikeF}°F in ${json_weather.Loc}"
+    (label :text "${json_weather.Icon} ${json_weather.TempF}°F")))
+(defpoll json_weather
+  :initial '{"FeelsLikeC":"0","FeelsLikeF":"0","TempC":"0","TempF":"0","Loc":"N/A","Desc":"N/A","Icon" :""}'
+  :interval "5m"
+  `./run weather::status`)
 
 ;;;;;;;;;;;;;
 ;; Status Bar
@@ -153,7 +157,7 @@
     :tooltip {tooltip}
     (overlay
       (circular-progress
-        :class {progress-class ?: "statusbar-circle-normal"}
+        :class {progress-class ?: "color-normal"}
         :value {progress-value}
         :height 30
         :width 30
@@ -195,7 +199,7 @@
     (for conn in json_net-connections
       (statusbar-entry
         :text-label {conn.type == "ethernet" ? "" : ""}
-        :text-label-class "dockcontainer-icon ${conn.is_default ? 'dockcontainer-active' : 'dockcontainer-inactive'}"
+        :text-label-class "dockcontainer-icon ${conn.is_default ? 'color-active' : 'color-inactive'}"
         :text-hover "${conn.strength}%"
         :subtext-hover "net"
         :progress-value {conn.strength}
@@ -213,15 +217,17 @@
                  int_statusbar-bat-capacity > 60 ? "" :
                  int_statusbar-bat-capacity > 40 ? "" :
                  int_statusbar-bat-capacity > 20 ? "" : ""}
+    :text-label-class "dockcontainer-icon ${int_statusbar-bat-capacity > 10 ? "" : "color-critical"}"
     :text-hover "${int_statusbar-bat-capacity}%"
     :subtext-hover "bat"
     :progress-value int_statusbar-bat-capacity
-    :progress-class "statusbar-circle-${str_statusbar-bat-capacity-level}"
+    :progress-class "${int_statusbar-bat-capacity == 100 ? "color-full" :
+                       int_statusbar-bat-capacity > 25 ? "color-normal" :
+                       int_statusbar-bat-capacity > 10 ? "color-warning" : "color-critical"}"
     :tooltip "${str_statusbar-bat-status}"
     :visible bool_statusbar-bat-available))
 (defpoll bool_statusbar-bat-available :interval "1m" :initial false `./run power::on_bat -p`)
 (defpoll int_statusbar-bat-capacity :interval "1m" :initial 0 `./run power::get_capacity`)
-(defpoll str_statusbar-bat-capacity-level :interval "1m" `./run power::get_capacity_level`)
 (defpoll str_statusbar-bat-status :interval "1s" `./run power::get_status`)
 ;; RAM
 (defwidget statusbar-ram []
@@ -244,16 +250,17 @@
     :onrightclick "./run eww::popup open audio-window && ${EWW_CMD} update bool_audio-control-pane-visible=true"
     :onscroll `pactl set-sink-mute @DEFAULT_SINK@ no && [[ {} == 'up' ]] && pactl set-sink-volume @DEFAULT_SINK@ +5% || pactl set-sink-volume @DEFAULT_SINK@ -5%`
     (statusbar-entry
-      :text-label {str_volume == 0 ? "" :
-                   str_volume < 30 ? "" :
-                   str_volume < 70 ? "" : ""}
-      :text-label-class "dockcontainer-icon ${str_volume == 0 ? 'dockcontainer-disabled' :
-                                              str_volume > 100 ? 'dockcontainer-warning' : ''}"
-      :text-hover "${str_volume}%"
+      :text-label {json_audio-status.type == 'headset' ? '' :
+                   json_audio-status.vol == 0 ? "" :
+                   json_audio-status.vol < 30 ? "" :
+                   json_audio-status.vol < 70 ? "" : ""}
+      :text-label-class "dockcontainer-icon ${json_audio-status.vol == 0 ? 'color-disabled' :
+                                              json_audio-status.vol > 100 ? 'color-warning' : ''}"
+      :text-hover "${json_audio-status.vol}%"
       :subtext-hover "vol"
-      :progress-value {str_volume == 100 ? str_volume : str_volume % 100}
-      :progress-class {str_volume > 100 ? "statusbar-circle-amp" : "statusbar-circle-normal"})))
-(deflisten str_volume :initial 0 `./run audio::subscribe`)
+      :progress-value {json_audio-status.vol == 100 ? json_audio-status.vol : json_audio-status.vol % 100}
+      :progress-class {json_audio-status.vol > 100 ? "bg-normal color-amp" : "color-normal"})))
+(deflisten json_audio-status :initial '{"vol":0,"desc":"N/A","type":"default","sink":"N/A"}' `./run audio::subscribe`)
 
 ;;;;;;;;
 ;; Audio Panel

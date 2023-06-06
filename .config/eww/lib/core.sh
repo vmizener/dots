@@ -129,26 +129,37 @@ function power::get_capacity_level() {
 #   Audio
 #
 
-function audio::get_vol() {
+function audio::get_status() {
+    sink="$(pactl get-default-sink)"
     # Detect mute
     [[ $(pactl get-sink-mute @DEFAULT_SINK@ | cut -f2 -d' ') == 'yes' ]]
-    MUTED=$?
-    if (( $MUTED == 0 )); then
-        echo "0"
+    is_muted=$?
+    if (( $is_muted == 0 )); then
+        vol="0"
     else
-        echo $(pactl get-sink-volume @DEFAULT_SINK@ | awk '{print $5}' | tr -d '%')
+        vol="$(pactl get-sink-volume @DEFAULT_SINK@ | awk '{print $5}' | tr -d '%')"
     fi
+    sink_json="$(pactl --format=json list sinks | jq '.[] | select(.name=="'$sink'")')"
+    desc=$(echo "$sink_json" | jq -r '.description')
+    form_factor=$(echo "$sink_json" | jq -r '.properties."device.form_factor"')
+    [[ "$form_factor" =~ "null" ]] && form_factor="default"
+    echo '{
+        "vol": '$vol',
+        "desc": "'$desc'",
+        "type": "'$form_factor'",
+        "sink": "'$sink'"
+    }' | jq -c
 }
 
 function audio::subscribe() {
-    # Emit initial volume
-    audio::get_vol
+    # Emit initial status
+    audio::get_status
 
     # Subscribe to changes
     pactl subscribe |
         grep --line-buffered "sink" |
         while read -r _; do
-            audio::get_vol
+            audio::get_status
         done
 }
 
@@ -159,22 +170,26 @@ function audio::get_sinks() {
     #   {
     #     "id": 0,
     #     "name": "Navi 21/23 HDMI/DP Audio Controller Digital Stereo (HDMI)",
-    #     "is-default": "false"
+    #     "is-default": "false",
+    #     "type": null
     #   },
     #   {
     #     "id": 1,
     #     "name": "SteelSeries Arctis 7 Chat",
-    #     "is-default": "false"
+    #     "is-default": "false",
+    #     "type": "headset"
     #   },
     #   {
     #     "id": 2,
     #     "name": "SteelSeries Arctis 7 Game",
-    #     "is-default": "false"
+    #     "is-default": "false",
+    #     "type": "headset"
     #   },
     #   {
     #     "id": 3,
     #     "name": "Starship/Matisse HD Audio Controller Analog Stereo",
-    #     "is-default": "true"
+    #     "is-default": "true",
+    #     "type": null
     #   }
     # ]
 
@@ -184,7 +199,7 @@ function audio::get_sinks() {
             "id": .index,
             "name": .description,
             "is_default": (if .name == "'$DEFAULT_SINK'" then "true" else "false" end),
-            "type": .properties."device.profile.name"
+            "type": .properties."device.form_factor"
         }' | jq -jcs 'sort_by(.name)'
 }
 
@@ -217,14 +232,51 @@ function audio::scroll_sinks() {
 #
 
 function weather::status() {
-    local url="v2d.wttr.in/?format=1"
-    output=$(curl -m 10 ${url} 2>/dev/null)
+    local SYMBOLS='{
+        "Unknown":             "✨",
+        "Cloudy":              "☁️",
+        "Fog":                 "🌫",
+        "HeavyRain":           "🌧",
+        "HeavyShowers":        "🌧",
+        "HeavySnow":           "❄️",
+        "HeavySnowShowers":    "❄️",
+        "LightRain":           "🌦",
+        "LightShowers":        "🌦",
+        "LightSleet":          "🌧",
+        "LightSleetShowers":   "🌧",
+        "LightSnow":           "🌨",
+        "LightSnowShowers":    "🌨",
+        "PartlyCloudy":        "⛅️",
+        "Sunny":               "☀️",
+        "ThunderyHeavyRain":   "🌩",
+        "ThunderyShowers":     "⛈",
+        "ThunderySnowShowers": "⛈",
+        "VeryCloudy": "☁️"
+    }'
+    local URL="v2d.wttr.in/?format=j1"
+    o=$(curl -m 10 ${URL} 2>/dev/null)
     # Handle when the service is down
-    if [[ "$output" =~ "Unknown" ]]; then
-        echo "No data"
-    else
-        echo "$output" | tr -s ' '
+    if [[ "$o" =~ "Unknown location" ]]; then
+        >&2 echo "[ERR] weather::status\n$o"
+        echo "{}"
+        return 1
     fi
+    o_FeelsLikeC=$(echo "$o" | jq -r '.current_condition[0].FeelsLikeC')
+    o_FeelsLikeF=$(echo "$o" | jq -r '.current_condition[0].FeelsLikeF')
+    o_TempC=$(echo "$o" | jq -r '.current_condition[0].temp_C')
+    o_TempF=$(echo "$o" | jq -r '.current_condition[0].temp_F')
+    o_Loc="$(echo "$o" | jq -r '.nearest_area[0].areaName[0].value'), $(echo "$o" | jq -r '.nearest_area[0].region[0].value')"
+    o_weatherDesc="$(echo "$o" | jq -r '.current_condition[0].weatherDesc[0].value' | sed 's/\([[:blank:]][[:lower:]]\)/\U\1/g')"
+    o_weatherIco=$(echo "$SYMBOLS" | jq -r ".$(echo "$o_weatherDesc" | sed 's/[[:blank:]]\(.\)/\1/g')")
+    echo '{
+        "FeelsLikeC": "'$o_FeelsLikeC'",
+        "FeelsLikeF": "'$o_FeelsLikeF'",
+        "TempC": "'$o_TempC'",
+        "TempF": "'$o_TempF'",
+        "Loc": "'$o_Loc'",
+        "Desc": "'$o_weatherDesc'",
+        "Icon": "'$o_weatherIco'"
+    }' | jq -c
 }
 
 #
