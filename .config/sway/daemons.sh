@@ -2,8 +2,28 @@
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 # shellcheck source=./lib.sh
 source "$SCRIPTPATH/lib.sh"
+
 LOGPATH=/tmp/sway-daemons.log
 rm "$LOGPATH"
+function log() {
+    echo "$1" >> $LOGPATH
+}
+log "Running as user '$USER'"
+
+##
+
+PATH=.
+PATH=$PATH:${HOME}/.local/bin
+PATH=$PATH:${HOME}/.cargo/bin
+PATH=$PATH:${HOME}/go/bin
+PATH=$PATH:/usr/local/sbin
+PATH=$PATH:/usr/local/bin
+PATH=$PATH:/usr/sbin
+PATH=$PATH:/usr/bin
+PATH=$PATH:/sbin
+PATH=$PATH:/bin
+
+log "Running with PATH: $PATH"
 
 ###
 
@@ -50,7 +70,11 @@ if lib::exists mako; then
 fi
 
 # Status bar
-if lib::exists waybar; then
+if lib::exists eww; then
+    # Prefer eww
+    eww open topbar
+elif lib::exists waybar; then
+    # Fallback on waybar
     killall -q waybar
     while pgrep -x waybar >/dev/null; do sleep 1; done
     waybar &

@@ -431,10 +431,10 @@
     #? BrightnessDown            | Lower brightness by 5%
     #? Shift+BrightnessUp        | Raise brightness by 1%
     #? Shift+BrightnessDown      | Lower brightness by 1%
-    bindsym XF86MonBrightnessUp output * enable; exec brightnessctl set +5% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-    bindsym XF86MonBrightnessDown output * enable; exec brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-    bindsym Shift+XF86MonBrightnessUp output * enable; exec brightnessctl set +1% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-    bindsym Shift+XF86MonBrightnessDown output * enable; exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+    bindsym XF86MonBrightnessUp output * dpms enable; exec brightnessctl set +5% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+    bindsym XF86MonBrightnessDown output * dpms enable; exec brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+    bindsym Shift+XF86MonBrightnessUp output * dpms enable; exec brightnessctl set +1% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+    bindsym Shift+XF86MonBrightnessDown output * dpms enable; exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
 
     #? AudioPlay                 | Toggle audio player play/pause
     #? AudioNext                 | Play audio play next track
@@ -442,6 +442,9 @@
     bindsym XF86AudioPlay exec playerctl play-pause
     bindsym XF86AudioNext exec playerctl next
     bindsym XF86AudioPrev exec playerctl previous
+
+    #? Display                   | Enable displays
+    bindsym XF86Display exec output * enable
 
     #
     # Resizing containers
