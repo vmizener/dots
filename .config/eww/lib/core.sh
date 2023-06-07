@@ -234,6 +234,7 @@ function audio::scroll_sinks() {
 function weather::status() {
     local SYMBOLS='{
         "Unknown":             "✨",
+        "Clear":               "☀️",
         "Cloudy":              "☁️",
         "Fog":                 "🌫",
         "HeavyRain":           "🌧",
@@ -246,6 +247,7 @@ function weather::status() {
         "LightSleetShowers":   "🌧",
         "LightSnow":           "🌨",
         "LightSnowShowers":    "🌨",
+        "Overcast":            "☁️",
         "PartlyCloudy":        "⛅️",
         "Sunny":               "☀️",
         "ThunderyHeavyRain":   "🌩",
