@@ -16,7 +16,7 @@ function network::get_active_connections() {
         is_default=$([[ "${c_device}" == "${default_interface}" ]] && echo 'true' || echo 'false')
         [[ ! "${c_state}" = "connected" ]] && continue
         strength=100
-        if [[ "${is_default}" == "true" ]] && [[ "${c_type}" == "wifi" ]]; then
+        if [[ "${c_type}" == "wifi" ]]; then
             strength=$(network::list_wifi | jq -r '.[] | select(.ssid == "'${c_conn}'") | .best_signal')
         fi
         ret+=("{\"name\": \"${c_conn}\", \"device\": \"${c_device}\", \"type\": \"${c_type}\", \"is_default\": \"${is_default}\", \"strength\": \"${strength}\"}")
@@ -302,7 +302,7 @@ function eww::popup() {
             eww close $WINDOW
         fi
     }
-    if [[ ! $(pidof eww) ]]; then
+    if [[ ! $(timeout 1s pidof eww) ]]; then
         eww daemon
         sleep 1
     fi
