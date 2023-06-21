@@ -23,6 +23,7 @@
   ; Wayland props
   :exclusive true
   (topbar))
+(defvar bool_topbar-visible true)
 
 (defwindow audio-window
   :monitor 0
@@ -31,6 +32,17 @@
   ; Wayland props
   :stacking "fg"
   (audio-control-pane))
+(defvar bool_audio-window-visible false)
+
+(defwindow side-panel
+  :monitor 0
+  :geometry (geometry
+              :height "90%"
+              :anchor "top right")
+  ; Wayland props
+  :stacking "fg"
+  (side-panel))
+(defvar bool_side-panel-visible false)
 
 ;;;;;;;;;;;;;
 ;; Widgets ;;
@@ -71,7 +83,7 @@
         :spacing 7
         (weather)
         (statusbar)
-        (powermenu)))))
+        (hamburger)))))
 (defvar bool_topbar-hover false)
 (defvar bool_topbar-middle-hover false)
 (defvar bool_topbar-right-hover false)
@@ -248,7 +260,7 @@
 (defwidget statusbar-vol []
   (eventbox
     :onclick "pactl set-sink-mute @DEFAULT_SINK@ toggle"
-    :onrightclick "./run eww::popup open audio-window && ${EWW_CMD} update bool_audio-control-pane-visible=true"
+    :onrightclick "./run eww::popup open audio-window"
     :onscroll `pactl set-sink-mute @DEFAULT_SINK@ no && [[ {} == 'up' ]] && pactl set-sink-volume @DEFAULT_SINK@ +5% || pactl set-sink-volume @DEFAULT_SINK@ -5%`
     (statusbar-entry
       :text-label {json_audio-status.type == 'headset' ? '' :
@@ -268,43 +280,47 @@
 
 (defwidget audio-control-pane []
   (eventbox
-    :onhoverlost "./run eww::popup close audio-window && ${EWW_CMD} update bool_audio-control-pane-visible=false"
+    :onhoverlost "./run eww::popup close audio-window ${str_reveal-fade-duration}"
     :onscroll `./run audio::scroll_sinks {} && ${EWW_CMD} update json_audio-sinks="$(./run audio::get_sinks)"`
-    :timeout "500ms"
-    (box
-      :orientation "h"
-      :class "audio-control-pane"
-      :space-evenly false
+    (revealer
+      :transition "crossfade"
+      :reveal {bool_audio-window-visible}
+      :duration str_reveal-fade-duration
       (box
-        :orientation "v"
-        :class "audio-control-pane-box"
-        (for sink in json_audio-sinks
+        :orientation "h"
+        :class "audio-control-pane"
+        :space-evenly false
+        (box
+          :orientation "v"
+          :class "audio-control-pane-box"
+          (for sink in json_audio-sinks
+            (button
+              :onclick `./run audio::set_default_sink ${sink.id} && ${EWW_CMD} update json_audio-sinks="$(./run audio::get_sinks)"`
+              :class "audio-control-pane-sink-option${sink.is_default ? '-default' : ''}"
+              "${sink.name}")))
+        (box
+          :class "audio-control-pane-box"
           (button
-            :onclick `./run audio::set_default_sink ${sink.id} && ${EWW_CMD} update json_audio-sinks="$(./run audio::get_sinks)"`
-            :class "audio-control-pane-sink-option${sink.is_default ? '-default' : ''}"
-            "${sink.name}")))
-      (box
-        :class "audio-control-pane-box"
-        (button
-          :class "audio-control-pane-config-button"
-          :onclick `pavucontrol &`
-          "")))))
-(defvar bool_audio-control-pane-visible false)
+            :class "audio-control-pane-config-button"
+            :onclick `pavucontrol &`
+            ""))))))
 (defpoll json_audio-sinks
   :interval "1s"
   :initial "[]"
-  :run-while bool_audio-control-pane-visible
+  :run-while bool_audio-window-visible
   `./run audio::get_sinks`)
 
 ;;;;;;;;
-;; Power Menu
+;; Hamburger Button
 
-(defwidget powermenu []
+(defwidget hamburger []
   (box
     :orientation "h"
-    (label
-      :class "powermenu"
-      :text "")))
+    (eventbox
+      :onclick "./run eww::popup open side-panel"
+      (label
+        :class "powermenu"
+        :text ""))))
 ;;;;;;;;
 ;; Workspaces
 
@@ -325,3 +341,33 @@
             :onclick "./run workspace::focus ${workspace.name}"
             "${workspace.name}"))))))
 (deflisten json_workspaces :initial "[]" `./run workspace::focus_subscriber`)
+
+;;;;;;;;
+;; Side Panel
+
+(defwidget side-panel []
+  (eventbox
+    :onhoverlost "./run eww::popup close side-panel ${str_reveal-fade-duration}"
+    (revealer
+      :transition "crossfade"
+      :reveal {bool_side-panel-visible}
+      :duration str_reveal-fade-duration
+      (centerbox
+        :class "dockcontainer"
+        :orientation "v"
+        (side-panel-top)
+        (label :text "hi")
+        (label :text "hi")))))
+
+(defwidget side-panel-top []
+  (box
+    :orientation "v"
+    :valign "start"
+    :space-evenly false
+    (button
+      :class "dockcontainer-icon"
+      :onclick `echo ok`
+      :tooltip "Shutdown"
+      "")
+    (calendar)))
+

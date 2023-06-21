@@ -17,7 +17,7 @@ function network::get_active_connections() {
         [[ ! "${c_state}" = "connected" ]] && continue
         strength=100
         if [[ "${c_type}" == "wifi" ]]; then
-            strength=$(network::list_wifi | jq -r '.[] | select(.ssid == "'${c_conn}'") | .best_signal')
+            strength=$(network::list_wifi | jq -r ".[] | select(.ssid == \"${c_conn}\") | .best_signal")
         fi
         ret+=("{\"name\": \"${c_conn}\", \"device\": \"${c_device}\", \"type\": \"${c_type}\", \"is_default\": \"${is_default}\", \"strength\": \"${strength}\"}")
     done < <(nmcli -t -f TYPE,DEVICE,STATE,CONNECTION device | grep -v '^loopback:')
@@ -287,26 +287,43 @@ function weather::status() {
 
 function eww::popup() {
     # Open or close a popup window via EWW
+    # Window should have an associated variable "bool_$WINDOW-visible" indicating if it should be visible
 
     function window () {
         [[ $1 == 'open' ]]
         OPEN=$?
         WINDOW=$2
+        DELAY=$3
         LOCK_FILE="$HOME/.cache/eww-$WINDOW.lock"
+        VIS_BOOL="bool_$WINDOW-visible"
 
+        # Update VIS_BOOL before delay on CLOSE, but after on OPEN to let transitions draw
+        if (( $OPEN != 0 )); then
+            eww update "$VIS_BOOL=false"
+        fi
+        # Parse and run delay if provided
+        if [ -n "$DELAY" ]; then
+            DELAY=$(echo "$DELAY" | tr -d '[:alpha:]')
+            DELAY=$(echo "scale=2 ; ${DELAY}/1000" | bc)
+            sleep "$DELAY"
+        fi
         if (( $OPEN == 0 )) && [[ ! -f "$LOCK_FILE" ]]; then
             touch "$LOCK_FILE"
             eww open $WINDOW
-        elif (( $OPEN != 0 )) && [[ -f "$LOCK_FILE" ]]; then
+        elif (( $OPEN != 0 )) && [[ -f "$LOCK_FILE" ]] && [[ $(eww get $VIS_BOOL) = "false" ]]; then
+            # Only close if VIS_BOOL is still false
             rm "$LOCK_FILE"
             eww close $WINDOW
+        fi
+        if (( $OPEN == 0 )); then
+            eww update "$VIS_BOOL=true"
         fi
     }
     if [[ ! $(timeout 1s pidof eww) ]]; then
         eww daemon
         sleep 1
     fi
-    window $1 $2
+    window $1 $2 $3 &
 }
 
 function eww::grace_hover() {

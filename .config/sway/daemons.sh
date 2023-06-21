@@ -8,7 +8,7 @@ rm "$LOGPATH"
 function log() {
     echo "$1" >> $LOGPATH
 }
-log "Running as user '$USER'"
+log "Starting daemons as user '$USER'"
 
 ##
 

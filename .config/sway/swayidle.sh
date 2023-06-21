@@ -27,12 +27,12 @@ swayidle -w \
         resume "brightnessctl s \$(cat $TMP_SCREENBRIGHTNESS)" \
     timeout $TIMEOUT_LOCK \
         "if on_battery; then swaylock; fi" \
-    timeout $TIMEOUT_BLACK \
-        'swaymsg "output * dpms off"' \
-        resume 'swaymsg "output * dpms on"' \
-    timeout $TIMEOUT_LOCKED_BLACK \
-        'if pgrep swaylock; then swaymsg "output * dpms off"; fi' \
-        resume 'if pgrep swaylock; then swaymsg "output * dpms on"; fi' \
+    #timeout $TIMEOUT_BLACK \
+    #    'swaymsg "output * dpms off"' \
+    #    resume 'swaymsg "output * dpms on"' \
+    #timeout $TIMEOUT_LOCKED_BLACK \
+    #    'if pgrep swaylock; then swaymsg "output * dpms off"; fi' \
+    #    resume 'if pgrep swaylock; then swaymsg "output * dpms on"; fi' \
     before-sleep \
         'swaylock' \
     before-sleep \
