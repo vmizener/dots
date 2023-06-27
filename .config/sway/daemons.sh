@@ -72,6 +72,7 @@ fi
 # Status bar
 if lib::exists eww; then
     # Prefer eww
+    eww kill
     eww open topbar
 elif lib::exists waybar; then
     # Fallback on waybar
