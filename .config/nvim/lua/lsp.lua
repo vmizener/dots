@@ -30,22 +30,34 @@ end
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 
 -- Golang
-lspconfig.gopls.setup({
-    on_attach = on_attach,
-    settings = {
-        gopls = {
-            env = {
-                GOPACKAGESDRIVER = vim.env.HOME .. '/tools/gopackagesdriver.sh'
-            },
-            directoryFilters = {
-                "-bazel-bin",
-                "-bazel-out",
-                "-bazel-testlogs",
-                "-bazel-mypkg",
-            }
-    }
-  }
-})
+local function file_exists(name)
+   local f=io.open(name,"r")
+   if f~=nil then io.close(f) return true else return false end
+end
+if file_exists("WORKSPACE") then
+    -- If a Bazel WORKSPACE file is present, include some additional settings
+    -- https://github.com/bazelbuild/rules_go/wiki/Editor-setup
+    lspconfig.gopls.setup({
+        on_attach = on_attach,
+        settings = {
+            gopls = {
+                env = {
+                    GOPACKAGESDRIVER = vim.env.HOME .. '/tools/gopackagesdriver.sh'
+                },
+                directoryFilters = {
+                    "-bazel-bin",
+                    "-bazel-out",
+                    "-bazel-testlogs",
+                    "-bazel-mypkg",
+                }
+        }
+      }
+    })
+else
+    lspconfig.gopls.setup({
+       on_attach = on_attach
+    })
+end
 
 -- Lua
 local luaruntimepath = vim.split(package.path, ';')

@@ -13,32 +13,28 @@ setopt EXTENDED_GLOB
 
 # Build path
 PATH=.
-PATH=$PATH:${HOME}/.local/bin
-PATH=$PATH:${HOME}/go/bin
-PATH=$PATH:/usr/local/sbin
-PATH=$PATH:/usr/local/bin
-PATH=$PATH:/usr/games
-PATH=$PATH:/usr/sbin
-PATH=$PATH:/usr/bin
-PATH=$PATH:/sbin
-PATH=$PATH:/bin
-
-if [ ! -z $VIRTUAL_ENV ]; then
-    PATH=${VIRTUAL_ENV}/bin:$PATH
-fi
-declare -a EXTRA_PATHS
-EXTRA_PATHS=(
-    ${HOME}/.cargo/bin
-    /opt/X11/bin
-    /usr/local/go/bin
-    /Library/TeX/texbin
-    # WSL paths
-    /mnt/c/Windows/System32
-    /mnt/c/Windows/System32/WindowsPowerShell/v1.0
-)
-for d in $EXTRA_PATHS; do
-    [ -d $d ] && PATH=$PATH:$d
-done
+local function add_path() {
+    # Adds path to PATH if it exists
+    [ -d "$1" ] && PATH=$PATH:$1
+}
+add_path ${HOME}/.local/bin
+add_path ${HOME}/go/bin
+add_path /usr/local/sbin
+add_path /usr/local/bin
+add_path /usr/local/go/bin
+add_path /usr/games
+add_path /usr/sbin
+add_path /usr/bin
+add_path /sbin
+add_path /bin
+add_path ${HOME}/.cargo/bin
+add_path /opt/X11/bin
+add_path /Library/TeX/texbin
+# WSL paths
+add_path /mnt/c/Windows/System32
+add_path /mnt/c/Windows/System32/WindowsPowerShell/v1.0
+# Prepend virtual env path if available
+[ ! -z $VIRTUAL_ENV ] && PATH=${VIRTUAL_ENV}/bin:$PATH
 
 export PATH
 
@@ -79,13 +75,8 @@ local c_reset='%f'      # Reset color
 # Startup
 ZSHCONFIGFILES=(${HOME}/.config/zsh/(^submodules/)#*.zsh)  # Ignore submodule files
 
-# Load path files
-for file in ${(M)ZSHCONFIGFILES:#*/path.zsh}; do
-    source ${file}
-done
-
-# Load non-path/non-completion files
-for file in ${${ZSHCONFIGFILES:#*/path.zsh}:#*/completion.zsh}; do
+# Load non-completion files
+for file in ${ZSHCONFIGFILES:#*/completion.zsh}; do
     source ${file}
 done
 
