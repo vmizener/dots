@@ -52,8 +52,8 @@
 ;; Top Bar
 (defwidget topbar []
   (eventbox
-    :onhover "./run eww::grace_hover bool_topbar-hover"
-    :onhoverlost "./run eww::grace_hover_lost bool_topbar-hover ${str_hover-delay-long}"
+    :onhover "./run eww::set_locked_var bool_topbar-hover"
+    :onhoverlost "./run eww::unset_locked_var bool_topbar-hover ${str_hover-delay-long}"
     (centerbox
       :class "top-bar"
       :orientation "h"
@@ -76,8 +76,8 @@
     :orientation "h"
     :halign "end"
     (eventbox
-      :onhover "./run eww::grace_hover bool_topbar-right-hover"
-      :onhoverlost "./run eww::grace_hover_lost bool_topbar-right-hover ${str_hover-delay-long}"
+      :onhover "./run eww::set_locked_var bool_topbar-right-hover"
+      :onhoverlost "./run eww::unset_locked_var bool_topbar-right-hover ${str_hover-delay-long}"
       (box
         :space-evenly false
         :spacing 7
@@ -136,8 +136,8 @@
 ;; Status Bar
 (defwidget statusbar []
   (eventbox
-    :onhover "./run eww::grace_hover bool_statusbar-hover"
-    :onhoverlost "./run eww::grace_hover_lost bool_statusbar-hover ${str_hover-delay-short}"
+    :onhover "./run eww::set_locked_var bool_statusbar-hover"
+    :onhoverlost "./run eww::unset_locked_var bool_statusbar-hover ${str_hover-delay-short}"
     (box
       :orientation "h"
       :class "dockcontainer"
@@ -371,3 +371,13 @@
       "")
     (calendar)))
 
+(defwidget longpress-button [text
+                             lock-var
+                             class?]
+  (eventbox
+    :onclick
+    :onhoverlost "./run eww::unset_locked_var ${lock-var}"
+    (label
+      :class "dockcontainer-icon"
+      :text "${text}")))
+      

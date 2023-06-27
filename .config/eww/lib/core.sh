@@ -326,21 +326,20 @@ function eww::popup() {
     window $1 $2 $3 &
 }
 
-function eww::grace_hover() {
+function eww::set_locked_var() {
     # Usage:
-    #   grace_hover [VAR]
-    #   grace_hoverlost [VAR] [GRACE] [CMD ...]
+    #   grace_set_var VAR
+    #   grace_unset_var VAR [GRACE]
     #
-    # Updates $VAR only if hover is still lost after $GRACE seconds
+    # Sets <VAR> with an associated lock file.
+    # When unset, will only trigger after <GRACE> seconds if the lock is still present.
     #
-    # E.g.
+    # <GRACE> is set to 0 if not provided.
     #
-    # :onhover "./run eww::grace_hover bool_topbar-right-hover"
-    # :onhoverlost "./run eww::grace_hover_lost bool_topbar-right-hover 0.5"
+    # E.g. to detect hover, but only unset if not hovering for 0.5 seconds:
     #
-    # or
-    #
-    # :onhoverlost `./run eww::grace_hover_lost.sh bool_sidebar-visible 0.3 './scripts/run eww::popup close sidebar-visible'`
+    #       :onhover     "./run eww::set_locked_var   bool_topbar-right-hover"
+    #       :onhoverlost "./run eww::unset_locked_var bool_topbar-right-hover 0.5"
 
     VAR=$1
     LOCK_FILE="$HOME/.cache/eww-grace-$VAR.lock"
@@ -350,12 +349,13 @@ function eww::grace_hover() {
     eww update "${VAR}=true"
 }
 
-function eww::grace_hover_lost() {
-    # See `eww::grace_hover` for usage
+function eww::unset_locked_var() {
+    # See `eww::set_locked_var` for usage
 
     VAR=$1
     shift
     GRACE=$1
+    [[ -z "$GRACE" ]] && GRACE=0
     shift
     LOCK_FILE="$HOME/.cache/eww-grace-$VAR.lock"
     (
