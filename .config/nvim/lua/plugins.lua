@@ -197,6 +197,8 @@ local plugins = {
     -- Fidget provides a progress indicator for the LSP {{{
     {
         'j-hui/fidget.nvim',
+        tag = "legacy",  -- TODO: check for new rewritten version
+        dependencies = { "neovim/nvim-lspconfig" },
         config = function()
             require("fidget").setup()
         end
