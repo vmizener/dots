@@ -35,7 +35,7 @@
     set $right l
 
 #
-# Common applications
+# Common applications/scripts
 #
 
     # Your preferred terminal emulator
@@ -49,6 +49,9 @@
 
     # Screen lock
     set $lock swaylock
+
+    # Common scripts
+    set $MEDIA_CTL ~/.config/sway/media_controls.sh
 
 #
 # System configs
@@ -85,13 +88,12 @@
     # Export display settings to D-Bus
     exec dbus-update-activation-environment --systemd DISPLAY I3SOCK SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
 
-    # Overlay bar (for e.g. volume control)
-    set $WOBSOCK $XDG_RUNTIME_DIR/wob.sock
-    exec_always rm -f $WOBSOCK && mkfifo $WOBSOCK && tail -f $WOBSOCK | wob
-
     # Startup scripts
     exec_always ~/.config/sway/daemons.sh
     exec_always ~/.config/sway/swayidle.sh
+
+    # Overlay bar (for e.g. volume control)
+    exec_always $MEDIA_CTL --init
 
 #
 # I/O configuration
@@ -422,25 +424,25 @@
     #
 
     #? AudioMute                 | Toggle mute
-    bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle && ([[ $(pactl get-sink-mute @DEFAULT_SINK@ | cut -d' ' -f2) = 'yes' ]] && echo '0' || pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}') > $WOBSOCK
+    bindsym XF86AudioMute exec $MEDIA_CTL volume --mute=toggle
 
     #? AudioVolumeUp             | Raise volume by 5%
     #? AudioVolumeDown           | Lower volume by 5%
     #? Shift+AudioVolumeUp       | Raise volume by 1%
     #? Shift+AudioVolumeDown     | Lower volume by 1%
-    bindsym XF86AudioRaiseVolume exec pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ +5% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
-    bindsym XF86AudioLowerVolume exec pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ -5% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
-    bindsym Shift+XF86AudioRaiseVolume exec pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ +1% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
-    bindsym Shift+XF86AudioLowerVolume exec pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ -1% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
+    bindsym XF86AudioRaiseVolume exec $MEDIA_CTL volume +5%
+    bindsym XF86AudioLowerVolume exec $MEDIA_CTL volume -5%
+    bindsym Shift+XF86AudioRaiseVolume exec $MEDIA_CTL volume +1%
+    bindsym Shift+XF86AudioLowerVolume exec $MEDIA_CTL volume -1%
 
     #? BrightnessUp              | Raise brightness by 5%
     #? BrightnessDown            | Lower brightness by 5%
     #? Shift+BrightnessUp        | Raise brightness by 1%
     #? Shift+BrightnessDown      | Lower brightness by 1%
-    bindsym XF86MonBrightnessUp output * dpms enable; exec brightnessctl set +5% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-    bindsym XF86MonBrightnessDown output * dpms enable; exec brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-    bindsym Shift+XF86MonBrightnessUp output * dpms enable; exec brightnessctl set +1% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-    bindsym Shift+XF86MonBrightnessDown output * dpms enable; exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+    bindsym XF86MonBrightnessUp output * dpms enable; exec $MEDIA_CTL +5%
+    bindsym XF86MonBrightnessDown output * dpms enable; exec $MEDIA_CTL 5%-
+    bindsym Shift+XF86MonBrightnessUp output * dpms enable; exec $MEDIA_CTL +1%
+    bindsym Shift+XF86MonBrightnessDown output * dpms enable; exec $MEDIA_CTL 1%-
 
     #? AudioPlay                 | Toggle audio player play/pause
     #? AudioNext                 | Play audio play next track
@@ -557,6 +559,8 @@
     for_window [class="Google-chrome" title="^Chrome Remote Desktop - Remote Access -.*"] move container to workspace 4
     # Steam
     for_window [class="Steam"] floating enable
+    # Dotes
+    for_window [class="dota2"] move container to workspace 10
     # Always float some applications by default
     for_window [app_id="pavucontrol"] floating enable
     for_window [app_id="blueman-manager"] {

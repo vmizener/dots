@@ -3,8 +3,9 @@ SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 # shellcheck source=./lib.sh
 source "$SCRIPTPATH/lib.sh"
 
-lib::init
+lib::init --reset
 lib::log "Starting daemons as user '$USER'"
+lib::log "Running with PATH: $PATH"
 
 # Clipboard manager
 if lib::exists wl-paste cliphist; then

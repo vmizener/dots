@@ -1,9 +1,20 @@
 #!/usr/bin/env bash
 
 lib::init() {
-    [ -z "$1" ] && LOGPATH="/tmp/sway-$(basename $0 .sh).log" || LOGPATH="$1"
-    rm "$LOGPATH"
-    lib::log "Initialized logger at $LOGPATH"
+    LOGPATH="/tmp/sway-daemons.log"
+    case $1 in
+        --reset)
+            rm "$LOGPATH"
+            shift
+        ;;
+        -*|--*)
+            echo "Unknown option $i"
+            return 1
+        ;;
+        *)
+            shift
+        ;;
+    esac
 
     PATH=.
     PATH=$PATH:${HOME}/.local/bin
@@ -15,7 +26,6 @@ lib::init() {
     PATH=$PATH:/usr/bin
     PATH=$PATH:/sbin
     PATH=$PATH:/bin
-    lib::log "Running with PATH: $PATH"
 }
 
 lib::exists() {
@@ -36,7 +46,7 @@ lib::exists() {
 
 lib::log() {
     [ -z "$LOGPATH" ] && lib::init
-    echo "$1" >> $LOGPATH
+    echo "[$(date '+%B %d %H:%M')] $1" >> $LOGPATH
 }
 
 lib::get_windows() {
