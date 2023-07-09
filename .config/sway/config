@@ -177,12 +177,12 @@
     bindsym $mod+Escape exec $lock
     #? Super+Shift+Escape        | Open the power menu
     bindsym $mod+Shift+Escape exec "~/.config/sway/powermenu.sh"
-    #? Super+q                   | Dismiss all notifications
-    bindsym $mod+q exec "makoctl dismiss -a"
-    #? Super+`                   | Restore most recently dismissed notification
-    bindsym $mod+grave exec "makoctl restore"
+    #? Super+e                   | Dismiss all notifications
+    bindsym $mod+e exec "makoctl dismiss -a"
+    #? Super+Shift+e             | Restore most recently dismissed notification
+    bindsym $mod+Shift+e exec "makoctl restore"
     #? Super+p                   | Open clipboard manager
-    bindsym $mod+p exec 'if command -v "cliphist"; then cliphist list | wofi -d | cliphist decode | wl-copy; else clipman pick -t wofi; fi'
+    bindsym $mod+p exec "~/.config/sway/clip_manager.sh"
     #? Super+?                   | Show hotkeys; help cheatsheet
     bindsym $mod+Shift+slash exec "~/.config/sway/hotkeys.sh"
     #? Alt+p                     | Focus most recent urgent window
@@ -291,6 +291,7 @@
     #? Super+9                   | Switch to workspace 9
     #? Super+0                   | Switch to workspace 10
     #? Super+Backslash           | Switch to last focused workspace
+    #? Super+Backtick/Grave      | Switch to last focused workspace
     #? Super+[                   | Switch to previous workspace on display
     #? Super+]                   | Switch to next workspace on display
     #? Super+Shift+Tab           | Switch to previouw workspace on display
@@ -308,6 +309,7 @@
     bindsym $mod+9 workspace number 9
     bindsym $mod+0 workspace number 10
     bindsym $mod+backslash workspace back_and_forth
+    bindsym $mod+grave workspace back_and_forth
     bindsym $mod+bracketleft workspace prev_on_output
     bindsym $mod+bracketright workspace next_on_output
     bindsym $mod+Shift+Tab workspace prev_on_output
@@ -326,6 +328,7 @@
     #? Super+Shift+9                | Move focused window to workspace 9 and switch to it
     #? Super+Shift+0                | Move focused window to workspace 10 and switch to it
     #? Super+Shift+Backslash        | Move focused window to last focused workspace and switch to it
+    #? Super+Shift+Backtick/Grave   | Move focused window to last focused workspace and switch to it
     #? Super+Shift+[                | Move focused window to previous workspace on display and switch to it
     #? Super+Shift+]                | Move focused window to next workspace on display and switch to it
     #? Super+Shift+MouseScrollUp    | Move focused window to previous workspace on display and switch to it
@@ -341,6 +344,7 @@
     bindsym $mod+Shift+9 move container to workspace number 9; workspace number 9
     bindsym $mod+Shift+0 move container to workspace number 10; workspace number 10
     bindsym $mod+Shift+backslash move container to workspace back_and_forth; workspace back_and_forth
+    bindsym $mod+Shift+grave move container to workspace back_and_forth; workspace back_and_forth
     bindsym $mod+Shift+bracketleft move container to workspace prev_on_output; workspace prev_on_output
     bindsym $mod+Shift+bracketright move container to workspace next_on_output; workspace next_on_output
     bindsym --whole-window --border $mod+Shift+$mouse_scroll_up move container to workspace prev_on_output; workspace prev_on_output
@@ -357,6 +361,7 @@
     #? Control+Super+Shift+9                | Move focused window to workspace 9
     #? Control+Super+Shift+0                | Move focused window to workspace 10
     #? Control+Super+Shift+Backslash        | Move focused window to last focused workspace
+    #? Control+Super+Shift+Backtick/Grave   | Move focused window to last focused workspace
     #? Control+Super+Shift+[                | Move focused window to previous workspace on display
     #? Control+Super+Shift+]                | Move focused window to next workspace on display
     bindsym $mod+Control+Shift+1 move container to workspace number 1
@@ -370,6 +375,7 @@
     bindsym $mod+Control+Shift+9 move container to workspace number 9
     bindsym $mod+Control+Shift+0 move container to workspace number 10
     bindsym $mod+Control+Shift+backslash move container to workspace back_and_forth
+    bindsym $mod+Control+Shift+grave move container to workspace back_and_forth
     bindsym $mod+Control+Shift+bracketleft move container to workspace prev_on_output
     bindsym $mod+Control+Shift+bracketright move container to workspace next_on_output
 
@@ -544,7 +550,10 @@
     for_window [app_id="firefox"] inhibit_idle fullscreen
     for_window [app_id="google-chrome"] inhibit_idle fullscreen
     # Set default workspace for some apps
-    for_window [class="Google-chrome" title="^Google Chat -.*"] move container to workspace 3
+    for_window [class="Google-chrome" title="^Google Chat -.*"] {
+        floating disable
+        move container to workspace 3
+    }
     for_window [class="Google-chrome" title="^Chrome Remote Desktop - Remote Access -.*"] move container to workspace 4
     # Steam
     for_window [class="Steam"] floating enable
