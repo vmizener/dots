@@ -151,14 +151,16 @@
       (statusbar-vol))))
 (defvar bool_statusbar-hover false)
 ;; Bar Entry
-(defwidget statusbar-entry [text-label          ; Icon to display
-                            ?text-label-class   ; Class of icon
-                            text-hover          ; Icon to display when hovering
-                            ?text-hover-class   ; Class of hover icon
+(defwidget statusbar-entry [text-label             ; Icon to display
+                            ?text-label-class      ; Class of icon
+                            text-hover             ; Icon to display when hovering
+                            ?text-hover-class      ; Class of hover icon
                             subtext-hover          ; Icon to display when hovering
                             ?subtext-hover-class   ; Class of hover icon
-                            progress-value      ; Value of progress circle
-                            ?progress-class     ; Class of progress circle
+                            progress-value         ; Value of base progress circle
+                            ?progress-class        ; Class of base progress circle
+                            ?alt-progress-value    ; Value of overlay progress circle
+                            ?alt-progress-class    ; Class of overlay progress circle
                             ?tooltip
                             ?visible]
   (box
@@ -169,10 +171,17 @@
     :tooltip {tooltip}
     (overlay
       (circular-progress
-        :class {progress-class ?: "color-normal"}
+        :class {progress-class != '' ? progress-class : alt-progress-value == '' ? "color-normal" : "color-active"}
         :value {progress-value}
         :height 30
         :width 30
+        :thickness 2)
+      (circular-progress
+        :class {alt-progress-class ?: "color-normal"}
+        :value {alt-progress-value ?: 0}
+        :height 30
+        :width 30
+        :visible {alt-progress-value != '' ? true : false}
         :thickness 2)
       (revealer
         :halign "center"
@@ -248,7 +257,9 @@
     :text-label ""
     :text-hover "${round(EWW_RAM.used_mem_perc, 0)}%"
     :subtext-hover "ram"
-    :progress-value "${round(EWW_RAM.used_mem_perc, 0)}"))
+    :progress-value "${round(100*(1-(EWW_RAM.free_mem/EWW_RAM.total_mem)), 2)}"
+    :alt-progress-value "${round(EWW_RAM.used_mem_perc, 2)}"
+    :tooltip "Non-Free: ${round(100*(1-(EWW_RAM.free_mem/EWW_RAM.total_mem)), 0)}%"))
 ;; CPU
 (defwidget statusbar-cpu []
   (statusbar-entry
@@ -272,7 +283,8 @@
       :text-hover "${json_audio-status.vol}%"
       :subtext-hover "vol"
       :progress-value {json_audio-status.vol == 100 ? json_audio-status.vol : json_audio-status.vol % 100}
-      :progress-class {json_audio-status.vol > 100 ? "bg-normal color-amp" : "color-normal"})))
+      :progress-class {json_audio-status.vol > 100 ? "bg-normal color-amp" : "color-normal"}
+      :tooltip {json_audio-status.vol > 100 ? "bg-normal color-amp" : "color-normal"})))
 (deflisten json_audio-status :initial '{"vol":0,"desc":"N/A","type":"default","sink":"N/A"}' `./run audio::subscribe`)
 
 ;;;;;;;;
