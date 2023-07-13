@@ -439,10 +439,10 @@
     #? BrightnessDown            | Lower brightness by 5%
     #? Shift+BrightnessUp        | Raise brightness by 1%
     #? Shift+BrightnessDown      | Lower brightness by 1%
-    bindsym XF86MonBrightnessUp output * dpms enable; exec $MEDIA_CTL +5%
-    bindsym XF86MonBrightnessDown output * dpms enable; exec $MEDIA_CTL 5%-
-    bindsym Shift+XF86MonBrightnessUp output * dpms enable; exec $MEDIA_CTL +1%
-    bindsym Shift+XF86MonBrightnessDown output * dpms enable; exec $MEDIA_CTL 1%-
+    bindsym XF86MonBrightnessUp output * dpms enable; exec $MEDIA_CTL brightness +5%
+    bindsym XF86MonBrightnessDown output * dpms enable; exec $MEDIA_CTL brightness 5%-
+    bindsym Shift+XF86MonBrightnessUp output * dpms enable; exec $MEDIA_CTL brightness +1%
+    bindsym Shift+XF86MonBrightnessDown output * dpms enable; exec $MEDIA_CTL brightness 1%-
 
     #? AudioPlay                 | Toggle audio player play/pause
     #? AudioNext                 | Play audio play next track
