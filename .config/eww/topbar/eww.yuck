@@ -284,7 +284,7 @@
       :subtext-hover "vol"
       :progress-value {json_audio-status.vol == 100 ? json_audio-status.vol : json_audio-status.vol % 100}
       :progress-class {json_audio-status.vol > 100 ? "bg-normal color-amp" : "color-normal"}
-      :tooltip {json_audio-status.vol > 100 ? "bg-normal color-amp" : "color-normal"})))
+      :tooltip {json_audio-status.desc})))
 (deflisten json_audio-status :initial '{"vol":0,"desc":"N/A","type":"default","sink":"N/A"}' `./run audio::subscribe`)
 
 ;;;;;;;;

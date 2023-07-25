@@ -37,6 +37,8 @@ fi
 
 # Gesture control
 if lib::exists fusuma; then
+    # https://github.com/iberianpig/fusuma
+    # Also needs fusuma-plugin-sendkey (see bottom of github)
     killall -q fusuma
     fusuma -d
     lib::log 'Initialized gesture control'
