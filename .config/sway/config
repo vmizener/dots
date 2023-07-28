@@ -72,7 +72,7 @@
     # Use gaps
     gaps {
         inner 5
-        outer 5
+        outer 0
     }
     # Don't include title-bar in border
     default_border pixel 5
@@ -558,7 +558,15 @@
     }
     for_window [class="Google-chrome" title="^Chrome Remote Desktop - Remote Access -.*"] move container to workspace 4
     # Steam
-    for_window [class="Steam"] floating enable
+    for_window [class="steam"] floating enable
+    for_window [class="steam" title="^(Steam|Friends List)$"] {
+        floating disable
+        move container to workspace 8
+    }
+    for_window [class="steam" title="^Friends List$"] {
+        # 15% width
+        resize set width 15ppt
+    }
     # Dotes
     for_window [class="dota2"] move container to workspace 10
     # Always float some applications by default
