@@ -34,9 +34,11 @@ if command -v batcat &>/dev/null; then
     # Bat is 'batcat' in Debian
     alias cat='batcat'
     export MANPAGER="sh -c 'col -bx | batcat -l man -p --paging=always'"
+    export MANROFFOPT="-c"
 elif command -v bat &>/dev/null; then
     alias cat='bat'
     export MANPAGER="sh -c 'col -bx | bat -l man -p --paging=always'"
+    export MANROFFOPT="-c"
 fi
 if command -v delta &>/dev/null; then
     alias diff='delta'
