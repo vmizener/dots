@@ -6,7 +6,7 @@ function workspace::focus() {
 
 function workspace::list_by_output() {
     echo $(swaymsg -t get_workspaces |
-        jq '.[] | {focused, output, name}' |
+        jq '.[] | {visible, focused, output, name}' |
         jq -jcs 'group_by(.output)'
     )
 }

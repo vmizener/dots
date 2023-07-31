@@ -349,7 +349,8 @@
         :spacing 2
         (for workspace in monitor
           (button
-            :class {workspace.focused ? "workspace-btn-focus" : "workspace-btn"}
+            :class {workspace.focused ? "workspace-btn-focus" :
+                    workspace.visible ? "workspace-btn-visible" : "workspace-btn"}
             :onclick "./run workspace::focus ${workspace.name}"
             "${workspace.name}"))))))
 (deflisten json_workspaces :initial "[]" `./run workspace::focus_subscriber`)

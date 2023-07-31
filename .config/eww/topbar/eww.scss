@@ -105,11 +105,15 @@
 
 // Workspaces
 .workspace-btn,
+.workspace-btn-visible,
 .workspace-btn-focus {
     &:hover {
         color: $red;
     };
     min-width: 20px;
+}
+.workspace-btn-visible {
+    color: $yellow;
 }
 .workspace-btn-focus {
     color: $blue;
