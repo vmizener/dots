@@ -374,23 +374,30 @@
 
 (defwidget side-panel-top []
   (box
-    :orientation "v"
+    :orientation "h"
     :valign "start"
-    :space-evenly false
-    (button
-      :class "dockcontainer-icon"
-      :onclick `echo ok`
-      :tooltip "Shutdown"
-      "")
-    (calendar)))
+    (large-button-option
+      :label ""
+      :text "Shutdown"
+      :onclick "echo ok")
+    (large-button-option
+      :label ""
+      :text "Suspend"
+      :onclick "echo ok")))
 
-(defwidget longpress-button [text
-                             lock-var
-                             class?]
+(defwidget large-button-option [label
+                                text
+                                onclick]
   (eventbox
-    :onclick
-    :onhoverlost "./run eww::unset_locked_var ${lock-var}"
-    (label
-      :class "dockcontainer-icon"
-      :text "${text}")))
-      
+    :onclick "${onclick}"
+    :hexpand true
+    (box
+      :class "dockcontainer-button"
+      :orientation "v"
+      :halign "fill"
+      (label
+        :class "dockcontainer-icon dockcontainer-supertext"
+        :text "${label}")
+      (label
+       :class "dockcontainer-text"
+       :text "${text}"))))

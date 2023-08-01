@@ -51,8 +51,18 @@
     padding: $bar-vpad $bar-hpad;
     margin: $bar-vmargin $bar-hmargin;
 }
+.dockcontainer-button {
+    background-color: $dark-green;
+    border-bottom-left-radius: 17px;
+    border-top-right-radius: 17px;
+    padding: 0.5rem;
+    margin: 0.5rem;
+}
 .dockcontainer-icon {
     font-family: $font-icons;
+}
+.dockcontainer-supertext {
+    font-size: 1.8rem;
 }
 .dockcontainer-text {
     font-size: 0.8rem;
