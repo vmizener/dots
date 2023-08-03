@@ -223,7 +223,7 @@
         :text-label {conn.type == "ethernet" ? "" : ""}
         :text-label-class "dockcontainer-icon ${conn.is_default ? 'color-active' : 'color-inactive'}"
         :text-hover "${conn.strength}%"
-        :subtext-hover "net"
+        :subtext-hover {conn.type == "ethernet" ? "eth" : "wifi"}
         :progress-value {conn.strength}
         :tooltip {conn.name}))))
 (defpoll json_net-connections

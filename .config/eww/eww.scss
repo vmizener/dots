@@ -52,13 +52,15 @@ $window-item-margin: 0.5rem;
 // Tooltips
 tooltip.background {
     background-color: rgba($background-layer-1, $bar-alpha);
-    font-size: 1rem;
     border-radius: 7px;
     color: $foreground;
 }
 
 tooltip label {
+    font-family: $font-text;
+    font-size: 1rem;
     margin: 0.1rem;
+    color: $white;
 }
 
 // Imports
