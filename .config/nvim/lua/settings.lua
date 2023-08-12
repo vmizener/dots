@@ -3,6 +3,7 @@ local options = {
 
     autoindent = true,      -- Automatic indentation
     smartindent = true,     -- Detect language-based indentation levels
+    cmdheight = 0,          -- Hide the commandline by default
     background = 'dark',    -- Use dark colorscheme for background.  Options: 'dark', 'light'
     breakindent = true,     -- Indent line-breaks to align with code
     confirm = true,         -- Confirm quit if there're unsaved changes

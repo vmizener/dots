@@ -43,8 +43,8 @@ end
 
 -- Editor Controls {{{
     -- Get to normal mode with `jk` or `<Space>`
-    map('i', 'jk', '<Esc>', opts())
-    map('v', '<Space>', '<Esc>', opts())
+    map('i', 'jk', '<Esc>', opts())      -- Escape insert mode
+    map('v', '<Space>', '<Esc>', opts()) -- Escape visual mode with <Space>
     -- Navigate wrapped lines
     map('n', 'j', 'gj', opts())
     map('n', 'k', 'gk', opts())
