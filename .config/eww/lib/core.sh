@@ -151,6 +151,17 @@ function audio::get_status() {
     }' | jq -c
 }
 
+function audio::set_mute() {
+    case "$1" in
+        toggle|yes|no)
+            pactl set-sink-mute @DEFAULT_SINK@ "$1"
+        ;;
+        *)
+            >&2 echo "[ERR] audio::set_mute\nInvalid option: got '$1', expected 'yes', 'no', or 'toggle'; "
+        ;;
+    esac
+}
+
 function audio::subscribe() {
     # Emit initial status
     audio::get_status

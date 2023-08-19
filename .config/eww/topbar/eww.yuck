@@ -272,7 +272,7 @@
   (eventbox
     :onclick "pactl set-sink-mute @DEFAULT_SINK@ toggle"
     :onrightclick "./run eww::popup open audio-window"
-    :onscroll `pactl set-sink-mute @DEFAULT_SINK@ no && [[ {} == 'up' ]] && pactl set-sink-volume @DEFAULT_SINK@ +5% || pactl set-sink-volume @DEFAULT_SINK@ -5%`
+    :onscroll `./run audio::set_mute no && [[ {} == 'up' ]] && pactl set-sink-volume @DEFAULT_SINK@ +5% || pactl set-sink-volume @DEFAULT_SINK@ -5%`
     (statusbar-entry
       :text-label {json_audio-status.type == 'headset' ? '' :
                    json_audio-status.vol == 0 ? "" :
