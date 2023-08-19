@@ -562,7 +562,10 @@
     }
     for_window [class="Google-chrome" title="^Chrome Remote Desktop - Remote Access -.*"] move container to workspace 4
     # Steam
-    for_window [class="steam"] floating enable
+    for_window [class="steam"] {
+        floating enable
+        move container to workspace 8
+    }
     for_window [class="steam" title="^(Steam|Friends List)$"] {
         floating disable
         move container to workspace 8
