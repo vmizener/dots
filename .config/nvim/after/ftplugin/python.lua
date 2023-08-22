@@ -1,7 +1,7 @@
 -- Helper function
-local function reformat (executable)
+local function reformat (exec_str)
     local view = vim.fn.winsaveview()
-    vim.cmd('silent execute ":%!' .. executable .. '"')
+    vim.cmd('silent execute "' .. exec_str .. '"')
     if vim.v['shell_error'] > 0 then
         -- If there are errors, put them in the quicklist and undo the formatting
         vim.cmd("cexpr getline(1, '$')->map({ idx, val -> val->substitute('<standard input>', expand('%'), '') })")
@@ -33,10 +33,10 @@ vim.api.nvim_create_autocmd('BufWritePre', {
     callback = function ()
         -- Use pyformat if present
         if vim.fn.executable('pyformat') == 1 then
-            reformat('pyformat')
+            reformat(':%! pyformat')
         -- Fallback on black
-        elseif vim.fn.executable("black") then
-            reformat('black')
+        elseif vim.fn.exists('Black') then
+            vim.cmd(':Black')
         else
             vim.api.nvim_echo({{"Missing python formatter! Install either pyformat or black via `pip`", "WarningMsg"}}, true, {})
         end
