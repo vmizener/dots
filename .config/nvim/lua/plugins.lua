@@ -185,6 +185,15 @@ local plugins = {
         end
     },
     -- }}}
+    -- Comment is a simple commenting plugin for Neovim {{{
+    {
+        'numToStr/Comment.nvim',
+        opts = {
+            -- add any options here
+        },
+        lazy = false,
+    },
+    -- }}}
     -- Dressing improves nvim UI default interfaces (like using Telescope) {{{
     {
         'stevearc/dressing.nvim',
