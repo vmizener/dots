@@ -576,6 +576,8 @@
     }
     # Dotes
     for_window [class="dota2"] move container to workspace 10
+    # Streamlink
+    for_window [class="streamlink-twitch-gui"] move container to workspace 9
     # Always float some applications by default
     for_window [app_id="pavucontrol"] floating enable
     for_window [app_id="blueman-manager"] {
