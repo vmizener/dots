@@ -1,99 +1,95 @@
--- Hotkeys from plugins are assigned in plugins.lua
 -- LSP hotkeys are in lsp.lua
+local utils = require("utils")
+utils.set_map_opts({noremap=true, silent=true})
 
 -- Leader is space
 vim.g['mapleader'] = ' '
 
-local map = vim.keymap.set
-local function opts(t)
-    t = t or {}
-    local r = { noremap = true, silent = true }
-    for k, v in pairs(t) do r[k] = v end
-    return r
-end
-
 -- Plugins {{{
+    -- Comment
+    utils.map('n', '<C-/>', '<Plug>(comment_toggle_linewise_current)', '[Comment] Toggle commenting of current line')
+    utils.map('v', '<C-/>', '<Plug>(comment_toggle_linewise_visual)', '[Comment] Toggle commenting of current lines')
     -- SymbolsOutline
-    map('n', '<Leader>ss', ':SymbolsOutline<CR>', opts({desc='[SymbolsOutline] Toggle symbols outline pane'}))
+    utils.map('n', '<Leader>ss', ':SymbolsOutline<CR>', '[SymbolsOutline] Toggle symbols outline pane')
     -- IndentLinesToggle
-    map('n', '<Leader>i', ':IndentLinesToggle<CR>', opts({desc='[IndentLines] Toggle indentation guide'}))
+    utils.map('n', '<Leader>i', ':IndentLinesToggle<CR>', '[IndentLines] Toggle indentation guide')
     -- Fugitive
-    map('n', '<Leader>gd', ':Gdiffsplit!<CR>', opts({desc='[Git] View diff in a split'}))
-    map('n', '<Leader>gD', '<C-w>h<C-w>c', opts())
+    utils.map('n', '<Leader>gd', ':Gdiffsplit!<CR>', '[Git] View diff in a split')
+    utils.map('n', '<Leader>gD', '<C-w>h<C-w>c', '[Git]')
     --map('n', '<Leader>gc', ':G commit<CR>', opts())
-    map('n', '<Leader>gs', ':G status<CR>', opts({desc='[Git] View status'}))
+    utils.map('n', '<Leader>gs', ':G status<CR>', '[Git] View status')
     -- Gitsigns
-    map('n', '<Leader>gj', ':Gitsigns next_hunk<CR>', opts({desc='[Git] Next hunk'}))
-    map('n', '<Leader>gk', ':Gitsigns prev_hunk<CR>', opts({desc='[Git] Previous hunk'}))
+    utils.map('n', '<Leader>gj', ':Gitsigns next_hunk<CR>', '[Git] Next hunk')
+    utils.map('n', '<Leader>gk', ':Gitsigns prev_hunk<CR>', '[Git] Previous hunk')
     -- Nvim-Tree
-    map('n', '<Leader>t', ':NvimTreeToggle<CR>', opts({desc='[NvimTree] Toggle file tree'}))
+    utils.map('n', '<Leader>t', ':NvimTreeToggle<CR>', '[NvimTree] Toggle file tree')
     -- Telescope
-    map('n', '<Leader>of', ':Telescope find_files hidden=true<CR>', opts({desc='[Telescope] File browser (show hidden)'}))
-    map('n', '<Leader>oF', ':Telescope find_files cwd=~ hidden=true<CR>', opts({desc='[Telescope] File browser (from $HOME)'}))
-    map('n', '<Leader>og', ':Telescope live_grep<CR>', opts({desc='[Telescope] Live grep'}))
-    map('n', '<Leader>ob', ':Telescope buffers<CR>', opts({desc='[Telescope] Buffers'}))
-    map('n', '<Leader>oh', ':Telescope help_tags<CR>', opts({desc='[Telescope] Help tags'}))
+    utils.map('n', '<Leader>of', ':Telescope find_files hidden=true<CR>', '[Telescope] File browser (show hidden)')
+    utils.map('n', '<Leader>oF', ':Telescope find_files cwd=~ hidden=true<CR>', '[Telescope] File browser (from $HOME)')
+    utils.map('n', '<Leader>og', ':Telescope live_grep<CR>', '[Telescope] Live grep')
+    utils.map('n', '<Leader>ob', ':Telescope buffers<CR>', '[Telescope] Buffers')
+    utils.map('n', '<Leader>oh', ':Telescope help_tags<CR>', '[Telescope] Help tags')
 
-    map('n', '<Leader>od', ':Telescope diagnostics<CR>', opts({desc='[Telescope] Diagnostics'}))
-    map('n', '<Leader>ca', ':lua vim.lsp.buf.code_action()<CR>', opts({desc='[Telescope] Code actions'}))
-    map('v', '<Leader>ca', ':lua vim.lsp.buf.code_action()<CR>', opts({desc='[Telescope] Code actions'}))
+    utils.map('n', '<Leader>od', ':Telescope diagnostics<CR>', '[Telescope] Diagnostics')
+    utils.map('n', '<Leader>ca', ':lua vim.lsp.buf.code_action()<CR>', '[Telescope] Code actions')
+    utils.map('v', '<Leader>ca', ':lua vim.lsp.buf.code_action()<CR>', '[Telescope] Code actions')
     -- WhichKey
-    map('n', '<Leader>?', ':WhichKey<CR>', opts({desc='[WhichKey] Open WhichKey'}))
+    utils.map('n', '<Leader>?', ':WhichKey<CR>', '[WhichKey] Open WhichKey')
 -- }}}
 
 -- Editor Controls {{{
     -- Get to normal mode with `jk` or `<Space>`
-    map('i', 'jk', '<Esc>', opts())      -- Escape insert mode
-    map('v', '<Space>', '<Esc>', opts()) -- Escape visual mode with <Space>
+    utils.map('i', 'jk', '<Esc>', '')      -- Escape insert mode
+    utils.map('v', '<Space>', '<Esc>', '') -- Escape visual mode with <Space>
     -- Navigate wrapped lines
-    map('n', 'j', 'gj', opts())
-    map('n', 'k', 'gk', opts())
+    utils.map('n', 'j', 'gj', '')
+    utils.map('n', 'k', 'gk', '')
     -- Indentation with tab key
-    map('n', '<Tab>', '>>_', opts({desc='Indent current line'}))
-    map('n', '<S-Tab>', '<<', opts({desc='De-indent current line'}))
-    map('v', '<Tab>', '>gv', opts())
-    map('v', '<S-Tab>', '<gv', opts())
+    utils.map('n', '<Tab>', '>>_', 'Indent current line')
+    utils.map('n', '<S-Tab>', '<<', 'De-indent current line')
+    utils.map('v', '<Tab>', '>gv', 'Indent current line')
+    utils.map('v', '<S-Tab>', '<gv', 'De-indent current line')
     -- Quickly close quickfix/loclist windows
-    map('n', 'QQ', ':cclose | lclose<CR>', opts({desc="Close quickfix/loclist"}))
+utils.    map('n', 'QQ', ':cclose | lclose<CR>', "Close quickfix/loclist")
 -- }}}
 
 -- Editor Behavior and Appearance {{{
     -- Center view on search results
-    map('n', 'n', 'nzz', opts({desc='Focus next search result'}))
-    map('n', 'N', 'Nzz', opts({desc='Focus previous search result'}))
+    utils.map('n', 'n', 'nzz', 'Focus next search result')
+    utils.map('n', 'N', 'Nzz', 'Focus previous search result')
     -- Toggle line wrap
-    map('n', '<Leader>w', ':set wrap! wrap?<CR>', opts({desc="Toggle line wrap"}))
+    utils.map('n', '<Leader>w', ':set wrap! wrap?<CR>', "Toggle line wrap")
     -- Toggle paste mode
     vim.o['pastetoggle'] = '<F2>'
     -- Toggle invisible characters
-    map('n', '<Leader>I', ':set list! list?<CR>', opts({desc="Toggle invisible characters"}))
+    utils.map('n', '<Leader>I', ':set list! list?<CR>', "Toggle invisible characters")
     -- Toggle spell check mode
-    map('n', '<F3>', ':set spell! spell?<CR>', opts({desc="Toggle spell check"}))
-    map('v', '<F3>', '<Esc>:set spell! spell?<CR>gv', opts())
+    utils.map('n', '<F3>', ':set spell! spell?<CR>', "Toggle spell check")
+    utils.map('v', '<F3>', '<Esc>:set spell! spell?<CR>gv', "Toggle spell check")
     -- Toggle folding
-    map('n', 'z<Space>', 'za', opts())
-    map('v', 'z<Space>', 'za', opts())
+    utils.map('n', 'z<Space>', 'za', 'Toggle folding')
+    utils.map('v', 'z<Space>', 'za', 'Toggle folding')
     -- Use system clipboard
-    map('x', '<Leader>y', require('osc52').copy_visual)
-    map('n', '<Leader>p', '"+p', opts())
-    map('v', '<Leader>p', '"+p', opts())
+    utils.map('x', '<Leader>y', require('osc52').copy_visual, '')
+    utils.map('n', '<Leader>p', '"+p', 'Paste from system clipboard')
+    utils.map('v', '<Leader>p', '"+p', 'Paste from system clipboard')
 -- }}}
 
 -- Buffer Management {{{
-    map('n', '<Leader>bp', ':bprev<CR>', opts())
-    map('n', '<Leader>bn', ':bnext<CR>', opts())
-    map('n', '<Leader>bb', ':b#<CR>', opts())
-    map('n', '<Leader>bd', ':lclose|bprev|bd #<CR>', opts())
-    map('n', '<Leader>bk', ':lclose|bprev|bd! #<CR>', opts())
+    utils.map('n', '<Leader>bp', ':bprev<CR>', '')
+    utils.map('n', '<Leader>bn', ':bnext<CR>', '')
+    utils.map('n', '<Leader>bb', ':b#<CR>', '')
+    utils.map('n', '<Leader>bd', ':lclose|bprev|bd #<CR>', '')
+    utils.map('n', '<Leader>bk', ':lclose|bprev|bd! #<CR>', '')
 -- }}}
 
 -- File Management {{{
     -- Write as root
     vim.cmd([[cnoreabbrev w!! lua require('utils').sudo_write()]])
     -- Open config
-    map('n', '<Leader>ec', ':e $MYVIMRC<CR>', opts({desc='Open config'}))
+    utils.map('n', '<Leader>ec', ':e $MYVIMRC<CR>', 'Open config')
     -- Source config
-    map('n', '<Leader>sc', ':source $MYVIMRC<CR>', opts({desc='Source config'}))
+    utils.map('n', '<Leader>sc', ':source $MYVIMRC<CR>', 'Source config')
 -- }}}
 
 -- Mouse Scroll Behavior {{{
@@ -102,22 +98,23 @@ end
     --   Shift + Scroll Wheel = Up/Down 1 page
     -- Control + Scroll Wheel = Up/Down half page
     --    Meta + Scroll Wheel = Up/Down 1 line
-    map('n', '<ScrollWheelUp>',     '4<C-Y>',      opts({desc='Scroll 4 lines up'}))
-    map('n', '<ScrollWheelDown>',   '4<C-E>',      opts({desc='Scroll 4 lines down'}))
-    map('n', '<S-ScrollWheelUp>',   '<C-B>',       opts({desc='Scroll 1 page up'}))
-    map('n', '<S-ScrollWheelDown>', '<C-F>',       opts({desc='Scroll 1 page down'}))
-    map('n', '<C-ScrollWheelUp>',   '<C-U>',       opts({desc='Scroll half page up'}))
-    map('n', '<C-ScrollWheelDown>', '<C-D>',       opts({desc='Scroll half page down'}))
-    map('n', '<M-ScrollWheelUp>',   '<C-Y>',       opts({desc='Scroll 1 line up'}))
-    map('n', '<M-ScrollWheelDown>', '<C-E>',       opts({desc='Scroll 1 line down'}))
-    map('i', '<ScrollWheelUp>',     '<C-O>4<C-Y>', opts())
-    map('i', '<ScrollWheelDown>',   '<C-O>4<C-E>', opts())
-    map('i', '<S-ScrollWheelUp>',   '<C-O><C-B>',  opts())
-    map('i', '<S-ScrollWheelDown>', '<C-O><C-F>',  opts())
-    map('i', '<C-ScrollWheelUp>',   '<C-O><C-U>',  opts())
-    map('i', '<C-ScrollWheelDown>', '<C-O><C-D>',  opts())
-    map('i', '<M-ScrollWheelUp>',   '<C-O><C-Y>',  opts())
-    map('i', '<M-ScrollWheelDown>', '<C-O><C-E>',  opts())
+    utils.map('n', '<ScrollWheelUp>',     '4<C-Y>',      'Scroll 4 lines up')
+    utils.map('n', '<ScrollWheelDown>',   '4<C-E>',      'Scroll 4 lines down')
+    utils.map('n', '<S-ScrollWheelUp>',   '<C-B>',       'Scroll 1 page up')
+    utils.map('n', '<S-ScrollWheelDown>', '<C-F>',       'Scroll 1 page down')
+    utils.map('n', '<C-ScrollWheelUp>',   '<C-U>',       'Scroll half page up')
+    utils.map('n', '<C-ScrollWheelDown>', '<C-D>',       'Scroll half page down')
+    utils.map('n', '<M-ScrollWheelUp>',   '<C-Y>',       'Scroll 1 line up')
+    utils.map('n', '<M-ScrollWheelDown>', '<C-E>',       'Scroll 1 line down')
+
+    utils.map('i', '<ScrollWheelUp>',     '<C-O>4<C-Y>', 'Scroll 4 lines up')
+    utils.map('i', '<ScrollWheelDown>',   '<C-O>4<C-E>', 'Scroll 4 lines down')
+    utils.map('i', '<S-ScrollWheelUp>',   '<C-O><C-B>',  'Scroll 1 page up')
+    utils.map('i', '<S-ScrollWheelDown>', '<C-O><C-F>',  'Scroll 1 page down')
+    utils.map('i', '<C-ScrollWheelUp>',   '<C-O><C-U>',  'Scroll half page up')
+    utils.map('i', '<C-ScrollWheelDown>', '<C-O><C-D>',  'Scroll half page down')
+    utils.map('i', '<M-ScrollWheelUp>',   '<C-O><C-Y>',  'Scroll 1 line up')
+    utils.map('i', '<M-ScrollWheelDown>', '<C-O><C-E>',  'Scroll 1 line down')
 -- }}}
 
 

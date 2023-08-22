@@ -1,5 +1,15 @@
 local M = {}
 
+-- Keymapping
+function M.set_map_opts(opts)
+    M._map_opts = opts
+end
+function M.map(mode, lhs, rhs, desc)
+    local t = M._map_opts or {}
+    t["desc"] = desc
+    vim.keymap.set(mode, lhs, rhs, t)
+end
+
 -- Logging
 function M._echo_multiline(msg)
   for _, s in ipairs(vim.fn.split(msg, "\n")) do
