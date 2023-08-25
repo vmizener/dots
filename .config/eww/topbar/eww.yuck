@@ -82,6 +82,7 @@
         :space-evenly false
         :spacing 7
         (weather)
+        (ime)
         (statusbar)
         (hamburger)))))
 (defvar bool_topbar-hover false)
@@ -115,6 +116,24 @@
 (defpoll str_date :interval "5s" `date +"%B %d"`)
 (defpoll str_time :interval "5s" `date +"%H:%M"`)
 (defpoll str_time-sec :interval "1s" `date +"%S"`)
+
+;;;;;;;;;;
+;; IME
+(defwidget ime []
+  (box
+    :orientation "h"
+    :class "dockcontainer"
+    :halign "end"
+    :spacing 7
+    :space-evenly false
+    :tooltip "${str_ime-name}"
+    (label
+      :class "dockcontainer-icon"
+      :text {str_ime-name == 'pinyin' ? "拼" : ""})))
+(defpoll str_ime-name
+  :initial ""
+  :interval "100ms"
+  `pgrep fcitx5 >/dev/null && fcitx5-remote -n`)
 
 ;;;;;;;;;;
 ;; Weather

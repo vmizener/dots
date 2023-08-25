@@ -230,6 +230,8 @@ elif [ "${system_type}" = "Debian" ]; then
         cmake
         cmatrix
         fd-find
+        fcitx5
+        fcitx5-chinese-addons
         figlet
         fortune
         fzf

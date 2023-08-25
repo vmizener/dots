@@ -6,6 +6,7 @@ source "$SCRIPTPATH/lib.sh"
 lib::init --reset
 lib::log "Starting daemons as user '$USER'"
 lib::log "Running with PATH: $PATH"
+lib::log "Running with ENV:\n$(env)"
 
 # Clipboard manager
 if lib::exists wl-paste cliphist; then
@@ -79,3 +80,9 @@ if lib::exists ckb-next; then
     lib::log 'Initialized `ckb-next`'
 fi
 
+# Language IME
+if lib::exists fcitx5; then
+    lib::log "$(env)"
+    fcitx5 -r &
+    lib::log 'Initialized `fcitx5`'
+fi
