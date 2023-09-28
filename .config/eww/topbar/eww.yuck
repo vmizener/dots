@@ -64,7 +64,8 @@
   (box
     :orientation "h"
     :halign "start"
-    (workspaces)))
+    (workspaces)
+    (current-mode)))
 (defwidget topbar-middle []
   (box
     :orientation "h"
@@ -134,6 +135,21 @@
   :initial ""
   :interval "100ms"
   `pgrep fcitx5 >/dev/null && fcitx5-remote -n`)
+
+;;;;;;;;;;
+;; Mode
+(defwidget current-mode []
+  (box
+    :orientation "h"
+    :class "dockcontainer"
+    :halign "start"
+    :spacing 7
+    :space-evenly false
+    :visible {str_cur-mode != 'default'}
+    (label
+      :class "dockcontainer-text color-alert"
+      :text "${str_cur-mode} mode")))
+(deflisten str_cur-mode :initial 'default' `./run mode::mode_subscriber`)
 
 ;;;;;;;;;;
 ;; Weather
