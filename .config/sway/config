@@ -136,6 +136,7 @@
     }
     input type:keyboard {
         xkb_numlock enabled
+        xkb_options grp_led:num
         # Remap menu to super
         xkb_options altwin:menu_win
     }

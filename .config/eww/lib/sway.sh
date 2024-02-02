@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+function mode::get_state() {
+    swaymsg -t get_binding_state | jq .name
+}
+
+function mode::get_available() {
+    swaymsg -t get_binding_modes | jq -c
+}
+function mode::mode_subscriber() {
+    swaymsg -t subscribe -m '["mode"]' | jq --unbuffered -rc .change
+}
+
 function workspace::focus() {
     swaymsg workspace "$1" >/dev/null
 }

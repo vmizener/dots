@@ -3,74 +3,6 @@
     background-color: rgba($background-layer-1, $bar-alpha);
 }
 
-// General Use Classes
-.color-green,
-.color-active {
-    color: $green;
-}
-.color-dark-green,
-.color-full {
-    color: $dark-green;
-}
-.color-red,
-.color-disabled {
-    color: $red;
-}
-.color-dark-red,
-.color-critical {
-    color: $dark-red;
-}
-.color-dark-blue,
-.color-normal {
-    color: $dark-blue;
-}
-.color-yellow,
-.color-amp {
-    color: $yellow;
-}
-.color-dark-yellow,
-.color-warning {
-    color: $dark-yellow;
-}
-.color-gray,
-.color-inactive {
-    color: $gray;
-}
-.bg-dark-blue,
-.bg-normal {
-    background-color: $dark-blue;
-}
-
-// Dock Containers
-.dockcontainer {
-    font-family: $font-text;
-    font-weight: bold;
-    font-size: 1rem;
-    background-color: $black;
-    border-radius: 7px;
-    padding: $bar-vpad $bar-hpad;
-    margin: $bar-vmargin $bar-hmargin;
-}
-.dockcontainer-button {
-    background-color: $dark-green;
-    border-bottom-left-radius: 17px;
-    border-top-right-radius: 17px;
-    padding: 0.5rem;
-    margin: 0.5rem;
-}
-.dockcontainer-icon {
-    font-family: $font-icons;
-}
-.dockcontainer-supertext {
-    font-size: 1.8rem;
-}
-.dockcontainer-text {
-    font-size: 0.8rem;
-}
-.dockcontainer-subtext {
-    font-size: 0.6rem;
-}
-
 // Clock
 .clock {
     font-family: $font-mono;
@@ -104,8 +36,8 @@
     color: $gray;
 }
 
-// Powermenu
-.powermenu {
+// Hamburger Menu
+.hamburgermenu {
     font-family: $font-icons;
     font-weight: bold;
     font-size: 1.2rem;
