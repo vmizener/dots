@@ -121,20 +121,19 @@
 ;;;;;;;;;;
 ;; IME
 (defwidget ime []
-  (box
-    :orientation "h"
-    :class "dockcontainer"
-    :halign "end"
-    :spacing 7
-    :space-evenly false
-    :tooltip "${str_ime-name}"
-    (label
-      :class "dockcontainer-icon"
-      :text {str_ime-name == 'pinyin' ? "拼" : ""})))
-(defpoll str_ime-name
-  :initial ""
-  :interval "100ms"
-  `pgrep fcitx5 >/dev/null && fcitx5-remote -n`)
+  (eventbox
+    :onclick `./run ime::toggle_active`
+    :onrightclick `./run ime::open_config`
+    (box
+      :orientation "h"
+      :class "dockcontainer"
+      :halign "end"
+      :spacing 7
+      :space-evenly false
+      (label
+        :class "dockcontainer-icon"
+        :text {str_ime-name == 'pinyin' ? "拼" : ""}))))
+(deflisten str_ime-name :initial "N/A" `./run ime::mode_subscriber`)
 
 ;;;;;;;;;;
 ;; Mode

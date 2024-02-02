@@ -10,6 +10,9 @@ if ! [ -z "$SWAYSOCK" ]; then
 fi
 
 case "$XDG_CURRENT_DESKTOP" in
+    Hyprland)
+        WMLIB="${SCRIPTPATH}/lib/hyprland.sh"
+        ;;
     SWAY)
         WMLIB="${SCRIPTPATH}/lib/sway.sh"
         ;;

@@ -62,7 +62,7 @@ function network::list_wifi() {
             \"security\": \"${c_security}\"
         }""")
     done < <(nmcli -t device wifi list)
-    echo "${ret[@]}" | jq 'select(.ssid != "")' | jq -s """[
+    echo "${ret[@]}" | jq 'select(.ssid != "")' | jq -s "[
         group_by(.ssid)[] | sort_by(.signal) | reverse | {
             ssid: .[0].ssid,
             in_use: ([.[] | .in_use] | any),
@@ -78,7 +78,7 @@ function network::list_wifi() {
                 bars: .bars
             }]
         }
-    ]"""
+    ]"
 }
 
 #
@@ -239,6 +239,34 @@ function audio::scroll_sinks() {
 }
 
 #
+# IME
+#
+
+function ime::open_config() {
+    fcitx5-configtool
+}
+
+function ime::toggle_active() {
+    fcitx5-remote -t
+}
+
+function ime::mode_subscriber() {
+    # Escape if fctix5 isn't available
+    pgrep fcitx5 >/dev/null || return
+
+    local SLEEP_STEP=0.1  # 100ms
+    local LAST_MODE="N/A"
+    while true; do
+        CUR_MODE=$(fcitx5-remote -n)
+        if [[ "${LAST_MODE}" != "${CUR_MODE}" ]]; then
+            echo "${CUR_MODE}"
+            LAST_MODE="${CUR_MODE}"
+        fi
+        sleep "${SLEEP_STEP}"
+    done
+}
+
+#
 # Weather
 #
 
@@ -252,7 +280,9 @@ function weather::status() {
         "Unknown":             "✨",
         "Clear":               "☀️",
         "Cloudy":              "☁️",
+        "VeryCloudy":          "☁️"
         "Fog":                 "🌫",
+        "Mist":                "🌫",
         "HeavyRain":           "🌧",
         "HeavyShowers":        "🌧",
         "HeavySnow":           "❄️",
@@ -269,7 +299,6 @@ function weather::status() {
         "ThunderyHeavyRain":   "🌩",
         "ThunderyShowers":     "⛈",
         "ThunderySnowShowers": "⛈",
-        "VeryCloudy": "☁️"
     }'
     local URL="v2d.wttr.in/?format=j1"
     o=$(curl -m 10 ${URL} 2>/dev/null)
