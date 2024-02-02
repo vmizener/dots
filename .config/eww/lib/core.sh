@@ -243,6 +243,11 @@ function audio::scroll_sinks() {
 #
 
 function weather::status() {
+    # Usage:
+    #   weather::status
+    #
+    # Returns local weather information
+
     local SYMBOLS='{
         "Unknown":             "✨",
         "Clear":               "☀️",
@@ -296,8 +301,125 @@ function weather::status() {
 # EWW
 #
 
+function eww::jq-update() {
+    # Usage:
+    #   eww::jq-update VAR JQ_CMD
+    #
+    # Update an EWW variable by passing it through a JQ command
+    # E.g.
+    #   eww update "var={}"
+    #   eww get var                             # Prints '{}'
+    #   ./run eww::jq-update var ".a = true"
+    #   eww get var                             # Prints '{"a": true}'
+    #
+    # If JQ returns an error, the variable is not updated
+
+    VAR="$1"
+    CMD="$2"
+
+    CUR_VAL="$(eww get ${VAR})"
+    NEW_VAL="$(echo "${CUR_VAL}" | jq -c "${CMD}" 2>/dev/null)"
+    if [[ $? != 0 ]]; then
+        >&2 echo "JQ command failure!"
+        echo "${CUR_VAL}" | jq -c "${CMD}"
+    else
+        eww update "${VAR}=${NEW_VAL}"
+    fi
+}
+
+function eww::counter() {
+    # Usage:
+    #   eww::counter VAR init INTERVAL [TICKRATE]
+    #   eww::counter VAR start
+    #   eww::counter VAR pause
+    #   eww::counter VAR reset
+    #
+    # Declare an automatically incrementing counter that increments from 0 to 100 over INTERVAL seconds
+    # The counter can then be started/paused/resumed/reset via corresponding commands
+    #
+    # TICKRATE determines the update frequency, in seconds (default: 0.1)
+    # 
+    # Use deflisten to track the counter's progress in EWW
+    # E.g.
+    #   deflisten int_mycounter :initial 0 `./run eww:counter mycounter init 3`
+    # Then use
+    #   `./run eww:counter mycounter start`
+    # somewhere else to start it
+
+    VAR="$1"
+    CMD="$2"
+    COUNTER_FILE="$HOME/.cache/eww-$VAR.counter"
+
+    function read_counter () {
+        read -a inputs -d EOF < "$COUNTER_FILE"
+        CUR_VAL="${inputs[0]}"
+        STEP="${inputs[1]}"
+        TICKRATE="${inputs[2]}"
+        STATE="${inputs[3]}"
+    }
+    function write_counter () {
+        printf "$1\n$2\n$3\n$4" > "$COUNTER_FILE"
+    }
+
+    function loop () {
+        while true; do
+            if [[ ! -f "$COUNTER_FILE" ]]; then
+                break
+            fi
+
+            read_counter
+            if [[ "${STATE}" != "active" ]]; then
+                sleep "$TICKRATE"
+                continue
+            fi
+
+            NEXT=$(bc <<< "scale=3; ${CUR_VAL}+${STEP}")
+            if (( $(echo "$NEXT >= 100" | bc -l) )); then
+                write_counter "100.000" "${STEP}" "${TICKRATE}" "inactive"
+                echo "100.000"
+            else
+                write_counter "${NEXT}" "${STEP}" "${TICKRATE}" "${STATE}"
+                echo "$NEXT"
+            fi
+
+            sleep "$TICKRATE"
+
+        done
+    }
+
+    case "$2" in
+        init)
+            INTERVAL="$3"
+            TICKRATE="$4"
+            STATE="inactive"
+            if ! [ -n "$TICKRATE" ]; then
+                TICKRATE="0.1"
+            fi
+            STEP=$(bc <<< "scale=3; (100*${TICKRATE})/${INTERVAL}")
+            printf "0.000\n${STEP}\n${TICKRATE}\n${STATE}" > "${COUNTER_FILE}"
+            echo "0.000"
+            loop
+        ;;
+        start)
+            read_counter
+            write_counter "${CUR_VAL}" "${STEP}" "${TICKRATE}" "active"
+        ;;
+        pause)
+            read_counter
+            write_counter "${CUR_VAL}" "${STEP}" "${TICKRATE}" "inactive"
+        ;;
+        reset)
+            read_counter
+            write_counter "0" "${STEP}" "${TICKRATE}" "inactive"
+        ;;
+    esac
+}
+
 function eww::popup() {
-    # Open or close a popup window via EWW
+    # Usage:
+    #   eww::popup ("open"|"close") WINDOW [DELAY]
+    #
+    # Open or close an EWW window, after a specified delay
     # Window should have an associated variable "bool_$WINDOW-visible" indicating if it should be visible
 
     function window () {
@@ -339,8 +461,8 @@ function eww::popup() {
 
 function eww::set_locked_var() {
     # Usage:
-    #   grace_set_var VAR
-    #   grace_unset_var VAR [GRACE]
+    #   eww::set_locked_var VAR
+    #   eww::unset_locked_var VAR [GRACE]
     #
     # Sets <VAR> with an associated lock file.
     # When unset, will only trigger after <GRACE> seconds if the lock is still present.

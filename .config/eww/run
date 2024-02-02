@@ -27,7 +27,8 @@ export ALL=(
 
 # Exec function directly if provided arguments
 if [[ "$#" -gt 0 ]] && [[ " ${ALL[*]} " =~ " $1 " ]]; then
-    eval "$@"
+    # Directly call the first argument, with remaining arguments passed in
+    "$1" "${@:2}"
 else
     >&2 echo "Valid functions:"
     for func in "${ALL[@]}"; do
