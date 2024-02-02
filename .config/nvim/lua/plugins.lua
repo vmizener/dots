@@ -97,12 +97,16 @@ local plugins = {
     },
     -- }}}
     -- Syntax & Language-Specific Plugins {{{
-    {'elkowar/yuck.vim', ft = 'yuck'},          -- eww syntax
-    'theRealCarneiro/hyprland-vim-syntax',      -- hypr syntax
-    {'psf/black', ft = 'python'},               -- python auto-formatter
-    {'lervag/vimtex', ft = 'tex'},              -- tex
-    {'pedrohdz/vim-yaml-folds', ft = 'yaml'},   -- yaml folding
-    'gpanders/nvim-parinfer',                   -- parentheses balancing for Lisp-like languages
+        -- Syntax
+        {'elkowar/yuck.vim', ft = 'yuck'},                  -- eww
+        'theRealCarneiro/hyprland-vim-syntax',              -- hypr
+        {'MDeiml/tree-sitter-markdown', ft = 'markdown'},   -- markdown
+        {'lervag/vimtex', ft = 'tex'},                      -- tex
+        -- Formatter
+        {'psf/black', ft = 'python'},                       -- python auto-formatter
+        -- Other
+        {'pedrohdz/vim-yaml-folds', ft = 'yaml'},           -- yaml folding
+        'gpanders/nvim-parinfer',                           -- parentheses balancing for Lisp-like languages
     -- }}}
 
 
