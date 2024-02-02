@@ -77,7 +77,7 @@ case $MODE in
                 awk '{print substr($5, 1, length($5)-1)}' > $WOBSOCK
         fi
         lib::log "Updated volume: $VAL"
-        ;;
+    ;;
     brightness)
         if ( ! echo "$VAL" | grep -E '^\+?[0-9]+%-?$' >/dev/null ); then
             echo "Invalid brightness value '$VAL', must be in form '\+?[0-9]+%-?'"
@@ -86,7 +86,7 @@ case $MODE in
         brightness=$(brightnessctl set "$VAL")
         lib::exists wob && echo "$brightness" | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
         lib::log "Updated brightness: $VAL"
-        ;;
+    ;;
     *)
         echo "Missing valid mode"
         exit 1

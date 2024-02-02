@@ -36,6 +36,17 @@ if lib::exists sway-audio-idle-inhibit; then
     lib::log 'Initialized `sway-audio-idle-inhibit`'
 fi
 
+# Dropbox
+if lib::exists dropbox; then
+    if ! [[ "$(dropbox-cli status)" =~ "Up to date" ]]; then
+        killall -q dropbox
+        dropbox
+        lib::log 'Initialized dropbox'
+    else
+        lib::log 'Dropbox is running'
+    fi
+fi
+
 # Gesture control
 if lib::exists fusuma; then
     # https://github.com/iberianpig/fusuma
@@ -82,7 +93,6 @@ fi
 
 # Language IME
 if lib::exists fcitx5; then
-    lib::log "$(env)"
     fcitx5 -r &
     lib::log 'Initialized `fcitx5`'
 fi
