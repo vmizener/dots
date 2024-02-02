@@ -457,6 +457,30 @@ elif [ "${system_type}" = 'Arch' ] && [ "${dist_type}" = 'SteamOS' ]; then
     nix-env -u
 # }}}
 
+# Manjaro {{{
+elif [ "${system_type}" = 'Arch' ] && [ "${dist_type}" = 'Manjaro' ]; then
+    log -n INFO "Starting bootstrap for Manjaro"
+    packages=(
+        fd
+        fcitx5
+        fcitx5-chinese-addons
+        fcitx5-configtool
+        fzf
+        git
+        git-delta
+        neofetch
+        neovim
+        yadm-git
+    )
+
+    sudo pacman -Syu
+    install_from_list \
+        "packages" \
+        "pamac install" \
+        "pacman -Qi" \
+        "${packages[@]}"
+# }}}
+
 # Arch {{{
 elif [ "${system_type}" = 'Arch' ]; then
     log -n INFO "Starting bootstrap for Arch"
