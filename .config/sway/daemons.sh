@@ -65,6 +65,7 @@ fi
 
 # Notification manager
 if lib::exists mako; then
+    killall -q xfce4-notifyd  # Kill xfce4-notifyd if that's running
     killall -q mako
     mako &
     lib::log 'Initialized notifier'
