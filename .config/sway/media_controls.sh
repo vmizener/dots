@@ -10,7 +10,7 @@ for i in "$@"; do
     case $i in
         volume|brightness)
             if [ -n "$MODE" ]; then
-                echo "Mode already set"
+                >&2 echo "Mode already set"
                 exit 1
             fi
             MODE="$i"
@@ -26,7 +26,7 @@ for i in "$@"; do
         --mute=*)
             if [[ "$MODE" != volume ]]; then
                 # Only works in volume mode
-                echo "Mute option only available in volume mode"
+                >&2 echo "Mute option only available in volume mode"
                 exit 1
             fi
             opt=${i#*=}
@@ -35,7 +35,7 @@ for i in "$@"; do
                     pactl set-sink-mute @DEFAULT_SINK@ "$opt"
                 ;;
                 *)
-                    echo "Invalid mute option, must be 'toggle', 'yes', or 'no'"
+                    >&2 echo "Invalid mute option, must be 'toggle', 'yes', or 'no'"
                     exit 1
                 ;;
             esac
@@ -48,12 +48,12 @@ for i in "$@"; do
             fi
         ;;
         --*)
-            echo "Unknown option $i"
+            >&2 echo "Unknown option $i"
             exit 1
         ;;
         *)
             if [ -n "$VAL" ]; then
-                echo "Too many inputs"
+                >&2 echo "Too many inputs"
                 exit 1
             fi
             VAL="$i"
@@ -66,7 +66,7 @@ done
 case $MODE in
     volume)
         if ! (echo "$VAL" | grep -E '^[+-][0-9]+%$' >/dev/null); then
-            echo "Invalid audio value '$VAL', must be in form '[+-][0-9]+%'"
+            >&2 echo "Invalid audio value '$VAL', must be in form '[+-][0-9]+%'"
             exit 1
         fi
         pactl set-sink-mute @DEFAULT_SINK@ 0        # Unmute
@@ -80,15 +80,19 @@ case $MODE in
     ;;
     brightness)
         if ( ! echo "$VAL" | grep -E '^\+?[0-9]+%-?$' >/dev/null ); then
-            echo "Invalid brightness value '$VAL', must be in form '\+?[0-9]+%-?'"
+            >&2 echo "Invalid brightness value '$VAL', must be in form '\+?[0-9]+%-?'"
             exit 1
         fi
         brightness=$(brightnessctl set "$VAL")
+        # if lib::exists ddcutil; then
+        #     ddcargs=( "$(echo "$VAL" | sed 's/%//' | sed 's/\(.*\)-/- \1/' | sed 's/+\(.*\)/+ \1/')" )
+        #     ddcutil setvcp 10 ${ddcargs[@]}
+        # fi
         lib::exists wob && echo "$brightness" | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
         lib::log "Updated brightness: $VAL"
     ;;
     *)
-        echo "Missing valid mode"
+        >&2 echo "Missing valid mode"
         exit 1
     ;;
 esac
