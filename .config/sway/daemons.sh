@@ -20,6 +20,8 @@ elif lib::exists wl-paste clipman; then
     killall -q wl-paste
     wl-paste -t text --watch clipman store &
     lib::log 'Using `clipman` as clipboard manager'
+else
+    lib::log '[WARNING] No clipboard manager detected'
 fi
 
 # Clipboard sync
@@ -27,6 +29,8 @@ if lib::exists julia; then
     ps -ef | grep "[c]lipboard_sync" | tr -s ' ' | cut -d' ' -f2 | xargs kill
     ~/.config/sway/clipboard_sync.jl >/dev/null 2>&1 &
     lib::log 'Initialized clipboard sync'
+else
+    lib::log '[WARNING] No julia installation available'
 fi
 
 # Inhibit idle while playing audio or listening on mic
@@ -69,6 +73,8 @@ if lib::exists mako; then
     killall -q mako
     mako &
     lib::log 'Initialized notifier'
+else
+    lib::log '[WARNING] No notifier'
 fi
 
 # Status bar
@@ -83,6 +89,8 @@ elif lib::exists waybar; then
     while pgrep -x waybar >/dev/null; do sleep 1; done
     waybar &
     lib::log 'Initialized `waybar`'
+else
+    lib::log '[WARNING] No bar'
 fi
 
 # CKB

@@ -4,7 +4,7 @@
 
 (defvar str_reveal-slide-duration "200ms")
 (defvar str_reveal-fade-duration "400ms")
-(defvar str_reveal-fade-duration-long "1200ms")
+(defvar str_reveal-fade-duration-long "800ms")
 (defvar str_hover-delay-long "0.3")
 (defvar str_hover-delay-short "0.1")
 
@@ -93,27 +93,25 @@
 ;;;;;;;;
 ;; Clock
 (defwidget clock []
-  (eventbox
-    :onclick `echo 'hi'`
-    (box
-      :orientation "h"
-      :class "clock"
-      :space-evenly false
-      :hexpand false
-      (revealer
-        :transition "slideright"
-        :reveal bool_topbar-hover
-        :duration str_reveal-slide-duration
-        (label
-          :text "${str_date}, "))
+  (box
+    :orientation "h"
+    :class "clock"
+    :space-evenly false
+    :hexpand false
+    (revealer
+      :transition "slideright"
+      :reveal bool_topbar-hover
+      :duration str_reveal-slide-duration
       (label
-        :text "${str_time}")
-      (revealer
-        :transition "slideleft"
-        :reveal bool_topbar-hover
-        :duration str_reveal-slide-duration
-        (label
-          :text ":${str_time-sec}")))))
+        :text "${str_date}, "))
+    (label
+      :text "${str_time}")
+    (revealer
+      :transition "slideleft"
+      :reveal bool_topbar-hover
+      :duration str_reveal-slide-duration
+      (label
+        :text ":${str_time-sec}"))))
 (defpoll str_date :interval "5s" `date +"%B %d"`)
 (defpoll str_time :interval "5s" `date +"%H:%M"`)
 (defpoll str_time-sec :interval "1s" `date +"%S"`)
@@ -418,22 +416,22 @@
       :id "suspend"
       :label ""
       :text "Suspend"
-      :onclick "echo ok")
+      :onclick "./run sys::suspend &")
     (large-button-option
       :id "lock"
       :label ""
       :text "Lock"
-      :onclick "swaylock --grace 0 --grace-no-mouse &")
+      :onclick "./run sys::lock &")
     (large-button-option
       :id "logout"
       :label ""
       :text "Logout"
-      :onclick "echo ok")
+      :onclick "./run sys::logout &")
     (large-button-option
       :id "shutdown"
       :label ""
       :text "Shutdown"
-      :onclick "echo ok")))
+      :onclick "./run sys::shutdown &")))
 
 (defwidget large-button-option [id
                                 label
@@ -485,4 +483,4 @@
               :duration str_reveal-fade-duration
               (label :text "OK"))))))))
 (defvar json_large-button-states "{}")
-(deflisten int_large-button-delay :initial 0 `./run eww::counter int_large-button-delay init 1.5`)
+(deflisten int_large-button-delay :initial 0 `./run eww::counter int_large-button-delay init 0.8`)

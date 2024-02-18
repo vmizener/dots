@@ -575,6 +575,10 @@
         # 15% width
         resize set width 15ppt
     }
+    for_window [class="streaming_client" title=".*[Streaming]$"] {
+        # Remote play streams go to workspace 10
+        move container to workspace 10
+    }
     # Dotes
     for_window [class="dota2"] {
         floating disable

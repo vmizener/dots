@@ -1,6 +1,48 @@
 #!/usr/bin/env bash
 
 #
+#   Utilities
+#
+
+function utils::exists() {
+    # Usage:
+    #     lib::exists [cmd ...]
+    #
+    # Returns whether all the given commands are in PATH.
+    # E.g.
+    #   `lib::exists bash zsh` -> RC 0
+    #   `lib::exists not-bash` -> RC 1
+
+    for arg in "$@"; do
+        if ! command -v "$arg" >/dev/null 2>&1; then
+            return 1
+        fi
+    done
+}
+
+#
+#   System
+#
+
+function sys::suspend () {
+    systemctl suspend
+    notify-send "Suspending now!"
+}
+
+function sys::lock() {
+    swaylock --grace 0 --grace-no-mouse
+}
+
+function sys::shutdown() {
+    shutdown now
+    notify-send "Shutting down now!"
+}
+
+function sys::logout() {
+    loginctl session-status | head -n1 | awk '{print $1}' | xargs -I{} loginctl kill-session {}
+}
+
+#
 #   Network
 #
 
@@ -301,10 +343,16 @@ function weather::status() {
         "ThunderySnowShowers": "⛈",
     }'
     local URL="v2d.wttr.in/?format=j1"
-    o=$(curl -m 10 ${URL} 2>/dev/null)
+    ERR_FILE="$HOME/.cache/eww-weather.out"
+    o=$(curl -m 10 ${URL} 2>${ERR_FILE})
+    OK=$?
+    ERR=$(<${ERR_FILE})
+    rm ${ERR_FILE}
     # Handle when the service is down
-    if [[ "$o" =~ "Unknown location" ]]; then
-        >&2 echo "[ERR] weather::status\n$o"
+    if (( $OK != 0 )) || [[ "$o" =~ "Unknown location" ]]; then
+        >&2 echo "[ERR] weather::status"
+        >&2 echo "$ERR"
+        >&2 echo "$o"
         echo "{}"
         return 1
     fi

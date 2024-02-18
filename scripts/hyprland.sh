@@ -1,33 +1,45 @@
 #!/usr/bin/env bash
 
+function hypr::event_subscriber() {
+    # Reads output from the Hyprland event socket, and outputs in JSON format
+    # Only emit events matching the input regex (if provided)
+    EVENT_SOCKET="UNIX-CONNECT:/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+    socat -U - "$EVENT_SOCKET" |
+        while read -r line; do
+            jsonevent="$(echo "$line" | sed -E 's/([a-z1-9]+)>>(.*)/{"event":"\1","data":"\2"}/g')"
+            if [[ -n "$1" ]]; then
+                echo "$jsonevent" | jq -c "select(.event|test(\"^"$1"\$\"))"
+            else
+                echo "$jsonevent"
+            fi
+        done
+}
+
+function mode::mode_subscriber() {
+    hypr::event_subscriber "submap" | jq -rc --unbuffered .data | sed -u 's/^$/default/g'
+}
+
 function workspace::focus() {
     hyprctl dispatch workspace "$1" >/dev/null
 }
 
 function workspace::list_by_output() {
     VISIBLE_WORKSPACES="$(hyprctl monitors -j | jq -c '[.[] | .activeWorkspace.id]')"
-    hyprctl workspaces -j | jq " .[] | {
+    hyprctl workspaces -j | jq " sort_by(.id) | .[] | {
         "visible": (.id as \$id | "${VISIBLE_WORKSPACES}" | map(.==\$id) | any),
         "focused": (.id == "$(hyprctl activewindow -j | jq '.workspace.id')"),
         "output": .monitor,
         "name" : .name,
-    }" | jq -jcs 'group_by(.output)'
+    }" | jq -cs 'group_by(.output)'
 }
 
-# function workspace::focus_subscriber() {
-#     workspace::list_by_output
-#     swaymsg -t subscribe -m '["workspace"]' | jq --unbuffered -rc '.change' |
-#         while read -r event; do
-#             if ! (
-#                 [ "$event" = "focus" ] ||
-#                 [ "$event" = "move" ] ||
-#                 [ "$event" = "init" ]
-#             ); then
-#                 continue
-#             fi
-#             workspace::list_by_output
-#         done
-# }
+function workspace::focus_subscriber() {
+    workspace::list_by_output
+    hypr::event_subscriber "activewindow" |
+        while read -r event; do
+            workspace::list_by_output
+        done
+}
 #
 # function window::get_attributes() {
 #     # Usage:
