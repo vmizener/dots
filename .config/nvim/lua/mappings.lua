@@ -7,8 +7,11 @@ vim.g['mapleader'] = ' '
 
 -- Plugins {{{
     -- Comment
+    -- (note that CTRL+/ is equivalent to C-_ in some terminals)
     utils.map('n', '<C-/>', '<Plug>(comment_toggle_linewise_current)', '[Comment] Toggle commenting of current line')
     utils.map('v', '<C-/>', '<Plug>(comment_toggle_linewise_visual)', '[Comment] Toggle commenting of current lines')
+    utils.map('n', '<C-_>', '<Plug>(comment_toggle_linewise_current)', '[Comment] Toggle commenting of current line')
+    utils.map('v', '<C-_>', '<Plug>(comment_toggle_linewise_visual)', '[Comment] Toggle commenting of current lines')
     -- SymbolsOutline
     utils.map('n', '<Leader>ss', ':SymbolsOutline<CR>', '[SymbolsOutline] Toggle symbols outline pane')
     -- IndentLinesToggle
