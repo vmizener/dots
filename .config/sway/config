@@ -497,7 +497,7 @@
 
     mode "opacity" {
         #? [opacity] h      | In "opacity" mode, decrease focused container opacity by 10%
-        #? [opacity] j      | In "opacity" mode, decrease focused container opacity by 5
+        #? [opacity] j      | In "opacity" mode, decrease focused container opacity by 5%
         #? [opacity] k      | In "opacity" mode, increase focused container opacity by 5%
         #? [opacity] l      | In "opacity" mode, increase focused container opacity by 10%
         bindsym $left opacity minus 0.1
@@ -506,7 +506,7 @@
         bindsym $right opacity plus 0.1
 
         #? [opacity] Left   | In "opacity" mode, decrease focused container opacity by 10%
-        #? [opacity] Down   | In "opacity" mode, decrease focused container opacity by 5
+        #? [opacity] Down   | In "opacity" mode, decrease focused container opacity by 5%
         #? [opacity] Up     | In "opacity" mode, increase focused container opacity by 5%
         #? [opacity] Right  | In "opacity" mode, increase focused container opacity by 10%
         bindsym Left opacity minus 0.1
