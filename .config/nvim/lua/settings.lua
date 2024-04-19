@@ -60,6 +60,15 @@ local options = {
 }
 for k, v in pairs(options) do vim.o[k] = v end
 
+-- local globals = {
+--     -- Allow syntax highlighting of embedded language in markdown files
+--     markdown_fenced_languages = {
+--         "lua", "python", "yaml"
+--     },
+-- }
+-- for k, v in pairs(globals) do vim.g[k] = v end
+
+
 -- Automatically show absolute numbering while in insert mode
 vim.api.nvim_create_augroup('InsertRelNum', { clear = true })
 vim.api.nvim_create_autocmd('InsertEnter', { command = 'set norelativenumber', group = 'InsertRelNum'})

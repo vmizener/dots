@@ -4,6 +4,39 @@
 #   Utilities
 #
 
+function utils::lib_init() {
+    USERLOGPATH="/tmp/${USER}-scripts.log"
+    case $1 in
+        --reset)
+            rm "${USERLOGPATH}"
+            shift
+        ;;
+        -*|--*)
+            echo "Unknown option $i"
+            return 1
+        ;;
+        *)
+            shift
+        ;;
+    esac
+
+    PATH=.
+    PATH=$PATH:${HOME}/.local/bin
+    PATH=$PATH:${HOME}/.cargo/bin
+    PATH=$PATH:${HOME}/go/bin
+    PATH=$PATH:/usr/local/sbin
+    PATH=$PATH:/usr/local/bin
+    PATH=$PATH:/usr/sbin
+    PATH=$PATH:/usr/bin
+    PATH=$PATH:/sbin
+    PATH=$PATH:/bin
+}
+
+function utils::log() {
+    [ -z "$USERLOGPATH" ] && utils::lib_init
+    echo "[$(date '+%B %d %H:%M')] $1" >> $USERLOGPATH
+}
+
 function utils::exists() {
     # Usage:
     #     lib::exists [cmd ...]

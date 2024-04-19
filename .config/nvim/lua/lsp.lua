@@ -102,8 +102,13 @@ lspconfig.lua_ls.setup({
             diagnostics = { globals = { "vim" }, },
             telemetry = { enable = false, },
             workspace = {
-                -- Make the server aware of Neovim config files
-                library = vim.fn.stdpath("config")
+                -- Make the LSP always aware of the following libraries
+                library = {
+                    -- Neovim config files
+                    vim.fn.stdpath("config"),
+                    -- Love2d
+                    "${3rd}/love2d/library",
+                }
             },
         }
     }

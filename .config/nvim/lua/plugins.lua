@@ -87,7 +87,18 @@ local plugins = {
         build = function () vim.cmd('TSUpdate') end,
         config = function ()
             require('nvim-treesitter.configs').setup({
-                --ensure_installed = "maintained",
+                ensure_installed = {
+                    "html",
+                    "lua",
+                    "luadoc",
+                    "python",
+                    "markdown",
+                    "markdown_inline",
+                    "regex",
+                    "tmux",
+                    "xml",
+                    "yaml",
+                },
                 highlight = { enable = true },
                 indent = { enable = true },
                 incremental_selection = { enable = true },
@@ -100,7 +111,7 @@ local plugins = {
         -- Syntax
         {'elkowar/yuck.vim', ft = 'yuck'},                  -- eww
         'theRealCarneiro/hyprland-vim-syntax',              -- hypr
-        {'MDeiml/tree-sitter-markdown', ft = 'markdown'},   -- markdown
+        {'tree-sitter-grammars/tree-sitter-markdown', ft = 'markdown'},   -- markdown
         {'lervag/vimtex', ft = 'tex'},                      -- tex
         -- Formatter
         {'psf/black', ft = 'python'},                       -- python auto-formatter
