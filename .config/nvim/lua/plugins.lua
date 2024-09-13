@@ -448,6 +448,9 @@ local plugins = {
     -- Vim-OSCyank has vim use OSC52 to copy to the system clipboard {{{
     'ojroques/nvim-osc52',
     -- }}}
+    -- VimWiki links docs into a personal wiki, inside vim {{{
+    'vimwiki/vimwiki',
+    -- }}}
     -- Which-Key for displaying a key-binding cheatsheet {{{
     'folke/which-key.nvim',
     -- }}}
