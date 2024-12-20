@@ -81,9 +81,15 @@ for file in ${ZSHCONFIGFILES:#*/completion.zsh}; do
 done
 
 # Enable autocomplete
+# See: https://gist.github.com/ctechols/ca1035271ad134841284
 zmodload zsh/complist
 bindkey -M menuselect '^[[Z' reverse-menu-complete  # Support shift-tab
-autoload -U compinit && compinit
+autoload -Uz compinit
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+else
+    compinit -C
+fi
 
 # Load completion files
 for file in ${(M)ZSHCONFIGFILES:#*/completion.zsh}; do
