@@ -2,12 +2,6 @@ local lspconfig = require("lspconfig")
 local available_configs = require("lspconfig.configs")
 local utils = require("utils")
 
--- Helper functions
-local function file_exists(name)
-   local f=io.open(name,"r")
-   if f~=nil then io.close(f) return true else return false end
-end
-
 -- Global hotkeys
 utils.set_map_opts({noremap=true, silent=true})
 utils.map('n', '<Leader>l', require("lsp_lines").toggle, "[LSP] Toggle lsp_lines")
@@ -51,7 +45,7 @@ end
 
 -- [Google3] CiderLSP: https://g3doc.corp.google.com/devtools/cider/ciderlsp/neovim/README.md?cl=head
 local ciderlsp = '/google/bin/releases/cider/ciderlsp/ciderlsp'
-if file_exists(ciderlsp) then
+if utils.file_exists(ciderlsp) then
     available_configs.ciderlsp = {
         default_config = {
             cmd = { ciderlsp, '--tooltag=nvim-lsp', '--noforward_sync_responses' };
@@ -65,7 +59,7 @@ if file_exists(ciderlsp) then
 end
 
 -- Golang
-if file_exists("WORKSPACE") then
+if utils.file_exists("WORKSPACE") then
     -- If a Bazel WORKSPACE file is present, include some additional settings
     -- https://github.com/bazelbuild/rules_go/wiki/Editor-setup
     lspconfig.gopls.setup({
@@ -81,8 +75,8 @@ if file_exists("WORKSPACE") then
                     "-bazel-testlogs",
                     "-bazel-mypkg",
                 }
+            }
         }
-      }
     })
 else
     lspconfig.gopls.setup({
