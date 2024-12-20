@@ -5,6 +5,19 @@ utils.set_map_opts({noremap=true, silent=true})
 -- Leader is space
 vim.g['mapleader'] = ' '
 
+-- DAP {{{
+    utils.map('n', '<F9>', ':lua require("dap").toggle_breakpoint()<CR>', '[Debug] Toggle breakpoint')
+    utils.map('n', '<F9>', ':lua require("dap").toggle_breakpoint()<CR>', '[Debug] Toggle breakpoint')
+    utils.map('n', '<F10>', ':lua require("dap").step_over()<CR>', '[Debug] Step over')
+    utils.map('n', '<F11>', ':lua require("dap").step_into()<CR>', '[Debug] Step in')
+    utils.map('n', '<F12>', ':lua require("dap").step_out()<CR>', '[Debug] Step out')
+    utils.map('n', '<F8>', ':lua require("dap").continue()<CR>', '[Debug] Continue')
+    utils.map('n', '<S-F8>', ':lua require("dap").stop()<CR>', '[Debug] Stop')
+    utils.map('n', '<Leader>dr', ':lua require("dap").repl.open()<CR>', '[Debug] Open REPL')
+    utils.map('n', '<Leader>dj', ':lua require("dap").down()<CR>', '[Debug] Go down without stepping')
+    utils.map('n', '<Leader>dk', ':lua require("dap").up()<CR>', '[Debug] Go up without stepping')
+    utils.map('n', '<Leader>di', ':lua require("dap.ui.widgets").hover()()<CR>', '[Debug] View value')
+-- }}}
 -- Plugins {{{
     -- Comment
     -- (note that CTRL+/ is equivalent to C-_ in some terminals)
@@ -53,7 +66,7 @@ vim.g['mapleader'] = ' '
     utils.map('v', '<Tab>', '>gv', 'Indent current line')
     utils.map('v', '<S-Tab>', '<gv', 'De-indent current line')
     -- Quickly close quickfix/loclist windows
-utils.    map('n', 'QQ', ':cclose | lclose<CR>', "Close quickfix/loclist")
+    utils.map('n', 'QQ', ':cclose | lclose<CR>', "Close quickfix/loclist")
 -- }}}
 
 -- Editor Behavior and Appearance {{{

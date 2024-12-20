@@ -109,6 +109,7 @@ local plugins = {
     -- }}}
     -- Syntax & Language-Specific Plugins {{{
         -- Syntax
+        'alexander-born/bazel.nvim',                        -- bazel
         {'elkowar/yuck.vim', ft = 'yuck'},                  -- eww
         'theRealCarneiro/hyprland-vim-syntax',              -- hypr
         {'tree-sitter-grammars/tree-sitter-markdown', ft = 'markdown'},   -- markdown
@@ -119,7 +120,6 @@ local plugins = {
         {'pedrohdz/vim-yaml-folds', ft = 'yaml'},           -- yaml folding
         'gpanders/nvim-parinfer',                           -- parentheses balancing for Lisp-like languages
     -- }}}
-
 
     -- Auto-Completion {{{
     'hrsh7th/nvim-cmp',
@@ -133,34 +133,22 @@ local plugins = {
     -- }}}
 
     -- DAP {{{
-    {
-        'mfussenegger/nvim-dap',
-        config = function ()
-            -- See `:help dap.txt` for documentation on how nvim-dap functions
-            vim.keymap.set('n', '<F9>', ':lua require("dap").toggle_breakpoint()<CR>', {noremap=true, silent=true, desc='[Debug] Toggle breakpoint'})
-            vim.keymap.set('n', '<F10>', ':lua require("dap").step_over()<CR>', {noremap=true, silent=true, desc='[Debug] Step over'})
-            vim.keymap.set('n', '<F11>', ':lua require("dap").step_into()<CR>', {noremap=true, silent=true, desc='[Debug] Step in'})
-            vim.keymap.set('n', '<F12>', ':lua require("dap").step_out()<CR>', {noremap=true, silent=true, desc='[Debug] Step out'})
-            vim.keymap.set('n', '<F5>', ':lua require("dap").continue()<CR>', {noremap=true, silent=true, desc='[Debug] Continue'})
-            vim.keymap.set('n', '<S-F5>', ':lua require("dap").stop()<CR>', {noremap=true, silent=true, desc='[Debug] Stop'})
-            vim.keymap.set('n', '<Leader>dr', ':lua require("dap").repl.open()<CR>', {noremap=true, silent=true, desc='[Debug] Open REPL'})
-            vim.keymap.set('n', '<Leader>dj', ':lua require("dap").down()<CR>', {noremap=true, silent=true, desc='[Debug] Go down without stepping'})
-            vim.keymap.set('n', '<Leader>dk', ':lua require("dap").up()<CR>', {noremap=true, silent=true, desc='[Debug] Go up without stepping'})
-            vim.keymap.set('n', '<Leader>di', ':lua require("dap.ui.widgets").hover()()<CR>', {noremap=true, silent=true, desc='[Debug] View value'})
-        end
-    },
+    'mfussenegger/nvim-dap',
     {
         'theHamsta/nvim-dap-virtual-text',
+        dependencies = {"mfussenegger/nvim-dap"},
         config = function ()
             require('nvim-dap-virtual-text').setup()
             vim.fn.sign_define('DapBreakpoint', { text='🔴', texthl='', linehl='', numhl='' })
         end
     },
     {
+        'leoluz/nvim-dap-go',
+        dependencies = {"mfussenegger/nvim-dap"},
+    },
+    {
         'mfussenegger/nvim-dap-python',
-        config = function ()
-            require('dap-python').setup(vim.g['python3_host_prog'])
-        end
+        dependencies = {"mfussenegger/nvim-dap"},
     },
     -- }}}
 
