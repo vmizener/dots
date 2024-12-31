@@ -115,7 +115,7 @@ lspconfig.lua_ls.setup({
 })
 
 -- Java/Typescript
-lspconfig.tsserver.setup({
+lspconfig.ts_ls.setup({
     on_attach = on_attach,
 })
 

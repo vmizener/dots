@@ -62,8 +62,6 @@ utils.    map('n', 'QQ', ':cclose | lclose<CR>', "Close quickfix/loclist")
     utils.map('n', 'N', 'Nzz', 'Focus previous search result')
     -- Toggle line wrap
     utils.map('n', '<Leader>w', ':set wrap! wrap?<CR>', "Toggle line wrap")
-    -- Toggle paste mode
-    vim.o['pastetoggle'] = '<F2>'
     -- Toggle invisible characters
     utils.map('n', '<Leader>I', ':set list! list?<CR>', "Toggle invisible characters")
     -- Toggle spell check mode
