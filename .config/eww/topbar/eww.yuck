@@ -82,6 +82,7 @@
       (box
         :space-evenly false
         :spacing 7
+        (tray)
         (weather)
         (ime)
         (statusbar)
@@ -115,6 +116,13 @@
 (defpoll str_date :interval "5s" `date +"%B %d"`)
 (defpoll str_time :interval "5s" `date +"%H:%M"`)
 (defpoll str_time-sec :interval "1s" `date +"%S"`)
+
+;;;;;;;;;;
+;; Tray
+(defwidget tray []
+  (systray
+    :class "systray"
+    :spacing 7))
 
 ;;;;;;;;;;
 ;; IME
@@ -341,13 +349,17 @@
             (button
               :onclick `./run audio::set_default_sink ${sink.id} && ${EWW_CMD} update json_audio-sinks="$(./run audio::get_sinks)"`
               :class "audio-control-pane-sink-option${sink.is_default ? '-default' : ''}"
-              "${sink.name}")))
+              (label
+                :show-truncated false
+                :text "${sink.name}"))))
         (box
           :class "audio-control-pane-box"
           (button
             :class "audio-control-pane-config-button"
             :onclick `pavucontrol &`
-            ""))))))
+            (label
+              :show-truncated false
+              :text "")))))))
 (defpoll json_audio-sinks
   :interval "1s"
   :initial "[]"
@@ -377,7 +389,7 @@
       (box
         :class "dockcontainer"
         :orientation "h"
-        :space-evenly true
+        :space-evenly false
         :spacing 2
         (for workspace in monitor
           (button
@@ -455,9 +467,11 @@
           :hexpand true
           (label
             :class "dockcontainer-icon dockcontainer-supertext"
+            :show-truncated false
             :text "${label}")
           (label
            :class "dockcontainer-text"
+            :show-truncated false
            :text "${text}")))
       (revealer
         :transition "crossfade"
@@ -469,8 +483,9 @@
           :halign "fill"
           :hexpand true
           (label
-           :class "dockcontainer-text"
-           :text "Confirm?")
+            :class "dockcontainer-text"
+            :show-truncated false
+            :text "Confirm?")
           (overlay
             (revealer
               :transition "crossfade"
@@ -481,6 +496,8 @@
               :transition "crossfade"
               :reveal {! (int_large-button-delay < 100)}
               :duration str_reveal-fade-duration
-              (label :text "OK"))))))))
+              (label
+                :show-truncated false
+                :text "OK"))))))))
 (defvar json_large-button-states "{}")
 (deflisten int_large-button-delay :initial 0 `./run eww::counter int_large-button-delay init 0.8`)
