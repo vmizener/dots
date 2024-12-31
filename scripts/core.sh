@@ -355,7 +355,7 @@ function weather::status() {
         "Unknown":             "✨",
         "Clear":               "☀️",
         "Cloudy":              "☁️",
-        "VeryCloudy":          "☁️"
+        "VeryCloudy":          "☁️",
         "Fog":                 "🌫",
         "Mist":                "🌫",
         "HeavyRain":           "🌧",
@@ -373,9 +373,9 @@ function weather::status() {
         "Sunny":               "☀️",
         "ThunderyHeavyRain":   "🌩",
         "ThunderyShowers":     "⛈",
-        "ThunderySnowShowers": "⛈",
+        "ThunderySnowShowers": "⛈"
     }'
-    local URL="v2d.wttr.in/?format=j1"
+    local URL="v2d.wttr.in/?format=j2"
     ERR_FILE="$HOME/.cache/eww-weather.out"
     o=$(curl -m 10 ${URL} 2>${ERR_FILE})
     OK=$?

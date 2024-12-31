@@ -3,7 +3,7 @@
 function hypr::event_subscriber() {
     # Reads output from the Hyprland event socket, and outputs in JSON format
     # Only emit events matching the input regex (if provided)
-    EVENT_SOCKET="UNIX-CONNECT:/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+    EVENT_SOCKET="UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
     socat -U - "$EVENT_SOCKET" |
         while read -r line; do
             jsonevent="$(echo "$line" | sed -E 's/([a-z1-9]+)>>(.*)/{"event":"\1","data":"\2"}/g')"
