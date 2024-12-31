@@ -579,11 +579,31 @@
         # Remote play streams go to workspace 10
         move container to workspace 10
     }
+    # Factorio
+    for_window [class="factorio"] {
+        floating enable
+        border none
+    }
     # Dotes
     for_window [class="dota2"] {
         floating disable
         border none
         move container to workspace 10
+    }
+    # Deadlock
+    for_window [class="^steam_app_1422450$" title="Deadlock"] {
+        floating disable
+        border none
+        move container to workspace 10
+    }
+    # Democracy
+    for_window [title="HELLDIVERS.*2" class="^steam_app_553850$"] {
+        floating disable
+        border none
+        move container to workspace 10
+    }
+    for_window [title="" class="^steam_app_553850$"] {
+        move scratchpad
     }
     # Streamlink
     for_window [class="streamlink-twitch-gui"] move container to workspace 9
