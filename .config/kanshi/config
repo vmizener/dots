@@ -2,13 +2,14 @@ profile laptop {
     output eDP-1 enable scale 1.7
 }
 
+# Check `wdisplays` for positioning values
 profile work-desk-main {
-    output 'Dell Inc. DELL P3223QE G2CXWN3' enable scale 1 position 2260,0
-    output eDP-1 enable scale 1.7 position 0,748
+    output 'Dell Inc. DELL P3223QE G2CXWN3' enable scale 1 position 0,0
+    output eDP-1 enable scale 1.7 position 740,2160
     exec swaymsg workspace 1, move workspace to output '"Dell Inc. DELL P3223QE G2CXWN3"'
     exec swaymsg workspace 2, move workspace to output 'eDP-1'
     exec swaymsg workspace 3, move workspace to output '"Dell Inc. DELL P3223QE G2CXWN3"'
-    exec swaymsg workspace 4, move workspace to output 'eDP-1'
+    exec swaymsg workspace 4, move workspace to output '"Dell Inc. DELL P3223QE G2CXWN3"'
     exec swaymsg workspace 5, move workspace to output '"Dell Inc. DELL P3223QE G2CXWN3"'
     exec swaymsg workspace 8, move workspace to output 'eDP-1'
     exec swaymsg workspace 9, move workspace to output 'eDP-1'
