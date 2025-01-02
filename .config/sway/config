@@ -643,6 +643,16 @@
         move position 50 ppt 1 ppt
         inhibit_idle
     }
+    for_window [app_id="google-chrome" title="^Meet -.*$"] {
+        # Float Google Meet windows by default
+        floating enable
+        resize set height 50 ppt
+        resize set width 50 ppt
+        move position 50 ppt 1 ppt
+    } ; [app_id="google-chrome" title="^Meet -.*- Google Chrome$"] {
+        # But undo this for Meet windows in a browser
+        floating disable
+    }
     for_window [app_id="mpv"] {
         floating enable
         resize set height 50 ppt
