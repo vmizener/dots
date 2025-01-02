@@ -2,19 +2,19 @@
 
 lib::init() {
     LOGPATH="/tmp/sway-daemons.log"
-    case $1 in
-        --reset)
-            rm "$LOGPATH"
-            shift
-        ;;
-        -*|--*)
-            echo "Unknown option $i"
-            return 1
-        ;;
-        *)
-            shift
-        ;;
-    esac
+    for var in "$@"; do
+        case $var in
+            --reset)
+                [[ -f "$LOGPATH" ]] && rm -f "$LOGPATH"
+                touch "$LOGPATH"
+                chmod 664 "$LOGPATH"
+            ;;
+            -*|--*)
+                echo "Unknown option $i"
+                return 1
+            ;;
+        esac
+    done
 
     PATH=.
     PATH=$PATH:${HOME}/.local/bin
@@ -45,8 +45,23 @@ lib::exists() {
 }
 
 lib::log() {
+    # Usage:
+    #     [command-with-output] | lib::log [message]
+    #
+    # Writes messages to the log file
+    # E.g. 
+
     [ -z "$LOGPATH" ] && lib::init
-    echo "[$(date '+%B %d %H:%M')] $1" >> $LOGPATH
+    if [[ -n "$1" ]]; then
+        # Has argument; dump to logfile
+        echo -e "[$(date '+%B %d %H:%M')] $1" >> $LOGPATH
+    elif [[ ! -t 0 ]]; then
+        # No arguments; directly log from STDIN
+        while read line; do
+            [[ -n "$1" ]] && echo -n "$1 "
+            echo -e "$line" >> $LOGPATH
+        done < "/dev/stdin"
+    fi
 }
 
 lib::get_windows() {
