@@ -45,7 +45,8 @@ end
 
 -- [Google3] CiderLSP: https://g3doc.corp.google.com/devtools/cider/ciderlsp/neovim/README.md?cl=head
 local ciderlsp = '/google/bin/releases/cider/ciderlsp/ciderlsp'
-if utils.file_exists(ciderlsp) then
+local in_google3 = vim.startswith(vim.loop.cwd(), "/google")
+if utils.file_exists(ciderlsp) and in_google3 then
     available_configs.ciderlsp = {
         default_config = {
             cmd = { ciderlsp, '--tooltag=nvim-lsp', '--noforward_sync_responses' };
@@ -55,11 +56,15 @@ if utils.file_exists(ciderlsp) then
             settings = {};
         }
     }
-    lspconfig.ciderlsp.setup({})
+    lspconfig.ciderlsp.setup({
+       on_attach = on_attach
+    })
+    -- No need to configure other LSPs; Cider handles everything
+    return
 end
 
--- Golang
-if utils.file_exists("WORKSPACE") then
+local root_has_bazel_workspace = vim.fs.root(0, "WORKSPACE")
+if root_has_bazel_workspace then
     -- If a Bazel WORKSPACE file is present, include some additional settings
     -- https://github.com/bazelbuild/rules_go/wiki/Editor-setup
     lspconfig.gopls.setup({
@@ -73,7 +78,6 @@ if utils.file_exists("WORKSPACE") then
                     "-bazel-bin",
                     "-bazel-out",
                     "-bazel-testlogs",
-                    "-bazel-mypkg",
                 }
             }
         }

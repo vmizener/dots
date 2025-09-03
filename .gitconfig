@@ -24,6 +24,8 @@
 [core]
 	excludesfile = ~/.gitignore
 	pager = delta -sn
+	fsmonitor = true
+	untrackedCache = true
 [merge]
 	tool = vimdiff
 	conflictstyle = diff3
