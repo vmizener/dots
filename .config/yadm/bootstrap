@@ -355,8 +355,12 @@ elif [ "${system_type}" = "Debian" ]; then
             xdg-desktop-portal-wlr
         )
         sway_gems=(
+            debug
+            ffi
             fusuma
             fusuma-plugin-sendkey
+            rbs
+            rbtree
         )
         build_repos=(
             # Swaylock-effects: fancier swaylock

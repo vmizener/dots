@@ -112,10 +112,10 @@ lspconfig.lua_ls.setup({
     }
 })
 
--- Java/Typescript
-lspconfig.ts_ls.setup({
-    on_attach = on_attach,
-})
+-- -- Java/Typescript
+-- lspconfig.ts_ls.setup({
+--     on_attach = on_attach,
+-- })
 
 -- Python
 lspconfig.pyright.setup({

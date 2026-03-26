@@ -1,7 +1,17 @@
-export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
-alias ls='ls -Fh'
-alias la='ls -Fha'
-alias ll='ls -Fhal'
+if command -v eza &>/dev/null; then
+    alias ls='eza'
+    alias la='eza -a'
+    alias ll='eza -al'
+    alias lt='eza -lT'
+    alias llt='eza -alT'
+else
+    export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
+    alias ls='ls -Fh'
+    alias la='ls -Fha'
+    alias ll='ls -Fhal'
+    alias lt="tree -CpDh | sed -e 's/\(.*\)\[\([^]]*\)\]/\2 \1/'"
+    alias llt="tree -aCpDh | sed -e 's/\(.*\)\[\([^]]*\)\]/\2 \1/'"
+fi
 
 alias cdr='cd $(git rev-parse --show-toplevel)'
 alias pip='python -m pip'
@@ -28,7 +38,11 @@ alias tt='tmux attach -t'
 alias tR='tmux attach'
 alias ts='tmux new -s'
 
-alias icat='kitty +kitten icat --align=left'
+if command -v timg &>/dev/null; then
+    alias icat='timg'
+elif command -v kitty &>/dev/null; then
+    alias icat='kitty +kitten icat --align=left'
+fi
 
 if command -v batcat &>/dev/null; then
     # Bat is 'batcat' in Debian

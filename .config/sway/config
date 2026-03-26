@@ -88,6 +88,9 @@
     # Export display settings to D-Bus
     exec dbus-update-activation-environment --systemd DISPLAY I3SOCK SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
 
+    # Autostart registered apps
+    exec dex -ae sway
+
     # Startup scripts
     exec_always ~/.config/sway/daemons.sh
     exec_always ~/.config/sway/swayidle.sh

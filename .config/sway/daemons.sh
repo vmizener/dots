@@ -5,10 +5,8 @@ source "$SCRIPTPATH/lib.sh"
 
 lib::init --reset
 lib::log "Starting daemons as user '$USER'"
-lib::log "Running with PATH:"
-echo "$PATH" | lib::log
-lib::log "Running with ENV:"
-env          | lib::log
+lib::log "Running with PATH:\n$PATH"
+lib::log "Running with ENV:\n$(env)"
 
 # Clipboard manager
 if lib::exists wl-paste cliphist; then

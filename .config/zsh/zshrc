@@ -17,6 +17,10 @@ local function add_path() {
     # Adds path to PATH if it exists
     [ -d "$1" ] && PATH=$PATH:$1
 }
+# Nix paths
+add_path ${HOME}/.nix-profile/bin
+add_path ${HOME}/.local/state/nix/profiles/home-manager/home-path/bin
+# System paths
 add_path ${HOME}/.local/bin
 add_path ${HOME}/go/bin
 add_path /usr/local/sbin
@@ -37,6 +41,9 @@ add_path /mnt/c/Windows/System32/WindowsPowerShell/v1.0
 [ ! -z $VIRTUAL_ENV ] && PATH=${VIRTUAL_ENV}/bin:$PATH
 
 export PATH
+
+# Update Nix path
+export NIX_PATH="$NIX_PATH:$HOME/.nix-defexpr/channels"
 
 
 # Enable history
